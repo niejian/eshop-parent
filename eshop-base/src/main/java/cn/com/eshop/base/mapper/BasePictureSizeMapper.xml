@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.eshop.base.mapper.BasePictureSizeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.com.eshop.base.entity.BasePictureSize">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="width" property="width" />
+        <result column="height" property="height" />
+        <result column="create_time" property="createTime" />
+        <result column="create_person" property="createPerson" />
+        <result column="create_person_ids" property="createPersonIds" />
+        <result column="modify_time" property="modifyTime" />
+        <result column="modify_person" property="modifyPerson" />
+        <result column="modify_person_ids" property="modifyPersonIds" />
+        <result column="flag_delete" property="flagDelete" />
+        <result column="remark" property="remark" />
+        <result column="data_json" property="dataJson" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, width, height, create_time, create_person, create_person_ids, modify_time, modify_person, modify_person_ids, flag_delete, remark, data_json
+    </sql>
+
+</mapper>

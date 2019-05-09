@@ -11,5 +11,12 @@
 
     <artifactId>eshop-base</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>cn.com.eshop</groupId>
+            <artifactId>eshop-common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
 </project>

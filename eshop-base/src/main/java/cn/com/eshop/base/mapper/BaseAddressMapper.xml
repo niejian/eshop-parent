@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.eshop.base.mapper.BaseAddressMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.com.eshop.base.entity.BaseAddress">
+        <id column="id" property="id" />
+        <result column="address1_hand" property="address1Hand" />
+        <result column="address2_system_text" property="address2SystemText" />
+        <result column="address2_system" property="address2System" />
+        <result column="areaIds" property="areaIds" />
+        <result column="person" property="person" />
+        <result column="tel" property="tel" />
+        <result column="mobile" property="mobile" />
+        <result column="user_id" property="userId" />
+        <result column="email" property="email" />
+        <result column="zip" property="zip" />
+        <result column="flag_default" property="flagDefault" />
+        <result column="create_time" property="createTime" />
+        <result column="create_person" property="createPerson" />
+        <result column="create_person_ids" property="createPersonIds" />
+        <result column="modify_time" property="modifyTime" />
+        <result column="modify_person" property="modifyPerson" />
+        <result column="modify_person_ids" property="modifyPersonIds" />
+        <result column="flag_delete" property="flagDelete" />
+        <result column="remark" property="remark" />
+        <result column="data_json" property="dataJson" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, address1_hand, address2_system_text, address2_system, areaIds, person, tel, mobile, user_id, email, zip, flag_default, create_time, create_person, create_person_ids, modify_time, modify_person, modify_person_ids, flag_delete, remark, data_json
+    </sql>
+
+</mapper>

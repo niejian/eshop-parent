@@ -28,6 +28,23 @@
 
     <build>
         <finalName>eshop-admin</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/mapper/*.xml</include>
+                    <!--<include>**/*.*</include>-->
+                </includes>
+            </resource>
+            <!--将resources目录下的配置文件打到jar包中，否则外部运行不了这个jar包-->
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>*.properties</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
