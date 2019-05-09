@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.eshop.order.mapper.OrderStrategyConvertMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.com.eshop.order.entity.OrderStrategyConvert">
+        <id column="id" property="id" />
+        <result column="convert_code" property="convertCode" />
+        <result column="convert_name" property="convertName" />
+        <result column="platform_code" property="platformCode" />
+        <result column="start_time" property="startTime" />
+        <result column="end_time" property="endTime" />
+        <result column="convert_status" property="convertStatus" />
+        <result column="limit_num_of_shop" property="limitNumOfShop" />
+        <result column="limit_num_of_order" property="limitNumOfOrder" />
+        <result column="order_num" property="orderNum" />
+        <result column="flag_frozen" property="flagFrozen" />
+        <result column="flag_delete" property="flagDelete" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="create_by_ids" property="createByIds" />
+        <result column="modify_time" property="modifyTime" />
+        <result column="modify_by" property="modifyBy" />
+        <result column="modify_by_ids" property="modifyByIds" />
+        <result column="remark" property="remark" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, convert_code, convert_name, platform_code, start_time, end_time, convert_status, limit_num_of_shop, limit_num_of_order, order_num, flag_frozen, flag_delete, create_time, create_by, create_by_ids, modify_time, modify_by, modify_by_ids, remark
+    </sql>
+
+</mapper>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.eshop.order.mapper.OrderUnifiedProductDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.com.eshop.order.entity.OrderUnifiedProductDetail">
+        <id column="id" property="id" />
+        <result column="shop_code" property="shopCode" />
+        <result column="order_code" property="orderCode" />
+        <result column="product_code" property="productCode" />
+        <result column="specification" property="specification" />
+        <result column="product_name" property="productName" />
+        <result column="product_unit" property="productUnit" />
+        <result column="flag_present" property="flagPresent" />
+        <result column="price" property="price" />
+        <result column="price_total" property="priceTotal" />
+        <result column="quantity" property="quantity" />
+        <result column="price_discount_shop" property="priceDiscountShop" />
+        <result column="price_discount_platform" property="priceDiscountPlatform" />
+        <result column="price_actual_pay" property="priceActualPay" />
+        <result column="price_actual_receipts" property="priceActualReceipts" />
+        <result column="price_actual_unit" property="priceActualUnit" />
+        <result column="price_postage" property="pricePostage" />
+        <result column="flag_change" property="flagChange" />
+        <result column="order_num" property="orderNum" />
+        <result column="flag_frozen" property="flagFrozen" />
+        <result column="flag_delete" property="flagDelete" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="create_by_ids" property="createByIds" />
+        <result column="modify_time" property="modifyTime" />
+        <result column="modify_by" property="modifyBy" />
+        <result column="modify_by_ids" property="modifyByIds" />
+        <result column="remark" property="remark" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, shop_code, order_code, product_code, specification, product_name, product_unit, flag_present, price, price_total, quantity, price_discount_shop, price_discount_platform, price_actual_pay, price_actual_receipts, price_actual_unit, price_postage, flag_change, order_num, flag_frozen, flag_delete, create_time, create_by, create_by_ids, modify_time, modify_by, modify_by_ids, remark
+    </sql>
+
+</mapper>

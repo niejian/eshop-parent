@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.eshop.order.mapper.OrderUnifiedOrderExtendMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.com.eshop.order.entity.OrderUnifiedOrderExtend">
+        <id column="id" property="id" />
+        <result column="shop_code" property="shopCode" />
+        <result column="order_code" property="orderCode" />
+        <result column="refund_flag" property="refundFlag" />
+        <result column="refund_price_total" property="refundPriceTotal" />
+        <result column="refund_status" property="refundStatus" />
+        <result column="refund_remark" property="refundRemark" />
+        <result column="invoice_buyer" property="invoiceBuyer" />
+        <result column="invoice_type" property="invoiceType" />
+        <result column="invoice_title" property="invoiceTitle" />
+        <result column="invoice_status" property="invoiceStatus" />
+        <result column="invoice_remark" property="invoiceRemark" />
+        <result column="receiver_name" property="receiverName" />
+        <result column="receiver_mobile" property="receiverMobile" />
+        <result column="receiver_phone" property="receiverPhone" />
+        <result column="receiver_post_code" property="receiverPostCode" />
+        <result column="receiver_country" property="receiverCountry" />
+        <result column="receiver_province" property="receiverProvince" />
+        <result column="receiver_city" property="receiverCity" />
+        <result column="receiver_county" property="receiverCounty" />
+        <result column="receiver_town" property="receiverTown" />
+        <result column="receiver_address" property="receiverAddress" />
+        <result column="logistics_type" property="logisticsType" />
+        <result column="logistics_status" property="logisticsStatus" />
+        <result column="logistics_remark" property="logisticsRemark" />
+        <result column="order_num" property="orderNum" />
+        <result column="flag_frozen" property="flagFrozen" />
+        <result column="flag_delete" property="flagDelete" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="create_by_ids" property="createByIds" />
+        <result column="modify_time" property="modifyTime" />
+        <result column="modify_by" property="modifyBy" />
+        <result column="modify_by_ids" property="modifyByIds" />
+        <result column="remark" property="remark" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, shop_code, order_code, refund_flag, refund_price_total, refund_status, refund_remark, invoice_buyer, invoice_type, invoice_title, invoice_status, invoice_remark, receiver_name, receiver_mobile, receiver_phone, receiver_post_code, receiver_country, receiver_province, receiver_city, receiver_county, receiver_town, receiver_address, logistics_type, logistics_status, logistics_remark, order_num, flag_frozen, flag_delete, create_time, create_by, create_by_ids, modify_time, modify_by, modify_by_ids, remark
+    </sql>
+
+</mapper>

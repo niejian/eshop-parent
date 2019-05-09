@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.eshop.order.mapper.OrderStrategyConvertDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.com.eshop.order.entity.OrderStrategyConvertDetail">
+        <id column="id" property="id" />
+        <result column="convert_code" property="convertCode" />
+        <result column="product_code" property="productCode" />
+        <result column="product_num" property="productNum" />
+        <result column="convert_product_code" property="convertProductCode" />
+        <result column="convert_num" property="convertNum" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, convert_code, product_code, product_num, convert_product_code, convert_num
+    </sql>
+
+</mapper>

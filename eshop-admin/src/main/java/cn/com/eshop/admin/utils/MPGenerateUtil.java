@@ -135,9 +135,17 @@ public class MPGenerateUtil {
 //                "base_operat_log","base_picture_size","base_tag"
 //        });
         // prod模块
+//        strategy.setInclude(new String[]{
+//                "prod_brand","prod_product_category","prod_product_infor",
+//                "prod_product_infor_detail","prod_product_stock","prod_storehouse","prod_storehouse_area"
+//        });
+        //
         strategy.setInclude(new String[]{
-                "prod_brand","prod_product_category","prod_product_infor",
-                "prod_product_infor_detail","prod_product_stock","prod_storehouse","prod_storehouse_area"
+                "order_base_channel","order_base_logistics","order_base_logistics_area",
+                "order_strategy_convert","order_strategy_convert_detail","order_strategy_present",
+                "order_strategy_present_detail","order_unified_order","order_unified_order_detail",
+                "order_unified_order_extend","order_unified_package","order_unified_package_detail",
+                "order_unified_product_detail"
         });
         //strategy.setTablePrefix(new String[]{tablePrefix});
         strategy.setNaming(NamingStrategy.underline_to_camel);

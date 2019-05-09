@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.eshop.order.mapper.OrderUnifiedPackageMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.com.eshop.order.entity.OrderUnifiedPackage">
+        <id column="id" property="id" />
+        <result column="storehouse_code" property="storehouseCode" />
+        <result column="storehouse_name" property="storehouseName" />
+        <result column="package_code" property="packageCode" />
+        <result column="logistics_name" property="logisticsName" />
+        <result column="logistics_code" property="logisticsCode" />
+        <result column="logistics_no" property="logisticsNo" />
+        <result column="order_date" property="orderDate" />
+        <result column="verify_date" property="verifyDate" />
+        <result column="verify_by" property="verifyBy" />
+        <result column="verify_by_ids" property="verifyByIds" />
+        <result column="examine_date" property="examineDate" />
+        <result column="examine_by" property="examineBy" />
+        <result column="examine_by_ids" property="examineByIds" />
+        <result column="print_date" property="printDate" />
+        <result column="delivery_date" property="deliveryDate" />
+        <result column="plan_arrival_date" property="planArrivalDate" />
+        <result column="real_arrival_date" property="realArrivalDate" />
+        <result column="order_num" property="orderNum" />
+        <result column="flag_frozen" property="flagFrozen" />
+        <result column="flag_delete" property="flagDelete" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="create_by_ids" property="createByIds" />
+        <result column="modify_time" property="modifyTime" />
+        <result column="modify_by" property="modifyBy" />
+        <result column="modify_by_ids" property="modifyByIds" />
+        <result column="remark" property="remark" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, storehouse_code, storehouse_name, package_code, logistics_name, logistics_code, logistics_no, order_date, verify_date, verify_by, verify_by_ids, examine_date, examine_by, examine_by_ids, print_date, delivery_date, plan_arrival_date, real_arrival_date, order_num, flag_frozen, flag_delete, create_time, create_by, create_by_ids, modify_time, modify_by, modify_by_ids, remark
+    </sql>
+
+</mapper>
