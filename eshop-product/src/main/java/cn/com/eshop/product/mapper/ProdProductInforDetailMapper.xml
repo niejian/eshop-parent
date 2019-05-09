@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.eshop.product.mapper.ProdProductInforDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.com.eshop.product.entity.ProdProductInforDetail">
+        <id column="id" property="id" />
+        <result column="package_code" property="packageCode" />
+        <result column="product_code" property="productCode" />
+        <result column="product_num" property="productNum" />
+        <result column="order_num" property="orderNum" />
+        <result column="flag_delete" property="flagDelete" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, package_code, product_code, product_num, order_num, flag_delete
+    </sql>
+
+</mapper>

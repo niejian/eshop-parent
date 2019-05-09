@@ -127,12 +127,17 @@ public class MPGenerateUtil {
         // 表前缀
         //String tablePrefix = scanner("表名");
         //strategy.setInclude(scanner("表名"));
+//        strategy.setInclude(new String[]{
+//                "base_account_collection","base_account_track","base_address",
+//                "base_advertising","base_area","base_area_citie","base_area_province",
+//                "base_area_town","base_attachment","base_comment","base_dict",
+//                "base_dict_attr","base_long_text","base_message_notice","base_message_sms",
+//                "base_operat_log","base_picture_size","base_tag"
+//        });
+        // prod模块
         strategy.setInclude(new String[]{
-                "base_account_collection","base_account_track","base_address",
-                "base_advertising","base_area","base_area_citie","base_area_province",
-                "base_area_town","base_attachment","base_comment","base_dict",
-                "base_dict_attr","base_long_text","base_message_notice","base_message_sms",
-                "base_operat_log","base_picture_size","base_tag"
+                "prod_brand","prod_product_category","prod_product_infor",
+                "prod_product_infor_detail","prod_product_stock","prod_storehouse","prod_storehouse_area"
         });
         //strategy.setTablePrefix(new String[]{tablePrefix});
         strategy.setNaming(NamingStrategy.underline_to_camel);

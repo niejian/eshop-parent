@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.com.eshop.product.mapper.ProdProductInforMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.com.eshop.product.entity.ProdProductInfor">
+        <id column="id" property="id" />
+        <result column="category_code" property="categoryCode" />
+        <result column="brand_code" property="brandCode" />
+        <result column="product_code" property="productCode" />
+        <result column="specification" property="specification" />
+        <result column="product_name" property="productName" />
+        <result column="product_name_short" property="productNameShort" />
+        <result column="product_type" property="productType" />
+        <result column="flag_set_meal_split" property="flagSetMealSplit" />
+        <result column="price_cost" property="priceCost" />
+        <result column="price_market" property="priceMarket" />
+        <result column="price_retail" property="priceRetail" />
+        <result column="price_claim" property="priceClaim" />
+        <result column="product_unit" property="productUnit" />
+        <result column="flag_present" property="flagPresent" />
+        <result column="life_cycle" property="lifeCycle" />
+        <result column="bar_code_of_product" property="barCodeOfProduct" />
+        <result column="bar_code_of_box" property="barCodeOfBox" />
+        <result column="key_words" property="keyWords" />
+        <result column="weight_of_gross" property="weightOfGross" />
+        <result column="weight_of_net" property="weightOfNet" />
+        <result column="deposit_volume" property="depositVolume" />
+        <result column="deposit_length" property="depositLength" />
+        <result column="deposit_width" property="depositWidth" />
+        <result column="deposit_height" property="depositHeight" />
+        <result column="flag_picture" property="flagPicture" />
+        <result column="order_num" property="orderNum" />
+        <result column="flag_frozen" property="flagFrozen" />
+        <result column="flag_delete" property="flagDelete" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="create_by_ids" property="createByIds" />
+        <result column="modify_time" property="modifyTime" />
+        <result column="modify_by" property="modifyBy" />
+        <result column="modify_by_ids" property="modifyByIds" />
+        <result column="remark" property="remark" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, category_code, brand_code, product_code, specification, product_name, product_name_short, product_type, flag_set_meal_split, price_cost, price_market, price_retail, price_claim, product_unit, flag_present, life_cycle, bar_code_of_product, bar_code_of_box, key_words, weight_of_gross, weight_of_net, deposit_volume, deposit_length, deposit_width, deposit_height, flag_picture, order_num, flag_frozen, flag_delete, create_time, create_by, create_by_ids, modify_time, modify_by, modify_by_ids, remark
+    </sql>
+
+</mapper>

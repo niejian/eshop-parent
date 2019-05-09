@@ -9,6 +9,10 @@
         <module>eshop-admin</module>
         <module>eshop-base</module>
         <module>eshop-base-api</module>
+        <module>eshop-order</module>
+        <module>eshop-order-api</module>
+        <module>eshop-product</module>
+        <module>eshop-product-api</module>
     </modules>
     <groupId>cn.com.eshop</groupId>
     <artifactId>eshop-parent</artifactId>
@@ -35,5 +39,25 @@
             <url>http://maven.aliyun.com/nexus/content/groups/public</url>
         </repository>
     </repositories>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/mapper/*.xml</include>
+                    <!--<include>**/*.*</include>-->
+                </includes>
+            </resource>
+            <!--将resources目录下的配置文件打到jar包中，否则外部运行不了这个jar包-->
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>*.properties</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
 
 </project>
