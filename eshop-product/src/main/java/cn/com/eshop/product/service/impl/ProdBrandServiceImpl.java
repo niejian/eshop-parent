@@ -4,7 +4,10 @@ import cn.com.eshop.product.entity.ProdBrand;
 import cn.com.eshop.product.mapper.ProdBrandMapper;
 import cn.com.eshop.product.service.IProdBrandService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -17,4 +20,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProdBrandServiceImpl extends ServiceImpl<ProdBrandMapper, ProdBrand> implements IProdBrandService {
 
+    @Autowired
+    private ProdBrandMapper prodBrandMapper;
+    @Override
+    public List<ProdBrand> getAll() {
+
+        return prodBrandMapper.getAll();
+    }
 }

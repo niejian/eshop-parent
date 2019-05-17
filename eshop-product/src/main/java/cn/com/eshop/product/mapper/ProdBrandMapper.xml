@@ -23,4 +23,8 @@
         id, brand_name, brand_code, order_num, flag_delete, create_time, create_by, create_by_ids, modify_time, modify_by, modify_by_ids, remark
     </sql>
 
+    <select id="getAll" resultMap="BaseResultMap">
+        select * from prod_brand
+    </select>
+
 </mapper>

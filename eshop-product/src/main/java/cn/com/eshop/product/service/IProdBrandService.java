@@ -3,6 +3,8 @@ package cn.com.eshop.product.service;
 import cn.com.eshop.product.entity.ProdBrand;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 产品品牌 服务类
@@ -13,4 +15,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IProdBrandService extends IService<ProdBrand> {
 
+    /**
+     * 获取所有
+     * @return
+     */
+    List<ProdBrand> getAll();
 }
