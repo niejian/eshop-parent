@@ -2,7 +2,7 @@
 ### Java template
 # Compiled class file
 *.class
-
+logs/
 # Log file
 *.log
 eshop-*.iml

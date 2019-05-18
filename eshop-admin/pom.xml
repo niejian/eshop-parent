@@ -22,6 +22,18 @@
             <artifactId>eshop-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                    <groupId>org.springframework.boot</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
     </dependencies>
 
 
@@ -40,12 +52,18 @@
             <!--将resources目录下的配置文件打到jar包中，否则外部运行不了这个jar包-->
             <resource>
                 <directory>src/main/resources</directory>
-                <includes>
-                    <include>*.properties</include>
-                </includes>
+
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>cn.com.eshop.admin.EshopBootstrap</mainClass>
+                </configuration>
+
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -65,18 +83,7 @@
                     <!--<warName>eshop-admin</warName>-->
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>tomcat-maven-plugin</artifactId>
-                <version>1.0</version>
-                <configuration>
-                    <url>http://localhost:8080/manager/text</url>
-                    <server>tomcat</server>
-                    <username>admin</username>
-                    <password>admin</password>
-                    <path>/eshop-admin</path>
-                </configuration>
-            </plugin>
+
         </plugins>
     </build>
 

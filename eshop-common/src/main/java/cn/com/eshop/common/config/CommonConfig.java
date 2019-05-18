@@ -16,7 +16,7 @@ import java.util.List;
  * @date 2019/5/6
  */
 @Configuration
-@EnableWebMvc
+//@EnableWebMvc
 public class CommonConfig extends WebMvcConfigurerAdapter {
 
     /**
