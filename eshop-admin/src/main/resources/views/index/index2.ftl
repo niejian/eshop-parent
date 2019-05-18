@@ -15,12 +15,12 @@
     <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
 </head>
 <body>
-<blockquote class="layui-elem-quote">
-    你也可以单独打开后台布局的例子：
-    <a class="layui-btn layui-btn-normal" href="layuiAdmin.html" target="_blank">单独打开</a>
-</blockquote>
+<#--<blockquote class="layui-elem-quote">-->
+    <#--你也可以单独打开后台布局的例子：-->
+    <#--<a class="layui-btn layui-btn-normal" href="layuiAdmin.html" target="_blank">单独打开</a>-->
+<#--</blockquote>-->
 
-<iframe src="layuiAdmin.html?from=demo" frameborder="0" id="demoAdmin" style="width: 100%; height: 300px;"></iframe>
+<#--<iframe src="layuiAdmin.html?from=demo" frameborder="0" id="demoAdmin" style="width: 100%; height: 300px;"></iframe>-->
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
         <div class="layui-logo">layui 后台布局</div>
@@ -92,12 +92,14 @@
 </div>
 
 <script src="${ctx}/statics/js/layer/layui.all.js" charset="utf-8"></script>
-<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+
+<script>
+//    alert(124)
+    <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
     layui.use('element', function(){
-    var element = layui.element;
+        var element = layui.element;
 
     });
-<script>
 </script>
 
 </body>
