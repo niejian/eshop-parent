@@ -63,7 +63,7 @@
                     <a class="" href="javascript:;">系统管理</a>
                     <dl class="layui-nav-child">
                         <dd><a href="javascript:;" onclick="goToPage('/user/manageMenus')">菜单管理</a></dd>
-                        <dd><a href="javascript:;" onclick="goToPage('/user/manageRights')">权限管理</a></dd>
+                        <dd><a href="javascript:;" onclick="goToPage('/user/manageRoles')">角色管理</a></dd>
 
 
                     </dl>
