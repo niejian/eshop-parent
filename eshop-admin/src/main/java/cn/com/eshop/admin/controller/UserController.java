@@ -39,6 +39,17 @@ public class UserController {
 
     }
 
+    @GetMapping(value = "/index")
+    public ModelAndView index() {
+        ModelAndView modelAndView = new ModelAndView();
+        log.info("---->");
+
+        modelAndView.setViewName("index/index");
+        return modelAndView;
+
+
+    }
+
     /**
      * 菜单管理
      * @return
