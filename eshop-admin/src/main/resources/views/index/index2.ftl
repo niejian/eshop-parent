@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>layui</title>
+    <title>EShop Admin</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -23,8 +23,8 @@
 <#--<iframe src="layuiAdmin.html?from=demo" frameborder="0" id="demoAdmin" style="width: 100%; height: 300px;"></iframe>-->
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo">layui 后台布局</div>
-        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <div class="layui-logo">EShop Admin</div>
+        <!-- 头部区域（可配合layui已有的水平导航）水平导航栏 -->
         <ul class="layui-nav layui-layout-left">
             <li class="layui-nav-item"><a href="">控制台</a></li>
             <li class="layui-nav-item"><a href="">商品管理</a></li>
@@ -38,6 +38,7 @@
                 </dl>
             </li>
         </ul>
+        <#--头像信息-->
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
                 <a href="javascript:;">
@@ -53,11 +54,22 @@
         </ul>
     </div>
 
+    <#--左侧导航栏-->
     <div class="layui-side layui-bg-black">
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-                <li class="layui-nav-item layui-nav-itemed">
+            <ul class="layui-nav layui-nav-tree">
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:;">系统管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" onclick="goToPage('/user/manageMenus')">菜单管理</a></dd>
+                        <dd><a href="javascript:;" onclick="goToPage('/user/manageRights')">权限管理</a></dd>
+
+
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item">
                     <a class="" href="javascript:;">所有商品</a>
                     <dl class="layui-nav-child">
                         <dd><a href="javascript:;">列表一</a></dd>
@@ -80,9 +92,11 @@
         </div>
     </div>
 
-    <div class="layui-body">
-        <!-- 内容主体区域 -->
-        <div style="padding: 15px;">内容主体区域</div>
+    <#--<iframe id="contentFrame" src="" frameborder="0" >-->
+    <div class="layui-body layui-tab-content">
+        <!-- 内容主体区域，通过goToPage 动态变换地址信息 -->
+        <iframe id="contentFrame" src="" frameborder="0" width="100%" height="100%"></iframe>
+
     </div>
 
     <div class="layui-footer">
@@ -96,10 +110,20 @@
 <script>
 //    alert(124)
     <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+
+
     layui.use('element', function(){
         var element = layui.element;
 
     });
+
+
+    function goToPage(param){
+
+        $("#contentFrame").attr("src",param);
+    }
+
+
 </script>
 
 </body>
