@@ -27,4 +27,31 @@ public class UserController {
 
 
     }
+
+    /**
+     * 菜单管理
+     * @return
+     */
+    @GetMapping(value = "/manageMenus")
+    public ModelAndView menu() {
+        ModelAndView modelAndView = new ModelAndView();
+
+
+        modelAndView.setViewName("user/manageMenus");
+        return modelAndView;
+    }
+
+
+    /**
+     * 菜单管理
+     * @return
+     */
+    @GetMapping(value = "/manageRights")
+    public ModelAndView manageRights() {
+        ModelAndView modelAndView = new ModelAndView();
+
+
+        modelAndView.setViewName("user/manageRights");
+        return modelAndView;
+    }
 }

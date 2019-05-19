@@ -1,15 +1,18 @@
 <#assign ctx=request.contextPath />
 
-<script type="text/javascript" src="${ctx}/js/jquery-1.9.1.min.js"></script>
-<script type="text/javascript" src="${ctx}/js/common.js"></script>
-<script type="text/javascript" src="${ctx}/js/layer/layerui.all.js"></script>
+<script type="text/javascript" src="${ctx}/statics/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="${ctx}/statics/js/common.js"></script>
+<script type="text/javascript" src="${ctx}/statics/js/layer/layui.all.js"></script>
 
-<script type="text/javascript" src="${ctx}/bootstrap/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="${ctx}/bootstrap/css/bootstrap.min.css">
-<link href="${ctx}/css/font-awesome.min.css" rel="stylesheet">
+<script type="text/javascript" src="${ctx}/statics/bootstrap/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="${ctx}/statics/bootstrap/css/bootstrap.min.css">
+<link href="${ctx}/statics/css/font-awesome.min.css" rel="stylesheet">
+<#--lay ui css-->
+<link href="${ctx}/statics/js/layer/css/layui.css" rel="stylesheet">
+<link href="${ctx}/statics/js/layer/css/layui.mobile.css" rel="stylesheet">
 
-<script type="text/javascript" src="${ctx}/js/bootstrapValidator/bootstrapValidator.min.js"></script>
-    <script type="text/javascript" src="${ctx}/js/md5.js"></script>
+<script type="text/javascript" src="${ctx}/statics/js/bootstrapValidator/bootstrapValidator.min.js"></script>
+    <script type="text/javascript" src="${ctx}/statics/js/md5.js"></script>
 
-    <link rel="stylesheet" href="${ctx}/js/bootstrapValidator/bootstrapValidator.min.css">
+    <link rel="stylesheet" href="${ctx}/statics/js/bootstrapValidator/bootstrapValidator.min.css">
 <#--<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">-->
