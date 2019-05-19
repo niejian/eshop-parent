@@ -140,14 +140,19 @@ public class MPGenerateUtil {
 //                "prod_product_infor_detail","prod_product_stock","prod_storehouse","prod_storehouse_area"
 //        });
         //
+//        strategy.setInclude(new String[]{
+//                "order_base_channel","order_base_logistics","order_base_logistics_area",
+//                "order_strategy_convert","order_strategy_convert_detail","order_strategy_present",
+//                "order_strategy_present_detail","order_unified_order","order_unified_order_detail",
+//                "order_unified_order_extend","order_unified_package","order_unified_package_detail",
+//                "order_unified_product_detail"
+//        });
         strategy.setInclude(new String[]{
-                "order_base_channel","order_base_logistics","order_base_logistics_area",
-                "order_strategy_convert","order_strategy_convert_detail","order_strategy_present",
-                "order_strategy_present_detail","order_unified_order","order_unified_order_detail",
-                "order_unified_order_extend","order_unified_package","order_unified_package_detail",
-                "order_unified_product_detail"
+               "sys_menus","sys_role","sys_role_menu","sys_user","sys_user_role"
         });
-        //strategy.setTablePrefix(new String[]{tablePrefix});
+
+
+                //strategy.setTablePrefix(new String[]{tablePrefix});
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
 //        strategy.setSuperEntityClass("cn.com.vandesr.admin.entity");
