@@ -27,24 +27,44 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">角色编码</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input">
+                        <input type="text" name="roleCode" name="roleCode" lay-verify="required" autocomplete="off" placeholder="请输入角色编码" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline">
-                    <label class="layui-form-label">验证日期</label>
+                    <label class="layui-form-label">角色名称</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="date" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                        <input type="text" name="roleName" id="roleName" lay-verify="required" placeholder="请输入角色名称" autocomplete="off" class="layui-input">
                     </div>
                 </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">验证链接</label>
-                    <div class="layui-input-inline">
-                        <input type="tel" name="url" lay-verify="url" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
+
             <div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline"></div>
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="roleForm">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
 
         </form>
 
+
+
     </body>
+
+    <script type="text/javascript">
+        layui.use('form', function(){
+            var form = layui.form;
+
+            //监听提交
+            form.on('submit(roleForm)', function(data){
+                console.log(data)
+                layer.msg(JSON.stringify(data.field));
+                return false;
+
+
+            });
+        });
+    </script>
 </html>

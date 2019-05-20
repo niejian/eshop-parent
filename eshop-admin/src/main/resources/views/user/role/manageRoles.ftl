@@ -26,7 +26,9 @@
     </div>
 </fieldset>
 
-<table id="roles" lay-filter='roles' ></table>
+<table class="layui-hide" id="roles" lay-filter='roles' ></table>
+
+</body>
 
 <#--为了让表格显示行号-->
 <script type="text/html" id="tableIndex">
@@ -54,7 +56,7 @@
         table.render({
             // id: 'role-table',
             elem: '#roles',
-            height: 500,
+            height: 'full',
             //url: '/demo/table/user/', //数据接口,
             <#--data: '${roles}',-->
             data: roles,
@@ -113,7 +115,7 @@
                     id: "editRole",
                     title: "更新角色信息",
                     type: 2,
-                    area: ["98%", "90%"],
+                    area: ["90%", "98%"],
                     content: url,
                     success: function(layero, index){
                         //console.log("add--" + index);
@@ -158,5 +160,5 @@
 
 </script>
 
-</body>
+
 </html>

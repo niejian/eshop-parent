@@ -16,9 +16,16 @@
         //iframe高度自适应
         function setIframeHeight(iframe) {
             if (iframe) {
+
                 var iframeWin = iframe.contentWindow || iframe.contentDocument.parentWindow;
                 if (iframeWin.document.body) {
                     iframe.height = iframeWin.document.documentElement.scrollHeight || iframeWin.document.body.scrollHeight;
+                }
+
+                console.log(iframe.height);
+//
+                if(iframe.height < 640) {
+                    iframe.height = 640;
                 }
             }
         };
