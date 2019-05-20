@@ -72,7 +72,7 @@
             <ul class="layui-nav layui-nav-tree" lay-filter="navtree">
                 <li class="layui-nav-item">
                     <#--并设置图标-->
-                    <a href="javascript:;" title="设置"><i class="layui-icon layui-icon-set"></i><cite>系统设置</cite></a>
+                    <a href="javascript:;" title="设置"><i class="layui-icon layui-icon-set"></i>&nbsp;&nbsp;<cite>系统设置</cite></a>
                     <dl class="layui-nav-child">
                         <dd><a href="javascript:;" lay-href="/user/manageMenus">菜单管理</a></dd>
                         <dd><a href="javascript:;" lay-href='/user/manageRoles'>角色管理</a></dd>

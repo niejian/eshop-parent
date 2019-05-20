@@ -156,7 +156,7 @@ public class MPGenerateUtil {
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
 //        strategy.setSuperEntityClass("cn.com.vandesr.admin.entity");
-//        strategy.setEntityLombokModel(true);
+        strategy.setEntityLombokModel(true);
 //        strategy.setRestControllerStyle(true);
 //        strategy.setSuperControllerClass("com.baomidou.ant.common.BaseController");
 

@@ -16,31 +16,19 @@
 </head>
 <body>
 <#--角色管理页面-->
-<fieldset class="layui-elem-field site-demo-button" style="margin-top: 30px;">
-
+<fieldset class="layui-elem-field site-demo-button">
+    <legend></legend>
+    <div class="demoTable">
+        <button class="layui-btn"> <i class="layui-icon">&#xe654;</i> 添加</button>
+        <button class="layui-btn layui-btn-normal" data-type="edit"> <i class="layui-icon">&#xe642;</i>编辑</button>
+        <button class="layui-btn layui-btn-warm"> <i class="layui-icon">&#xe615;</i>查看</button>
+        <button class="layui-btn  layui-btn-danger"> <i class="layui-icon">&#xe640;</i>删除</button>
+    </div>
 </fieldset>
-<#--数据展示-->
-<#--<table lay-even class="layui-table">-->
-    <#--<thead>-->
-        <#--<tr>-->
-            <#--<th>角色名称</th>-->
-            <#--<th>角色编号</th>-->
-            <#--<th>创建时间</th>-->
-            <#--<th>创建人</th>-->
-        <#--</tr>-->
-    <#--</thead>-->
-    <#--<tbody>-->
-        <#--<#list roles as role>-->
-            <#--<tr>-->
-                <#--<td>${role.roleName}</td>-->
-                <#--<td>${role.roleCode}</td>-->
-                <#--<td>${role.createTime?string('yyyy-MM-dd hh:mm:ss')}</td>-->
-                <#--<td>${role.createBy}</td>-->
-            <#--</tr>-->
-        <#--</#list>-->
-    <#--</tbody>-->
-<#--</table>-->
+
 <table id="roles" lay-filter='roles' ></table>
+
+<#--为了让表格显示行号-->
 <script type="text/html" id="tableIndex">
     {{d.LAY_TABLE_INDEX+1}}
 </script>
@@ -57,12 +45,14 @@
         roles.push(obj);
     </#list>
 
-    console.log(roles)
 
-    layui.use('table', function() {
+
+    layui.use(['table', 'form'], function() {
         var table = layui.table;
+        var form = layui.form;
         //第一个实例
         table.render({
+            // id: 'role-table',
             elem: '#roles',
             //height: 312,
             //url: '/demo/table/user/', //数据接口,
@@ -82,7 +72,9 @@
             ]]
         });
 
+        // 选中行时，当前行被选中
         table.on('row(roles)', function(obj){
+
             obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');//选中行样式
             obj.tr.find('input[lay-type="layTableRadio"]').prop("checked",true);
             var index = obj.tr.data('index')
@@ -95,9 +87,42 @@
                     delete item.LAY_CHECKED;
                 }
             });
-//            table.render('radio');
+
+            form.render('radio');
+            // console.log(obj.data);
         });
+
+        // 自定义js方法
+        var $ = layui.$, active = {
+            edit: function() { //获取选中数据
+
+                var checkStatus = table.checkStatus('roles'); // table标签的id属性
+                var data = checkStatus.data;
+                if (null == data || data.length == 0) {
+                    layer.msg('请选择一条数据进行编辑');
+
+                    return;
+                }
+
+                layer.alert(JSON.stringify(data))
+
+            }
+        };
+
+        $('.demoTable .layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+
     });
+
+    // function edit() {
+    //     debugger
+    //     var checkStatus = table.checkStatus('roleTable'); //idTest 即为基础参数 id 对应的值
+    //
+    //     console.log(checkStatus.data) //获取选中行的数据
+    // }
 
 
 </script>
