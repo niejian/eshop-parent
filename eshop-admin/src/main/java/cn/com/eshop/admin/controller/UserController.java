@@ -5,7 +5,6 @@ package cn.com.eshop.admin.controller;/**
 import cn.com.eshop.admin.entity.SysRole;
 import cn.com.eshop.admin.service.ISysRoleService;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +58,6 @@ public class UserController {
     public ModelAndView menu() {
         ModelAndView modelAndView = new ModelAndView();
 
-
         modelAndView.setViewName("user/manageMenus");
         return modelAndView;
     }
@@ -94,7 +93,29 @@ public class UserController {
 
         modelAndView.addObject("roles", sysRoleList);
 
-        modelAndView.setViewName("user/manageRoles");
+        modelAndView.setViewName("user/role/manageRoles");
         return modelAndView;
     }
+
+    @GetMapping(value = "/editRole")
+    public ModelAndView editRole(HttpServletRequest request) {
+        log.info("获取角色信息");
+        String type = request.getParameter("type");
+        String id = request.getParameter("id");
+
+        ModelAndView modelAndView = new ModelAndView();
+        // 获取所有角色信息
+
+        SysRole sysRole = this.roleService.getById(id);
+        if (null == sysRole) {
+            sysRole = new SysRole();
+        }
+
+        modelAndView.addObject("role", sysRole);
+        modelAndView.addObject("type", type);
+
+        modelAndView.setViewName("user/role/editRole");
+        return modelAndView;
+    }
+
 }

@@ -54,7 +54,7 @@
         table.render({
             // id: 'role-table',
             elem: '#roles',
-            //height: 312,
+            height: 500,
             //url: '/demo/table/user/', //数据接口,
             <#--data: '${roles}',-->
             data: roles,
@@ -104,7 +104,38 @@
                     return;
                 }
 
-                layer.alert(JSON.stringify(data))
+                layer.alert(JSON.stringify(data));
+
+                var id = data[0].id;
+
+                var url = "${cx}/user/editRole?type=edit&id=" + id;
+                layer.open({
+                    id: "editRole",
+                    title: "更新角色信息",
+                    type: 2,
+                    area: ["98%", "90%"],
+                    content: url,
+                    success: function(layero, index){
+                        //console.log("add--" + index);
+                    },
+                    end: function () {
+                        //resetForm();
+                        //刷新表格数据
+                        search();
+                    },
+                    cancel: function (index, layero) {
+
+                        layer.confirm('关闭后将无法保存已填写的数据，是否确认关闭', function (index2) {
+                            layer.close(index);
+                            layer.close(index2);
+                        });
+                        //resetForm();
+                        search();
+                        return false;
+                    }
+                });
+
+
 
             }
         };

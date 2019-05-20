@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>角色管理</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+        <link href="${ctx}/statics/js/layer/css/layui.css" rel="stylesheet">
+        <script type="text/javascript" src="${ctx}/statics/js/jquery-1.9.1.min.js"></script>
+
+        <script type="text/javascript" src="${ctx}/statics/js/layer/layui.all.js"></script>
+
+
+    </head>
+    <body>
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <#if type == 'edit'>
+                <legend>编辑角色信息</legend>
+                <#elseif type == 'view'  >
+                <legend>查看角色信息</legend>
+            </#if>
+        </fieldset>
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">角色编码</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="number" lay-verify="required|number" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">验证日期</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="date" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">验证链接</label>
+                    <div class="layui-input-inline">
+                        <input type="tel" name="url" lay-verify="url" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            <div>
+
+        </form>
+
+    </body>
+</html>
