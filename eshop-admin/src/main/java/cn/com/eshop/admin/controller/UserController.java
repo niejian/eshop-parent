@@ -4,16 +4,20 @@ package cn.com.eshop.admin.controller;/**
 
 import cn.com.eshop.admin.entity.SysRole;
 import cn.com.eshop.admin.service.ISysRoleService;
+import cn.com.eshop.common.vo.ResultBeanVo;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONObject;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,6 +31,8 @@ public class UserController {
 
     @Autowired
     private ISysRoleService roleService;
+
+    private static final String DATE_FORMAT_S = "yyyy-MM-dd HH:mm:ss";
 
     @GetMapping(value = "/toIndex")
     public ModelAndView toIndex() {
@@ -116,6 +122,41 @@ public class UserController {
 
         modelAndView.setViewName("user/role/editRole");
         return modelAndView;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/updateRole")
+    public ResultBeanVo<SysRole> updateRole(@RequestBody JSONObject jsonObject) {
+        ResultBeanVo<SysRole> resultBeanVo = new ResultBeanVo<>();
+        boolean success = false;
+        Integer errCode = -1;
+        String errMsg = "";
+        SysRole bean = new SysRole();
+
+        try {
+            String createTimeStr = jsonObject.optString("createTime", null);
+            if (null != createTimeStr) {
+                Date createTime = DateUtils.parseDate(createTimeStr, new String[]{DATE_FORMAT_S});
+                bean.setCreateTime(createTime);
+
+            }
+            jsonObject.remove("createTime");
+            bean = (SysRole)JSONObject.toBean(jsonObject, SysRole.class);
+            bean.setModifyTime(new Date());
+
+            roleService.updateRole(bean);
+            success = true;
+            errCode = 0;
+
+        } catch (Exception e) {
+            log.info(e.getMessage());
+
+            e.printStackTrace();
+        }
+        resultBeanVo.success(success)
+                .errCode(errCode)
+                .errMsg(errMsg);
+        return resultBeanVo;
     }
 
 }

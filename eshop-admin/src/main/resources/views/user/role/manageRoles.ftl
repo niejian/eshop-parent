@@ -56,7 +56,7 @@
         table.render({
             // id: 'role-table',
             elem: '#roles',
-            height: 'full',
+            // height: 500,
             //url: '/demo/table/user/', //数据接口,
             <#--data: '${roles}',-->
             data: roles,
@@ -115,7 +115,7 @@
                     id: "editRole",
                     title: "更新角色信息",
                     type: 2,
-                    area: ["90%", "98%"],
+                    area: ["90%", "50%"],
                     content: url,
                     success: function(layero, index){
                         //console.log("add--" + index);
@@ -123,7 +123,7 @@
                     end: function () {
                         //resetForm();
                         //刷新表格数据
-                        search();
+                        //search();
                     },
                     cancel: function (index, layero) {
 
@@ -132,7 +132,7 @@
                             layer.close(index2);
                         });
                         //resetForm();
-                        search();
+                        //search();
                         return false;
                     }
                 });

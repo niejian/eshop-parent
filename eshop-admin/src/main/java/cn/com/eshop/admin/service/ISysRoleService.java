@@ -13,4 +13,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ISysRoleService extends IService<SysRole> {
 
+    boolean updateRole(SysRole sysRole);
+
 }

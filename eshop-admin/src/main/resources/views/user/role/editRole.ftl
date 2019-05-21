@@ -27,23 +27,45 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">角色编码</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="roleCode" name="roleCode" lay-verify="required" autocomplete="off" placeholder="请输入角色编码" class="layui-input">
-                    </div>
+                            <input type="hidden" name="id" value="${role.id}">
+                            <input type="hidden" name="createTime" value="${role.createTime?string('yyyy-MM-dd hh:mm:ss')}">
+                            <input type="hidden" name="createBy" value="${role.createBy}">
+                            <input type="text" name="roleCode" name="roleCode" value="${role.roleCode}" readonly lay-verify="required" autocomplete="off" placeholder="请输入角色编码" class="layui-input"/>
+
+                     </div>
                 </div>
                 <div class="layui-inline">
                     <label class="layui-form-label">角色名称</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="roleName" id="roleName" lay-verify="required" placeholder="请输入角色名称" autocomplete="off" class="layui-input">
+                         <#if type == 'edit'>
+                             <input type="text" name="roleName" id="roleName" value="${role.roleName}" lay-verify="roleName" placeholder="请输入角色名称" autocomplete="off" class="layui-input">
+
+                         <#elseif type == 'view'  >
+                             <input type="text" name="roleName" id="roleName" value="${role.roleName}" readonly lay-verify="required" placeholder="请输入角色名称" autocomplete="off" class="layui-input">
+
+                         </#if>
                     </div>
                 </div>
 
             <div>
 
-            <div class="layui-form-item">
-                <div class="layui-inline"></div>
-                <div class="layui-input-block">
-                    <button class="layui-btn" lay-submit lay-filter="roleForm">立即提交</button>
-                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            <br/> <br/> <br/>
+            <div class="submitRole layui-form-item">
+                <div class="layui-row">
+                    <#--<div class="layui-col-xs4">-->
+                        <#--<div class="grid-demo grid-demo-bg1">1</div>-->
+                    <#--</div>-->
+
+                    <div class="layui-col-md6 layui-col-md-offset4">
+                        <#if type == 'edit'>
+                            <button class="layui-btn" lay-submit lay-filter="roleForm">立即提交</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        <#elseif type == 'view'  >
+
+                        </#if>
+                        <button type="button" class="layui-btn layui-btn-warm"  data-type="back">返回</button>
+
+                    </div>
                 </div>
             </div>
 
@@ -57,14 +79,63 @@
         layui.use('form', function(){
             var form = layui.form;
 
+            // 表达校验信息
+            form.verify({
+                roleName: function (value) {
+                    if (null == value || '' == value) {
+                        return '请输入角色名称';
+                    }
+                }
+            });
+
             //监听提交
             form.on('submit(roleForm)', function(data){
-                console.log(data)
-                layer.msg(JSON.stringify(data.field));
+                // layer.msg(JSON.stringify(data.field));
+                //return false;
+                var postJSON = JSON.stringify(data.field);
+
+                // 验证成功，提交数据
+                $.ajax({
+                    url: '${cx}/user/updateRole',
+                    type: 'POST',
+                    contentType: "application/json; charset=utf-8",
+                    data: postJSON,
+                    async: false,
+                    dataType: "json",
+                    success: function(data){
+                        debugger
+                        var isSuccess = data.success;
+                        if (!isSuccess) {
+                            layer.alert(data.errMsg);
+                        } else {
+                            var msg ='更新成功';
+                            layer.alert(msg);
+                            var layIndex = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(layIndex);
+                        }
+
+                    }
+                })
+
                 return false;
 
-
             });
+
+            var $ = layui.$, active = {
+                // 点击返回，关闭本页面
+                back: function() {
+                    var layIndex = parent.layer.getFrameIndex(window.name);
+                    layer.confirm('关闭后将无法保存已填写的数据，是否确认关闭', function () {
+                        parent.layer.close(layIndex);
+                        //parent.layer.close(index2);
+                    });
+                }
+            };
+            $('.submitRole .layui-btn').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+
         });
     </script>
 </html>
