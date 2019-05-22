@@ -15,4 +15,11 @@ public interface ISysRoleService extends IService<SysRole> {
 
     boolean updateRole(SysRole sysRole);
 
+    /**
+     * 新增
+     * @param sysRole
+     * @return
+     */
+    boolean addRole(SysRole sysRole);
+
 }

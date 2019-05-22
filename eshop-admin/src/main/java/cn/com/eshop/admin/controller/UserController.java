@@ -4,10 +4,11 @@ package cn.com.eshop.admin.controller;/**
 
 import cn.com.eshop.admin.entity.SysRole;
 import cn.com.eshop.admin.service.ISysRoleService;
+import cn.com.eshop.common.utils.CommonFunction;
 import cn.com.eshop.common.vo.ResultBeanVo;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -58,6 +59,7 @@ public class UserController {
 
     /**
      * 菜单管理
+     *
      * @return
      */
     @GetMapping(value = "/manageMenus")
@@ -71,6 +73,7 @@ public class UserController {
 
     /**
      * 菜单管理
+     *
      * @return
      */
     @GetMapping(value = "/manageRights")
@@ -84,6 +87,7 @@ public class UserController {
 
     /**
      * 角色管理
+     *
      * @return
      */
     @GetMapping(value = "/manageRoles")
@@ -125,8 +129,50 @@ public class UserController {
     }
 
     @ResponseBody
+    @PostMapping(value = "/getRoles")
+    public ResultBeanVo<List<SysRole>> editRole(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
+        ResultBeanVo<List<SysRole>> roleResultBeanVo = new ResultBeanVo<>();
+        boolean success = false;
+        Integer errCode = -1;
+        String errMsg = "";
+        List<SysRole> beans = new ArrayList<>();
+
+        try {
+            String roleCode = jsonObject.optString("roleCode", null);
+            String roleName = jsonObject.optString("roleName", null);
+            QueryWrapper<SysRole> queryWrapper = new QueryWrapper<>();
+
+            if (null != roleCode) {
+                queryWrapper.like("role_code", "%" + roleCode + "%");
+
+
+            }
+
+            if (null != roleName) {
+                queryWrapper.like("role_name", "%" + roleName + "%");
+
+            }
+            beans = this.roleService.list(queryWrapper);
+            success = true;
+            errCode = 0;
+            errMsg = "请求成功";
+
+
+        } catch (Exception e) {
+            errMsg = e.getMessage();
+            log.error(e.getMessage());
+            e.printStackTrace();
+        }
+
+
+        return roleResultBeanVo.errCode(errCode).errMsg(errMsg).success(success).data(beans);
+
+    }
+
+    @ResponseBody
     @PostMapping(value = "/updateRole")
     public ResultBeanVo<SysRole> updateRole(@RequestBody JSONObject jsonObject) {
+
         ResultBeanVo<SysRole> resultBeanVo = new ResultBeanVo<>();
         boolean success = false;
         Integer errCode = -1;
@@ -141,7 +187,7 @@ public class UserController {
 
             }
             jsonObject.remove("createTime");
-            bean = (SysRole)JSONObject.toBean(jsonObject, SysRole.class);
+            bean = (SysRole) JSONObject.toBean(jsonObject, SysRole.class);
             bean.setModifyTime(new Date());
 
             roleService.updateRole(bean);
@@ -159,4 +205,80 @@ public class UserController {
         return resultBeanVo;
     }
 
+    @GetMapping(value = "/addRole")
+    public ModelAndView addRole() {
+        return new ModelAndView("user/role/addRole");
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/getRoleByRoleCode")
+    public ResultBeanVo<SysRole> getRoleByRoleCode(@RequestBody JSONObject jsonObject) {
+        ResultBeanVo<SysRole> roleResultBeanVo = new ResultBeanVo<>();
+        boolean success = false;
+        Integer errCode = -1;
+        String errMsg = "";
+        SysRole bean = new SysRole();
+
+        try {
+            String roleCode = jsonObject.optString("roleCode", null);
+            if (null != roleCode) {
+                QueryWrapper<SysRole> queryWrapper = new QueryWrapper<>();
+                queryWrapper.eq("role_code", roleCode);
+                bean = roleService.getOne(queryWrapper);
+
+                success = true;
+                errCode = 0;
+                errMsg = "请求成功";
+
+            }
+        } catch (Exception e) {
+            errMsg = e.getMessage();
+            log.error(e.getMessage());
+            e.printStackTrace();
+        }
+
+
+        return roleResultBeanVo.errCode(errCode).errMsg(errMsg).success(success).data(bean);
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/addRoleHandler")
+    public ResultBeanVo<SysRole> addRoleHandler(@RequestBody JSONObject jsonObject) {
+        ResultBeanVo<SysRole> roleResultBeanVo = new ResultBeanVo<>();
+        boolean success = false;
+        Integer errCode = -1;
+        String errMsg = "";
+        SysRole bean = new SysRole();
+        CommonFunction.beforeProcess(log, jsonObject);
+
+
+
+        try {
+            String roleCode = jsonObject.optString("roleCode", null);
+            String roleName = jsonObject.optString("roleName", null);
+
+            if (null != roleCode && null != roleName) {
+                Date date = new Date();
+                bean.setCreateBy("sys");
+                bean.setRoleName(roleName);
+                bean.setRoleCode(roleCode);
+                bean.setModifyTime(date);
+                bean.setModifyBy("sys");
+                bean.setCreateTime(date);
+                roleService.addRole(bean);
+                success = true;
+                errCode = 0;
+                errMsg = "请求成功";
+
+            }
+        } catch (Exception e) {
+            errMsg = e.getMessage();
+            log.error(e.getMessage());
+            CommonFunction.genErrorMessage(log, e);
+            e.printStackTrace();
+        }
+
+
+        return roleResultBeanVo.errCode(errCode).errMsg(errMsg).success(success).data(bean);
+    }
 }

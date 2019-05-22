@@ -15,13 +15,44 @@
 
 </head>
 <body>
+<fieldset class="layui-elem-field">
+    <legend>刷选条件</legend>
+    <form class="layui-form" action="" onsubmit="return false;">
+        <div class="layui-inline">
+            <label class="layui-form-label">角色编码</label>
+            <div class="layui-input-inline">
+
+                <input type="text" name="roleCode" name="roleCode" autocomplete="off" placeholder="角色编码" class="layui-input"/>
+
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">角色名称</label>
+            <div class="layui-input-inline">
+                <input type="text" name="roleName" id="roleName"  placeholder="角色名称"  class="layui-input">
+
+            </div>
+        </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div class="layui-inline">
+            <#--<div class="layui-col-xs4">-->
+            <#--<div class="grid-demo grid-demo-bg1">1</div>-->
+            <#--</div>-->
+
+                <button class="layui-btn" onclick="search()"><i class="layui-icon">&#xe615</i> &nbsp; 查询</button>
+                <button type="reset" class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe9aa;</i>&nbsp;重置</button>
+
+        </div>
+    </form>
+</fieldset>
+<br/>
 <#--角色管理页面-->
 <fieldset class="layui-elem-field site-demo-button">
     <legend></legend>
     <div class="demoTable">
-        <button class="layui-btn"> <i class="layui-icon">&#xe654;</i> 添加</button>
+        <button class="layui-btn" data-type="add"> <i class="layui-icon">&#xe654;</i> 添加</button>
         <button class="layui-btn layui-btn-normal" data-type="edit"> <i class="layui-icon">&#xe642;</i>编辑</button>
-        <button class="layui-btn layui-btn-warm"> <i class="layui-icon">&#xe615;</i>查看</button>
+        <button class="layui-btn layui-btn-warm" onclick="view()"> <i class="layui-icon">&#xe621;</i>查看</button>
         <button class="layui-btn  layui-btn-danger"> <i class="layui-icon">&#xe640;</i>删除</button>
     </div>
 </fieldset>
@@ -37,15 +68,41 @@
 <script type="text/javascript">
 
     var roles = new Array();
-    <#list roles as role>
-        var obj = {};
-        obj.id = '${role.id}';
-        obj.roleCode = '${role.roleCode}';
-        obj.roleName = '${role.roleName}';
-        obj.createTime = "${role.createTime?string('yyyy-MM-dd hh:mm:ss')}";
-        obj.createBy = '${role.createBy}';
-        roles.push(obj);
-    </#list>
+    <#--<#list roles as role>-->
+        <#--var obj = {};-->
+        <#--obj.id = '${role.id}';-->
+        <#--obj.roleCode = '${role.roleCode}';-->
+        <#--obj.roleName = '${role.roleName}';-->
+        <#--obj.createTime = "${role.createTime?string('yyyy-MM-dd hh:mm:ss')}";-->
+        <#--obj.createBy = '${role.createBy}';-->
+        <#--roles.push(obj);-->
+    <#--</#list>-->
+
+    search()
+
+    function search() {
+        var roleCode = $("input[name=roleCode]").val();
+        var roleName = $("input[name=roleName]").val();
+        $.ajax({
+            url: '${cx}/user/getRoles',
+            type: 'POST',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({roleCode: roleCode, roleName: roleName}),
+            async: false,
+            dataType: "json",
+            success: function(data){
+
+                var success = data.success;
+                var errCode = data.errCode;
+
+                if(success && 0 === errCode) {
+                    roles = data.data;
+                }
+
+
+            }
+        });
+    }
 
 
 
@@ -57,8 +114,13 @@
             // id: 'role-table',
             elem: '#roles',
             // height: 500,
-            //url: '/demo/table/user/', //数据接口,
+            <#--url: '${cx}/user/getRoles', //数据接口,-->
             <#--data: '${roles}',-->
+            method: 'post',
+            limits: [1,20,50],  //每页条数的选择项，默认：[10,20,30,40,50,60,70,80,90]
+
+            // 请求参数
+//            where: {'roleCode': roleCode, 'roleName':roleName},
             data: roles,
             page: true, //开启分页
             cols: [[ //表头, 这里要加两个中括号不然显示不出数据
@@ -94,6 +156,46 @@
             // console.log(obj.data);
         });
 
+        // 查看按钮点击事件
+        window.view = function () {
+            var checkStatus = table.checkStatus('roles'); // table标签的id属性
+            var data = checkStatus.data;
+            if (null == data || data.length == 0) {
+                layer.msg('请选择一条数据进行操作');
+
+                return;
+            }
+
+            var id = data[0].id;
+
+            var url = "${cx}/user/editRole?type=view&id=" + id;
+            layer.open({
+                id: "editRole",
+                title: "查看角色信息",
+                type: 2,
+                area: ["90%", "50%"],
+                content: url,
+                success: function(layero, index){
+                    //console.log("add--" + index);
+                },
+                end: function () {
+                    //resetForm();
+                    //刷新表格数据
+                    //search();
+                },
+                cancel: function (index, layero) {
+                    layer.close(index);
+
+                    //resetForm();
+                    //search();
+                    return false;
+                }
+            });
+
+        };
+
+
+
         // 自定义js方法
         var $ = layui.$, active = {
             edit: function() { //获取选中数据
@@ -106,7 +208,7 @@
                     return;
                 }
 
-                layer.alert(JSON.stringify(data));
+                //layer.alert(JSON.stringify(data));
 
                 var id = data[0].id;
 
@@ -136,9 +238,34 @@
                         return false;
                     }
                 });
+            },
+            add: function () {
+                var url = "${cx}/user/addRole";
+                layer.open({
+                    id: "addRole",
+                    title: "添加角色信息",
+                    type: 2,
+                    area: ["90%", "50%"],
+                    content: url,
+                    success: function(layero, index){
+                        //console.log("add--" + index);
+                    },
+                    end: function () {
+                        //resetForm();
+                        //刷新表格数据
+                        //search();
+                    },
+                    cancel: function (index, layero) {
 
-
-
+                        layer.confirm('关闭后将无法保存已填写的数据，是否确认关闭', function (index2) {
+                            layer.close(index);
+                            layer.close(index2);
+                        });
+                        //resetForm();
+                        //search();
+                        return false;
+                    }
+                });
             }
         };
 
