@@ -6,7 +6,10 @@ import cn.com.eshop.admin.entity.SysRole;
 import cn.com.eshop.admin.service.ISysRoleService;
 import cn.com.eshop.common.utils.CommonFunction;
 import cn.com.eshop.common.vo.ResultBeanVo;
+import cn.com.eshop.common.vo.TableResultVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.time.DateUtils;
@@ -18,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -130,16 +134,22 @@ public class UserController {
 
     @ResponseBody
     @PostMapping(value = "/getRoles")
-    public ResultBeanVo<List<SysRole>> editRole(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
+    public TableResultVo<SysRole> editRole(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
+
+        TableResultVo<SysRole> tableResultVo = new TableResultVo<>();
         ResultBeanVo<List<SysRole>> roleResultBeanVo = new ResultBeanVo<>();
         boolean success = false;
         Integer errCode = -1;
         String errMsg = "";
         List<SysRole> beans = new ArrayList<>();
+        int count = 0;
 
         try {
             String roleCode = jsonObject.optString("roleCode", null);
             String roleName = jsonObject.optString("roleName", null);
+            Integer pageNum = jsonObject.optInt("page", 1);
+            Integer pageSize = jsonObject.optInt("limit", 10);
+            Page<SysRole> page = new Page<>(pageNum, pageSize);
             QueryWrapper<SysRole> queryWrapper = new QueryWrapper<>();
 
             if (null != roleCode) {
@@ -152,7 +162,12 @@ public class UserController {
                 queryWrapper.like("role_name", "%" + roleName + "%");
 
             }
-            beans = this.roleService.list(queryWrapper);
+            IPage<SysRole> sysRolePages = this.roleService.page(page, queryWrapper);
+            if (null != sysRolePages) {
+                beans = sysRolePages.getRecords();
+            }
+            // 获取记录总数
+            count = this.roleService.count(queryWrapper);
             success = true;
             errCode = 0;
             errMsg = "请求成功";
@@ -165,7 +180,7 @@ public class UserController {
         }
 
 
-        return roleResultBeanVo.errCode(errCode).errMsg(errMsg).success(success).data(beans);
+        return tableResultVo.code(errCode).count(count).data(beans).msg(errMsg);
 
     }
 

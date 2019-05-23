@@ -77,7 +77,7 @@
 
                     // 校验角色编码唯一
                     var msg = validRoleCode(value);
-                    debugger
+
                     if (null != msg && '' != msg && typeof (msg) != 'undefined') {
                         return msg
                     }

@@ -8,9 +8,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
     <link href="${ctx}/statics/js/layer/css/layui.css" rel="stylesheet">
-    <script type="text/javascript" src="${ctx}/statics/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="${ctx}/statics/js/jquery-3.3.1.min.js"></script>
 
     <script type="text/javascript" src="${ctx}/statics/js/layer/layui.all.js"></script>
+
 
 
 </head>
@@ -18,6 +19,7 @@
 <fieldset class="layui-elem-field">
     <legend>刷选条件</legend>
     <form class="layui-form" action="" onsubmit="return false;">
+
         <div class="layui-inline">
             <label class="layui-form-label">角色编码</label>
             <div class="layui-input-inline">
@@ -34,7 +36,7 @@
             </div>
         </div>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <div class="layui-inline">
+        <div class="layui-inline demoTable">
             <#--<div class="layui-col-xs4">-->
             <#--<div class="grid-demo grid-demo-bg1">1</div>-->
             <#--</div>-->
@@ -44,18 +46,19 @@
 
         </div>
     </form>
+    <br/>
 </fieldset>
-<br/>
 <#--角色管理页面-->
 <fieldset class="layui-elem-field site-demo-button">
-    <legend></legend>
-    <div class="demoTable">
+    <div class="demoTable" style="margin-bottom: 10px">
         <button class="layui-btn" data-type="add"> <i class="layui-icon">&#xe654;</i> 添加</button>
         <button class="layui-btn layui-btn-normal" data-type="edit"> <i class="layui-icon">&#xe642;</i>编辑</button>
         <button class="layui-btn layui-btn-warm" onclick="view()"> <i class="layui-icon">&#xe621;</i>查看</button>
         <button class="layui-btn  layui-btn-danger"> <i class="layui-icon">&#xe640;</i>删除</button>
     </div>
 </fieldset>
+
+
 
 <table class="layui-hide" id="roles" lay-filter='roles' ></table>
 
@@ -68,42 +71,6 @@
 <script type="text/javascript">
 
     var roles = new Array();
-    <#--<#list roles as role>-->
-        <#--var obj = {};-->
-        <#--obj.id = '${role.id}';-->
-        <#--obj.roleCode = '${role.roleCode}';-->
-        <#--obj.roleName = '${role.roleName}';-->
-        <#--obj.createTime = "${role.createTime?string('yyyy-MM-dd hh:mm:ss')}";-->
-        <#--obj.createBy = '${role.createBy}';-->
-        <#--roles.push(obj);-->
-    <#--</#list>-->
-
-    search()
-
-    function search() {
-        var roleCode = $("input[name=roleCode]").val();
-        var roleName = $("input[name=roleName]").val();
-        $.ajax({
-            url: '${cx}/user/getRoles',
-            type: 'POST',
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({roleCode: roleCode, roleName: roleName}),
-            async: false,
-            dataType: "json",
-            success: function(data){
-
-                var success = data.success;
-                var errCode = data.errCode;
-
-                if(success && 0 === errCode) {
-                    roles = data.data;
-                }
-
-
-            }
-        });
-    }
-
 
 
     layui.use(['table', 'form'], function() {
@@ -111,17 +78,26 @@
         var form = layui.form;
         //第一个实例
         table.render({
-            // id: 'role-table',
             elem: '#roles',
             // height: 500,
-            <#--url: '${cx}/user/getRoles', //数据接口,-->
+            url: '${cx}/user/getRoles', //数据接口,
             <#--data: '${roles}',-->
             method: 'post',
-            limits: [1,20,50],  //每页条数的选择项，默认：[10,20,30,40,50,60,70,80,90]
-
+            contentType: "application/json",
+            limit: 10, // 每页条数
+            limits: [10,20,50],  //每页条数的选择项，默认：[10,20,30,40,50,60,70,80,90]
+            parseData: function(res) { //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.count, //解析数据长度
+                    "data": res.data //解析数据列表
+                };
+            },
             // 请求参数
-//            where: {'roleCode': roleCode, 'roleName':roleName},
-            data: roles,
+
+           where: {},
+//             data: roles,
             page: true, //开启分页
             cols: [[ //表头, 这里要加两个中括号不然显示不出数据
 
@@ -194,7 +170,21 @@
 
         };
 
+        // 重新加载表格信息
+        window.search = function() {
+            var roleCode = $("input[name=roleCode]").val();
+            var roleName = $("input[name=roleName]").val();
+            table.reload('roles', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    roleCode: roleCode,
+                    roleName: roleName
+                }
+            });
 
+        }
 
         // 自定义js方法
         var $ = layui.$, active = {
@@ -224,8 +214,7 @@
                     },
                     end: function () {
                         //resetForm();
-                        //刷新表格数据
-                        //search();
+                        //刷新表格数据search();
                     },
                     cancel: function (index, layero) {
 
@@ -234,7 +223,7 @@
                             layer.close(index2);
                         });
                         //resetForm();
-                        //search();
+                        search();
                         return false;
                     }
                 });
@@ -253,7 +242,7 @@
                     end: function () {
                         //resetForm();
                         //刷新表格数据
-                        //search();
+                        search();
                     },
                     cancel: function (index, layero) {
 
@@ -262,11 +251,12 @@
                             layer.close(index2);
                         });
                         //resetForm();
-                        //search();
+                        search();
                         return false;
                     }
                 });
             }
+
         };
 
         $('.demoTable .layui-btn').on('click', function(){
@@ -276,13 +266,6 @@
 
 
     });
-
-    // function edit() {
-    //     debugger
-    //     var checkStatus = table.checkStatus('roleTable'); //idTest 即为基础参数 id 对应的值
-    //
-    //     console.log(checkStatus.data) //获取选中行的数据
-    // }
 
 
 </script>
