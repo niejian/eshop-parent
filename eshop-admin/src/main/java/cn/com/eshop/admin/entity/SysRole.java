@@ -3,6 +3,8 @@ package cn.com.eshop.admin.entity;
     import com.baomidou.mybatisplus.annotation.IdType;
     import java.util.Date;
     import com.baomidou.mybatisplus.annotation.TableId;
+    import com.fasterxml.jackson.annotation.JsonFormat;
+
     import java.io.Serializable;
 
 /**
@@ -24,10 +26,12 @@ package cn.com.eshop.admin.entity;
 
     private String roleName;
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date createTime;
 
     private String createBy;
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date modifyTime;
 
     private String modifyBy;

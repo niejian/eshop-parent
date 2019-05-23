@@ -37,13 +37,8 @@
         </div>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <div class="layui-inline demoTable">
-            <#--<div class="layui-col-xs4">-->
-            <#--<div class="grid-demo grid-demo-bg1">1</div>-->
-            <#--</div>-->
-
-                <button class="layui-btn" onclick="search()"><i class="layui-icon">&#xe615</i> &nbsp; 查询</button>
-                <button type="reset" class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe9aa;</i>&nbsp;重置</button>
-
+            <button class="layui-btn" onclick="search()"><i class="layui-icon">&#xe615</i> &nbsp; 查询</button>
+            <button type="reset" class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe9aa;</i>&nbsp;重置</button>
         </div>
     </form>
     <br/>
@@ -107,7 +102,9 @@
                 {field: 'roleCode', title: '角色编码',  sort: true, align: 'center'},
                 {field: 'roleName', title: '角色名称',  sort: true, align: 'center'},
                 {field: 'createTime', title: '创建时间',  sort: true, align: 'center'},
-                {field: 'createBy', title: '创建人',  sort: true, align: 'center'}
+                {field: 'createBy', title: '创建人',  sort: true, align: 'center'},
+                {field: 'modifyTime', title: '修改时间',  sort: true, align: 'center'},
+                {field: 'modifyBy', title: '修改人',  sort: true, align: 'center'}
 
             ]]
         });
@@ -157,13 +154,13 @@
                 end: function () {
                     //resetForm();
                     //刷新表格数据
-                    //search();
+                    search();
                 },
                 cancel: function (index, layero) {
                     layer.close(index);
 
                     //resetForm();
-                    //search();
+                    search();
                     return false;
                 }
             });
@@ -214,7 +211,8 @@
                     },
                     end: function () {
                         //resetForm();
-                        //刷新表格数据search();
+                        //刷新表格数据
+                        search();
                     },
                     cancel: function (index, layero) {
 
