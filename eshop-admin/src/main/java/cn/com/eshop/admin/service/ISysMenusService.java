@@ -1,6 +1,5 @@
 package cn.com.eshop.admin.service;
 
-import cn.com.eshop.admin.entity.SysMenus;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

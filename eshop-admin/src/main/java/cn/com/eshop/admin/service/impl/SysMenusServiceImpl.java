@@ -1,6 +1,5 @@
 package cn.com.eshop.admin.service.impl;
 
-import cn.com.eshop.admin.entity.SysMenus;
 import cn.com.eshop.admin.mapper.SysMenusMapper;
 import cn.com.eshop.admin.service.ISysMenusService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

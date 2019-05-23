@@ -83,6 +83,7 @@
                     <dl class="layui-nav-child">
                         <dd><a href="javascript:;" lay-href="/user/manageMenus">菜单管理</a></dd>
                         <dd><a href="javascript:;" lay-href='/user/manageRoles'>角色管理</a></dd>
+                        <dd><a href="javascript:;" lay-href='/user/menu/menuList'>菜单管理</a></dd>
                     </dl>
                 </li>
                 <!--默认展开-->
