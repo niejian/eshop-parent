@@ -26,7 +26,7 @@ public class SysMenusController {
     @GetMapping(value = "/menuList")
     public ModelAndView menuList(HttpServletRequest request) {
         ModelAndView modelAndView =new ModelAndView("user/menu/menuList");
-        return modelAndView; 
+        return modelAndView;
     }
 
 }

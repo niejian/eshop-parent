@@ -31,6 +31,11 @@ package cn.com.eshop.admin.entity;
     private String menuName;
 
             /**
+            * 菜单类型（0：菜单；1：按钮）
+            */
+    private Boolean menuType;
+
+            /**
             * 是否叶子节点（1：叶子节点，1：非叶子节点）
             */
     private Boolean leaf;
@@ -46,6 +51,11 @@ package cn.com.eshop.admin.entity;
     private Long parentId;
 
     private String menuUrl;
+
+            /**
+            * 排序
+            */
+    private Integer num;
 
     private Date createTime;
 
