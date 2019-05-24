@@ -148,7 +148,7 @@ public class MPGenerateUtil {
 //                "order_unified_product_detail"
 //        });
         strategy.setInclude(new String[]{
-               "sys_menus","sys_role","sys_role_menu","sys_user","sys_user_role"
+               "sys_menus"
         });
 
 

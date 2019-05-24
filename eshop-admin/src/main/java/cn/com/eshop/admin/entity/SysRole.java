@@ -27,11 +27,12 @@ package cn.com.eshop.admin.entity;
     private String roleName;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
+
     private Date createTime;
 
     private String createBy;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date modifyTime;
 
     private String modifyBy;
