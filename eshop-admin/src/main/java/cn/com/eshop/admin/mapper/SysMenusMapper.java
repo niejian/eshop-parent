@@ -1,5 +1,6 @@
 package cn.com.eshop.admin.mapper;
 
+import cn.com.eshop.admin.entity.SysMenus;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
