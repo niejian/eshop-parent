@@ -37,7 +37,9 @@ public class SysMenusServiceImpl extends ServiceImpl<SysMenusMapper, SysMenus> i
         // 1.获取根节点信息
         QueryWrapper<SysMenus> queryWrapper = new QueryWrapper<>();
 
-        queryWrapper.isNull("parent_id");
+        // 根菜单并且菜单类型是0 的信息
+        queryWrapper.isNull("parent_id")
+                .eq("menu_type", 0);
         log.info(queryWrapper.getSqlSelect());
         List<SysMenus> rootMenus = this.list(queryWrapper);
         rootMenus.forEach(rootMenu -> {
@@ -67,7 +69,8 @@ public class SysMenusServiceImpl extends ServiceImpl<SysMenusMapper, SysMenus> i
         List<MenuNodeVo> menuNodeVoList = new ArrayList<>();
 
         QueryWrapper<SysMenus> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("parent_id", menuId);
+        queryWrapper.eq("parent_id", menuId)
+                .eq("menu_type", 0);
         List<SysMenus> parentMenus = this.list(queryWrapper);
         parentMenus.forEach(subMenu -> {
             MenuNodeVo menuNodeVo = new MenuNodeVo();

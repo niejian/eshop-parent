@@ -71,6 +71,8 @@
     layui.use(['table', 'form'], function() {
         var table = layui.table;
         var form = layui.form;
+        var index = layer.load(1); //添加laoding,0-2两种方式
+
         //第一个实例
         table.render({
             elem: '#roles',
@@ -106,7 +108,12 @@
                 {field: 'modifyTime', title: '修改时间',  sort: true, align: 'center'},
                 {field: 'modifyBy', title: '修改人',  sort: true, align: 'center'}
 
-            ]]
+            ]],
+            done:function (res) {   //返回数据执行回调函数
+                layer.close(index);    //返回数据关闭loading
+
+            }
+
         });
 
         // 选中行时，当前行被选中
