@@ -43,16 +43,16 @@ public class SysMenusServiceImpl extends ServiceImpl<SysMenusMapper, SysMenus> i
         log.info(queryWrapper.getSqlSelect());
         List<SysMenus> rootMenus = this.list(queryWrapper);
         rootMenus.forEach(rootMenu -> {
-            MenuNodeVo menuNodeVo = new MenuNodeVo();
+            MenuNodeVo menuNodeVo = this.convertMenuNode(rootMenu);
 
             Long rootMenuId = rootMenu.getId();
             List<MenuNodeVo> subMenuNodeVoList = this.getSubMenuNodeVoList(rootMenuId);
             menuNodeVo.setChildren(subMenuNodeVoList);
             menuNodeVo.setSpread(true);
-            menuNodeVo.setUrl(rootMenu.getMenuUrl());
+//            menuNodeVo.setUrl(rootMenu.getMenuUrl());
 
-            menuNodeVo.setName(rootMenu.getMenuName());
-            menuNodeVo.setMenuId(rootMenuId);
+//            menuNodeVo.setName(rootMenu.getMenuName());
+//            menuNodeVo.setMenuId(rootMenuId);
             menuNodeVoList.add(menuNodeVo);
         });
         
@@ -73,18 +73,29 @@ public class SysMenusServiceImpl extends ServiceImpl<SysMenusMapper, SysMenus> i
                 .eq("menu_type", 0);
         List<SysMenus> parentMenus = this.list(queryWrapper);
         parentMenus.forEach(subMenu -> {
-            MenuNodeVo menuNodeVo = new MenuNodeVo();
+            MenuNodeVo menuNodeVo = this.convertMenuNode(subMenu);
 
             Long rootMenuId = subMenu.getId();
             List<MenuNodeVo> subMenuNodeVoList = getSubMenuNodeVoList(rootMenuId);
             menuNodeVo.setChildren(subMenuNodeVoList);
             menuNodeVo.setSpread(true);
-            menuNodeVo.setUrl(subMenu.getMenuUrl());
-
-            menuNodeVo.setName(subMenu.getMenuName());
-            menuNodeVo.setMenuId(rootMenuId);
+//            menuNodeVo.setUrl(subMenu.getMenuUrl());
+//
+//            menuNodeVo.setName(subMenu.getMenuName());
+//            menuNodeVo.setMenuId(rootMenuId);
             menuNodeVoList.add(menuNodeVo);
         });
         return menuNodeVoList;
+    }
+
+    private MenuNodeVo convertMenuNode(SysMenus sysMenus) {
+        MenuNodeVo node = new MenuNodeVo();
+        node.setMenuCode(sysMenus.getMenuCode());
+        node.setNum(sysMenus.getNum());
+        node.setUrl(sysMenus.getMenuUrl());
+        node.setMenuId(sysMenus.getId());
+        node.setName(sysMenus.getMenuName());
+        node.setLeaf(sysMenus.getLeaf());
+        return node;
     }
 }

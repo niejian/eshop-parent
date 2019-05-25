@@ -57,6 +57,8 @@ package cn.com.eshop.admin.entity;
             */
     private Integer num;
 
+    private String icon;
+
     private Date createTime;
 
     private String createBy;

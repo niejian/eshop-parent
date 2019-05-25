@@ -78,8 +78,9 @@
         });
     };
 
-    layui.use(['tree', 'table', 'layer'], function() {
+    layui.use(['tree', 'table', 'layer', 'form'], function() {
         var layer = layui.layer
+                , form = layui.form
                 , table = layui.table
                 , $ = layui.jquery;
 
@@ -95,7 +96,22 @@
                 data.push(item)
                 console.log(data)
                 table.init('menuTable', { //转化静态表格
-                    data: data
+                    data: data,
+                    cols: [[ //表头, 这里要加两个中括号不然显示不出数据
+
+                        {title:'#',width:80, type: 'radio'},
+                        {title: '序号', width:80, align:"center", templet:'#tableIndex'}, //显示序号
+                        {field: 'id', title: 'id', width:80, sort: true, align: 'center', fixed:"left", hide:true},
+                        {field: 'menuCode', title: '菜单编码',  sort: true, align: 'center'},
+                        {field: 'name', title: '菜单名称',  sort: true, align: 'center'},
+                        {field: 'num', title: '排序',  sort: true, align: 'center'},
+                        {field: 'url', title: '菜单路径',  sort: true, align: 'center'},
+                        {field: 'leaf', title: '是否叶子节点',  sort: true, align: 'center',
+                            templet: function(d) {
+                                return d.leaf ? '是' : '否'
+                            }}
+
+                    ]]
                 });
             }
             , nodes: menus
@@ -112,10 +128,14 @@
                 {title: '序号', width:80, align:"center", templet:'#tableIndex'}, //显示序号
                 {field: 'id', title: 'id', width:80, sort: true, align: 'center', fixed:"left", hide:true},
                 {field: 'menuCode', title: '菜单编码',  sort: true, align: 'center'},
-                {field: 'menuName', title: '菜单名称',  sort: true, align: 'center'},
+                {field: 'name', title: '菜单名称',  sort: true, align: 'center'},
                 {field: 'num', title: '排序',  sort: true, align: 'center'},
-                {field: 'url', title: '菜单路径',  sort: true, align: 'center'}
-            ]]
+                {field: 'url', title: '菜单路径',  sort: true, align: 'center'},
+                {field: 'leaf', title: '是否叶子节点',  sort: true, align: 'center',
+                    templet: function(d) {
+                        return d.leaf ? '是' : '否'
+                    }}
+                ]]
         });
 
         // 选中行时，当前行被选中
@@ -140,15 +160,46 @@
         // 添加菜单
         window.add = function() {
             // 先要选取父及菜单
-//            var checkStatus = table.checkStatus('menuTable'); // table标签的id属性
-//            var data = checkStatus.data;
-//            if (null == data || data.length == 0) {
-//                layer.msg('请选择左侧菜单');
-//
-//                return;
-//            }
+            var checkStatus = table.checkStatus('menuTable'); // table标签的id属性
+            var data = checkStatus.data;
+            if (null == data || data.length == 0) {
+                layer.msg('请选择菜单');
 
-            layer.alert(JSON.stringify(checkedMenu));
+                return;
+            }
+
+            if (data[0].leaf) {
+                layer.msg('请选择非叶子节点菜单');
+
+                return;
+            }
+            debugger
+            var parentId = data[0].menuId;
+            var url = "${cx}/user/menu/addMenuView?parentId="+parentId;
+            layer.open({
+                id: "addMenuView",
+                title: "添加菜单",
+                type: 2,
+                area: ["90%", "50%"],
+                content: url,
+                success: function(layero, index){
+                    //console.log("add--" + index);
+                },
+                end: function () {
+                    //resetForm();
+                    //刷新表格数据
+                    search();
+                },
+                cancel: function (index, layero) {
+                    layer.close(index);
+
+                    //resetForm();
+                    search();
+                    return false;
+                }
+            });
+
+
 
 //            var id = data[0].id;
 //            var url = data[0].url

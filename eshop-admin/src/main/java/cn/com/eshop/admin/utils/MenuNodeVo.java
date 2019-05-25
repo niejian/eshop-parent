@@ -17,5 +17,8 @@ public class MenuNodeVo implements Serializable {
     private Boolean spread;
     private Long menuId;
     private String url;
+    private String menuCode;
+    private Integer num;
+    private boolean leaf;
     private List<MenuNodeVo> children;
 }
