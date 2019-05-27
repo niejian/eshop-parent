@@ -61,3 +61,5 @@ create table sys_role_menu(
   modify_time datetime(3) not null ,
   modify_by varchar (32) not null
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='菜单角色信息表';
+alter table sys_menus add COLUMN parent_menu_name varchar(32) comment '父菜单名称';
+alter table sys_menus add COLUMN parent_menu_code varchar(16) comment '父菜单编码';

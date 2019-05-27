@@ -22,4 +22,22 @@ public interface ISysMenusService extends IService<SysMenus> {
      * @return
      */
     List<MenuNodeVo> getUserMenuNodeVoList(String userId) throws Exception;
+
+    /**
+     * 新增菜单信息
+     * @param sysMenus
+     * @return
+     * @throws Exception
+     */
+    boolean addSysMenu(SysMenus sysMenus) throws Exception;
+
+    /**
+     * 更新
+     * @param sysMenus
+     * @return
+     * @throws Exception
+     */
+    boolean updateSysMenu(SysMenus sysMenus) throws Exception;
+
+    boolean del(SysMenus sysMenus) throws Exception;
 }

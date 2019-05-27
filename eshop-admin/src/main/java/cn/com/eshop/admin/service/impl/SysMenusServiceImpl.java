@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,8 @@ public class SysMenusServiceImpl extends ServiceImpl<SysMenusMapper, SysMenus> i
 
         // 根菜单并且菜单类型是0 的信息
         queryWrapper.isNull("parent_id")
-                .eq("menu_type", 0);
+                .eq("menu_type", 0)
+                .orderByAsc("num");
         log.info(queryWrapper.getSqlSelect());
         List<SysMenus> rootMenus = this.list(queryWrapper);
         rootMenus.forEach(rootMenu -> {
@@ -70,7 +72,8 @@ public class SysMenusServiceImpl extends ServiceImpl<SysMenusMapper, SysMenus> i
 
         QueryWrapper<SysMenus> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("parent_id", menuId)
-                .eq("menu_type", 0);
+                .eq("menu_type", 0)
+                .orderByAsc("num");;
         List<SysMenus> parentMenus = this.list(queryWrapper);
         parentMenus.forEach(subMenu -> {
             MenuNodeVo menuNodeVo = this.convertMenuNode(subMenu);
@@ -97,5 +100,37 @@ public class SysMenusServiceImpl extends ServiceImpl<SysMenusMapper, SysMenus> i
         node.setName(sysMenus.getMenuName());
         node.setLeaf(sysMenus.getLeaf());
         return node;
+    }
+
+    /**
+     * 新增菜单信息
+     *
+     * @param sysMenus
+     * @return
+     * @throws Exception
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public boolean addSysMenu(SysMenus sysMenus) throws Exception {
+        return save(sysMenus);
+    }
+
+    /**
+     * 更新
+     *
+     * @param sysMenus
+     * @return
+     * @throws Exception
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public boolean updateSysMenu(SysMenus sysMenus) throws Exception {
+        return updateById(sysMenus);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public boolean del(SysMenus sysMenus) throws Exception {
+        return removeById(sysMenus.getId());
     }
 }

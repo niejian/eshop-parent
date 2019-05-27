@@ -14,11 +14,14 @@
         <result column="create_by" property="createBy" />
         <result column="modify_time" property="modifyTime" />
         <result column="modify_by" property="modifyBy" />
+        <result column="icon" property="icon" />
+        <result column="parent_menu_code" property="parentMenuCode" />
+        <result column="parent_menu_name" property="parentMenuName" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, menu_code, menu_name, parent_ids, parent_id, menu_url, create_time, create_by, modify_time, modify_by
+        id, menu_code, menu_name, parent_ids, parent_id, menu_url, create_time, create_by, modify_time, modify_by, icon, parent_menu_code, parent_menu_name
     </sql>
 
 </mapper>

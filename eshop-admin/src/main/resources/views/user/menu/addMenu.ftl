@@ -25,25 +25,42 @@
             <label class="layui-form-label">菜单编码</label>
             <div class="layui-input-inline">
 
-                <input type="text" name="roleCode" name="menuCode"  lay-verify="menuCode" autocomplete="off" placeholder="请输入菜单编码" class="layui-input"/>
+                <#if type == 'add'>
+                    <input type="text" name="menuCode" lay-verify="menuCode" autocomplete="off" placeholder="请输入菜单编码" class="layui-input"/>
+                    <#else >
+                     <input type="text" name="menuCode" value="${menu.menuCode}" readonly autocomplete="off" placeholder="请输入菜单编码" class="layui-input"/>
+                     <input type="hidden" name="id" value="${menu.id}"/>
+
+                </#if>
 
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">菜单名称</label>
             <div class="layui-input-inline">
-                <input type="text" name="menuName" id="menuName" lay-verify="menuName" placeholder="请输入菜单名称" autocomplete="off" class="layui-input">
+                <#if type == 'add'>
+                    <input type="text" name="menuName" id="menuName" lay-verify="menuName" placeholder="请输入菜单名称" autocomplete="off" class="layui-input">
+                <#elseif type == 'view'>
+                     <input type="text" name="menuName" id="menuName" readonly value="${menu.menuName}" placeholder="请输入菜单名称" autocomplete="off" class="layui-input">
+                <#elseif type == 'edit'>
+                     <input type="text" name="menuName" id="menuName" value="${menu.menuName}" placeholder="请输入菜单名称" autocomplete="off" class="layui-input">
 
+                </#if>
             </div>
         </div>
 
         <div class="layui-inline">
             <label class="layui-form-label">上级菜单</label>
             <div class="layui-input-inline">
-                <input type="hidden" name="parnetId" value="${(parnetMenu.id)!''}"/>
-                <input type="hidden" name="parnetIds" value="${(parnetMenu.parentIds)!''}"/>
-                <input type="text" name="parentMenuName" name="parentMenuName" value="${(parnetMenu.menuName)!''}"  readonly class="layui-input"/>
-
+                <#if type == 'add'>
+                    <input type="hidden" name="parentId" value="${(parnetMenu.id)!''}"/>
+                    <input type="hidden" name="parentIds" value="${(parnetMenu.parentIds)!''}"/>
+                    <input type="text" name="parentMenuName" name="parentMenuName" value="${(parnetMenu.menuName)!''}"  readonly class="layui-input"/>
+                <#elseif type == 'view'>
+                    <input type="text" name="parentMenuName" readonly  name="parentMenuName" value="${(menu.menuName)!''}"  readonly class="layui-input"/>
+                <#elseif type == 'edit'>
+                    <input type="text" id="parentMenuTree" name="parentId" lay-filter="parentMenuTree" placeholder="父菜单" value="${menu.parentId}" class="layui-input">
+                </#if>
             </div>
 
         </div>
@@ -54,7 +71,25 @@
             <label class="layui-form-label">是否叶子节点</label>
 
             <div class="layui-input-inline">
-                <input type="checkbox" name="left" lay-skin="switch" lay-text="是|否">
+                <#if type == 'add'>
+                    <input type="checkbox" name="leaf" lay-filter="leafSwitch" value="false" lay-skin="switch" lay-text="是|否">
+                <#elseif type == 'edit'>
+                    <#--switch是否选中-->
+                    <#if menu.leaf>
+                        <input type="checkbox" name="leaf" lay-filter="leafSwitch" checked="" value="${menu.leaf}" lay-skin="switch" lay-text="是|否">
+                    <#else >
+                        <input type="checkbox" name="leaf" lay-filter="leafSwitch" lay-skin="switch" value="${menu.leaf}" lay-text="是|否">
+
+                    </#if>
+
+                <#else >
+                    <#if menu.leaf>
+                        <input type="checkbox" name="leaf" lay-filter="leafSwitch" checked="" disabled lay-skin="switch" lay-text="是|否">
+                    <#else >
+                        <input type="checkbox" name="leaf" lay-filter="leafSwitch" lay-skin="switch" disabled lay-text="是|否">
+
+                    </#if>
+                </#if>
             </div>
         </div>
 
@@ -62,14 +97,30 @@
         <div class="layui-inline">
             <label class="layui-form-label">访问地址</label>
             <div class="layui-input-inline">
-                <input type="text" name="menuUrl" name="menuUrl"  lay-verify="menuUrl" class="layui-input"/>
+                <#if type == 'add'>
+                    <input type="text" name="menuUrl"  lay-verify="menuUrl" placeholder="菜单访问地址" disabled value="#" class="layui-input"/>
+                    <#elseif type == 'edit'>
+                    <input type="text" name="menuUrl"  lay-verify="menuUrl" value="${menu.menuUrl}"  class="layui-input"/>
+                    <#else>
+                    <input type="text" name="menuUrl"  lay-verify="menuUrl" disabled value="${menu.menuUrl}"  class="layui-input"/>
+
+                </#if>
             </div>
         </div>
 
         <div class="layui-inline">
             <label class="layui-form-label">页面排序</label>
             <div class="layui-input-inline">
-                <input type="text" name="num" name="num"  lay-verify="num" value="0" class="layui-input"/>
+                <#if type == 'add'>
+                    <input type="text" name="num" lay-verify="required|number" value="0" class="layui-input"/>
+                    <#elseif type == 'edit'>
+                    <input type="text" name="num" value="${menu.num}" lay-verify="required|number" class="layui-input"/>
+
+                    <#else >
+                     <input type="text" value="${menu.num}" disabled lay-verify="required|number" class="layui-input"/>
+
+
+                </#if>
             </div>
         </div>
     </div>
@@ -79,11 +130,21 @@
         <#--<div class="layui-col-xs4">-->
         <#--<div class="grid-demo grid-demo-bg1">1</div>-->
         <#--</div>-->
-
-            <div class="layui-col-md6 layui-col-md-offset4">
-                <button class="layui-btn" lay-submit lay-filter="menuForm"><i class="layui-icon">&#xe605 </i> &nbsp;确定</button>
-                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-
+            <#if type == 'add'>
+                <div class="layui-col-md6 layui-col-md-offset4">
+            </#if>
+            <#if type == 'edit'>
+                <div class="layui-col-md6 layui-col-md-offset5">
+            </#if>
+            <#if type == 'view'>
+                <div class="layui-col-md6 layui-col-md-offset5">
+            </#if>
+                <#if type != 'view'>
+                    <button class="layui-btn" lay-submit lay-filter="menuForm"><i class="layui-icon">&#xe605 </i> &nbsp;确定</button>
+                </#if>
+                <#if type == 'add'>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </#if>
                 <button type="button" class="layui-btn layui-btn-warm"  data-type="back"><i class="layui-icon">&#xe603;</i>&nbsp;返回</button>
 
             </div>
@@ -99,15 +160,54 @@
 </body>
 <style type="text/css">
     .layui-inline .layui-form-label{
-        width: 150px;
+        width: 100px;
     }
 </style>
 <script type="text/javascript">
 
-    layui.use('form', function(){
+    var menus = new Array();
+
+    function loadMenu() {
+        //var res = [];
+        var postJSON = JSON.stringify({"A":"V"});
+        $.ajax({
+            url: '${cx}/user/menu/getMenuTree',
+            type: 'POST',
+            contentType: "application/json; charset=utf-8",
+            data: postJSON,
+            async: false,
+            dataType: "json",
+            success: function(data){
+
+                if (null != data) {
+                    menus = data;
+                }
+            }
+
+        });
+    };
+    loadMenu()
+    <#if type == 'edit'>
+        // 声明扩展模块
+        layui.config({
+            base: '${ctx}/statics/js/layer/lay/modules/' //假设这是你存放拓展模块的根目录
+        }).extend({ //设定模块别名
+            treeselect: 'treeselect' //如果 mymod.js 是在根目录，也可以不用设定别名
+        });
+        layui.use(['form', 'treeselect'], function(){
+
+        <#else >
+        layui.use(['form'], function(){
+    </#if>
+
+
+
         var form = layui.form;
         form.render();
-
+        $ = layui.jquery;
+        <#if type == 'edit'>
+            var treeselect = layui.treeselect;
+        </#if>
 
         // 表达校验信息
         form.verify({
@@ -138,15 +238,59 @@
             }
         });
 
+        <#if type == 'edit'>
+            treeselect.render({
+                elem: "#parentMenuTree",
+                data: menus,
+                selected: function (data) {
+                    layer.alert(JSON.stringify(data))
+                },
+                search: true,
+                valueKey: "menuId",
+                textKey: "name"
+
+            });
+        </#if>
+
+        //监听指定开关
+        form.on('switch(leafSwitch)', function(data){
+
+            var checkStatus = data.elem.checked ? true : false
+            // layer.msg('开关checked：'+ (this.checked ? 'true' : 'false'), {
+            //     offset: '6px'
+            // });
+            $("input[name=leaf]").val(checkStatus) ;
+            // 如果是叶子节点
+            if (checkStatus) {
+                $("input[name=menuUrl]").val("");
+                $("input[name=menuUrl]").removeAttr("disabled");
+            } else {
+                $("input[name=menuUrl]").val("#");
+                $("input[name=menuUrl]").attr({"disabled":"disabled"});
+            }
+             //console.log(data);
+            // layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+        });
+
         //监听提交
         form.on('submit(menuForm)', function(data){
             // layer.msg(JSON.stringify(data.field));
             //return false;
-            var postJSON = JSON.stringify(data.field);
+            var requestData = data.field;
+            var isLeaf = $("input[name=leaf]").val();
+            requestData.leaf = isLeaf;
+            var postJSON = JSON.stringify(requestData);
+
+            //console.log(postJSON);
+            var url = '${cx}/user/menu/addMenuHandler';
+
+            <#if  type == 'edit'>
+                url = '${cx}/user/menu/editMenuHandler'
+            </#if>
 
             // 验证成功，提交数据
             $.ajax({
-                url: '${cx}/user/menu/addMenuHandler',
+                url: url,
                 type: 'POST',
                 contentType: "application/json; charset=utf-8",
                 data: postJSON,
@@ -159,6 +303,7 @@
                         layer.alert(data.errMsg);
                     } else {
                         var msg ='新增成功';
+                        <#if  type == 'edit'>msg = "更新成功" </#if>
                         layer.alert(msg, function(index) {
                             // 关闭当前提示的这个弹出层
                             layer.close(index);
