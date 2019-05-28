@@ -198,7 +198,7 @@
                 var menuId = data[0].menuId;
                 var url = "${cx}/user/menu/addMenuView?type=" + type + "&menuId=" + menuId;
 
-                type === 'edit' ? '编辑菜单' : '查看菜单';
+                title = type === 'edit' ? '编辑菜单' : '查看菜单';
             }
 
             layer.open({

@@ -3,7 +3,9 @@ package cn.com.eshop.admin.controller;/**
  */
 
 import cn.com.eshop.admin.entity.SysRole;
+import cn.com.eshop.admin.service.ISysMenusService;
 import cn.com.eshop.admin.service.ISysRoleService;
+import cn.com.eshop.admin.utils.MenuNodeVo;
 import cn.com.eshop.common.utils.CommonFunction;
 import cn.com.eshop.common.vo.ResultBeanVo;
 import cn.com.eshop.common.vo.TableResultVo;
@@ -11,6 +13,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,8 @@ public class UserController {
 
     @Autowired
     private ISysRoleService roleService;
+    @Autowired
+    private ISysMenusService menusService;
 
     private static final String DATE_FORMAT_S = "yyyy-MM-dd HH:mm:ss";
 
@@ -51,11 +56,25 @@ public class UserController {
     }
 
     @GetMapping(value = "/index")
-    public ModelAndView index() {
+    public ModelAndView index(HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView();
-        log.info("---->");
+        CommonFunction.beforeProcess(log);
+        // 获取用户菜单信息
+        List<MenuNodeVo> menuNodeVoList = new ArrayList<>();
 
-        modelAndView.setViewName("index/index");
+        try {
+            menuNodeVoList = this.menusService.getUserMenuNodeVoList(null);
+            if (null == menuNodeVoList) {
+                menuNodeVoList = new ArrayList<>();
+            }
+            modelAndView.setViewName("index/index");
+            modelAndView.addObject("menus", JSONArray.fromObject(menuNodeVoList).toString());
+        } catch (Exception e) {
+            CommonFunction.genErrorMessage(log, e);
+        }
+
+
+
         return modelAndView;
 
 
