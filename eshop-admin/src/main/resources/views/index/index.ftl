@@ -94,11 +94,11 @@
         <div class="layui-admin-pagetabs">
             <div class="layui-tab layui-tab-brief" lay-allowClose="true" lay-filter="pagetabs">
                 <ul class="layui-tab-title layui-bg-white">
-                    <li class="layui-this" lay-id="./home.html"><i class="layui-icon layui-icon-home"></i></li>
+                    <li class="layui-this" lay-id="${ctx}/user/index"><i class="layui-icon layui-icon-home"></i></li>
                 </ul>
                 <div class="layui-tab-content">
                     <div class="layui-tab-item layui-show">
-                        <iframe src="home.html" class="layui-admin-iframe" scrolling="no" frameborder="0" onload="setIframeHeight(this);"></iframe>
+                        <#--<iframe src="" class="layui-admin-iframe" scrolling="no" frameborder="0" onload="setIframeHeight(this);"></iframe>-->
                     </div>
                 </div>
             </div>
@@ -116,6 +116,7 @@
     function initMenus() {
 
         var response = '${menus}';
+
         if (null != response) {
             var menuDatas = JSON.parse(response);
             menuDatas = menuDatas[0].children;
@@ -142,7 +143,7 @@
             // console.log(menuHtml)
             $(".layui-nav-tree").append(menuHtml)
 
-            window.localStorage.setItem("menus", menuDatas);
+            window.localStorage.setItem("menus", JSON.stringify(menuDatas));
         }
     }
 
