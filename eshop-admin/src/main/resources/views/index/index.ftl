@@ -10,8 +10,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <script type="text/javascript" src="${ctx}/statics/js/jquery-1.9.1.min.js"></script>
+    <script src="${ctx}/statics/js/layer/layui.all.js" charset="utf-8"></script>
+
     <link href="${ctx}/statics/js/layer/css/layui.css" rel="stylesheet"/>
     <link href="${ctx}/statics/css/index.css" rel="stylesheet"/>
+
     <script>
         //iframe高度自适应
         function setIframeHeight(iframe) {
@@ -22,7 +25,7 @@
                     iframe.height = iframeWin.document.documentElement.scrollHeight || iframeWin.document.body.scrollHeight;
                 }
 
-                console.log(iframe.height);
+                // console.log(iframe.height);
 //
                 if(iframe.height < 640) {
                     iframe.height = 640;
@@ -30,6 +33,8 @@
             }
         };
     </script>
+
+
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
@@ -77,36 +82,9 @@
         <div class="layui-side-scroll layui-bg-black">
             <div class="layui-logo">Eshop后台管理系统</div>
             <ul class="layui-nav layui-nav-tree" lay-filter="navtree">
-                <li class="layui-nav-item">
-                    <#--并设置图标-->
-                    <a href="javascript:;" title="设置"><i class="layui-icon layui-icon-set"></i>&nbsp;&nbsp;<cite>系统设置</cite></a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" lay-href="/user/manageMenus">菜单管理</a></dd>
-                        <dd><a href="javascript:;" lay-href='/user/manageRoles'>角色管理</a></dd>
-                        <dd><a href="javascript:;" lay-href='/user/menu/menuList'>菜单管理</a></dd>
-                    </dl>
-                </li>
-                <!--默认展开-->
-                <li class="layui-nav-item layui-nav-itemed">
-                    <a href="javascript:;" title="主页"><i class="layui-icon layui-icon-home"></i><cite>主页</cite></a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;">列表一</a></dd>
-                        <dd><a href="javascript:;">列表二</a></dd>
-                        <dd><a href="javascript:;">列表三</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item">
-                    <a href="javascript:;" title="用户"><i class="layui-icon layui-icon-user"></i><cite>用户</cite></a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" lay-href="./user.html">角色管理</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item">
-                    <a href="javascript:;" title="设置"><i class="layui-icon layui-icon-set"></i><cite>设置</cite></a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;" lay-href="./set.html">系统设置</a></dd>
-                    </dl>
-                </li>
+                <#--动态生成数据，需要使用element.render()重新渲染一边-->
+
+
             </ul>
         </div>
     </div>
@@ -116,11 +94,11 @@
         <div class="layui-admin-pagetabs">
             <div class="layui-tab layui-tab-brief" lay-allowClose="true" lay-filter="pagetabs">
                 <ul class="layui-tab-title layui-bg-white">
-                    <li class="layui-this" lay-id="./home.html"><i class="layui-icon layui-icon-home"></i></li>
+                    <li class="layui-this" lay-id="${ctx}/user/index"><i class="layui-icon layui-icon-home"></i></li>
                 </ul>
                 <div class="layui-tab-content">
                     <div class="layui-tab-item layui-show">
-                        <iframe src="home.html" class="layui-admin-iframe" scrolling="no" frameborder="0" onload="setIframeHeight(this);"></iframe>
+                        <#--<iframe src="" class="layui-admin-iframe" scrolling="no" frameborder="0" onload="setIframeHeight(this);"></iframe>-->
                     </div>
                 </div>
             </div>
@@ -131,13 +109,85 @@
     <div class="layui-footer">© 2018 layui.com </div>
 </div>
 <#--<script src="./js/layui/layui.js"></script>-->
-<script src="${ctx}/statics/js/layer/layui.all.js" charset="utf-8"></script>
+<script type="text/javascript">
 
-<script>
+    var menus = new Array();
+
+    function initMenus() {
+
+        var response = '${menus}';
+
+        if (null != response) {
+            var menuDatas = JSON.parse(response);
+            menuDatas = menuDatas[0].children;
+            var menuHtml = '';
+            // 一级菜单
+            for (var i = 0; i < menuDatas.length; i++) {
+
+                var menuData = menuDatas[i];
+
+                if(menuData.menuCode == "root_menu") {
+                    continue;
+                }
+                var icon = menuData.icon;
+                var name = menuData.name;
+
+                menuHtml += '<li class="layui-nav-item">';
+                menuHtml += '<a href="javascript:;" title="' + name + '"><i class="layui-icon ' + icon + '"></i>&nbsp;&nbsp;<cite>' + name + '</cite><span class="layui-nav-more"></span></a>';
+                // 解析一级菜单信息
+                menuHtml += parseChildrenMenuHtml(menuData);
+                menuHtml += '</li>';
+
+            }
+            // menuHtml += '</ul>'
+            // console.log(menuHtml)
+            $(".layui-nav-tree").append(menuHtml)
+
+            window.localStorage.setItem("menus", JSON.stringify(menuDatas));
+        }
+    }
+
+    function parseChildrenMenuHtml( menu) {
+
+        var children = menu.children;
+
+        var html = '';
+        //html += '<dl class="layui-nav-child">';
+
+        if (null != children && children.length > 0) {
+            html += '<dl class="layui-nav-child">';
+            for (var i = 0; i < children.length; i++) {
+                html += '<dd>';
+                var subMenu = children[i];
+                var subLeaf = subMenu.leaf;
+
+                // 如果是叶子节点,显示菜单名称
+                if (subLeaf) {
+                    html += '<a href="javascript:;" lay-href="' + subMenu.url + '">' + subMenu.name + '</a>';
+                } else {
+                    // 不是叶子节点，像像是一级菜单那样显示菜单信息
+                    var name = subMenu.name;
+                    var icon = subMenu.icon;
+                    html += '<li class="layui-nav-item ">';
+                    html += '<a href="javascript:;" title="' + name + '"><i class="layui-icon ' + icon + '"></i>&nbsp;&nbsp;<cite>' + name + '</cite><span class="layui-nav-more"></span></a>';
+                    html += parseChildrenMenuHtml(subMenu, html);
+
+                }
+                html += '</dd>';
+            }
+            html += '</dl>';
+        }
+        return html;
+    }
+
+
     layui.use(['element','layer'],function(){
         var element = layui.element
                 ,layer = layui.layer
                 ,$ = layui.jquery;
+
+
+
         //隐藏tab主页关闭标签
         $(".layui-tab-title li:first-child i:last-child").css("display","none");
         //tab点击监控
@@ -152,6 +202,11 @@
                 }
             })
         });
+
+        // 生成菜单信息
+        initMenus();
+        // 需要重新渲染一遍，不然不生效。！！！！！
+        element.render('nav', 'navtree');
         //顶部左侧菜单监控
         element.on('nav(leftmenu)',function(elem){
             //隐藏显示侧边菜单
@@ -217,6 +272,7 @@
         })
         //左侧垂直菜单监控
         element.on('nav(navtree)',function(elem){
+
             if($(".layui-side-menu").width()<200){
                 $(".layui-side-menu").animate({width:$(".layui-side-menu").width()+144+"px"});
                 $(".layui-body").animate({left:$(".layui-body").position().left+144+"px"});
@@ -255,5 +311,6 @@
         });
     });
 </script>
+
 </body>
 </html>

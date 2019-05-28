@@ -12,6 +12,10 @@
     <script type="text/javascript" src="${ctx}/statics/js/jquery-1.9.1.min.js"></script>
 
     <script type="text/javascript" src="${ctx}/statics/js/layer/layui.all.js"></script>
+    <#--引入图标选择器-->
+    <#--<script type="text/javascript" src="${ctx}/statics/js/layer/lay/modules/iconPicker-extend.js"></script>-->
+    <#--<script type="text/javascript" src="${ctx}/statics/js/layer/lay/modules/iconPicker.js"></script>-->
+
 
 
 </head>
@@ -57,7 +61,7 @@
                     <input type="hidden" name="parentIds" value="${(parnetMenu.parentIds)!''}"/>
                     <input type="text" name="parentMenuName" name="parentMenuName" value="${(parnetMenu.menuName)!''}"  readonly class="layui-input"/>
                 <#elseif type == 'view'>
-                    <input type="text" name="parentMenuName" readonly  name="parentMenuName" value="${(menu.menuName)!''}"  readonly class="layui-input"/>
+                    <input type="text" name="parentMenuName" readonly  name="parentMenuName" value="${(menu.parentMenuName)!''}"  readonly class="layui-input"/>
                 <#elseif type == 'edit'>
                     <input type="text" id="parentMenuTree" name="parentId" lay-filter="parentMenuTree" placeholder="父菜单" value="${menu.parentId}" class="layui-input">
                 </#if>
@@ -91,6 +95,9 @@
                     </#if>
                 </#if>
             </div>
+
+
+
         </div>
 
 
@@ -123,9 +130,30 @@
                 </#if>
             </div>
         </div>
-    </div>
+        <#if type == 'add'>
+            <div class="layui-inline" id="menuIcon" style="display: block">
+                <label class="layui-form-label">菜单图标</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="icon" id="icon" value="" placeholder="请输入菜单显示图标" autocomplete="off" width="80%" class="layui-input">
 
-    <div class="submitRole layui-form-item">
+                </div>
+                <label class="layui-form-label">
+                    <a href="https://www.layui.com/doc/element/icon.html" style="color: green" target="_blank">图标参考链接</a>
+                </label>
+            </div>
+            <#elseif type != 'add' && !menu.leaf>
+            <div class="layui-inline" id="menuIcon" style="display: block">
+                <label class="layui-form-label">菜单图标</label>
+                <div class="layui-input-inline">
+                    <input type="text" name= 'icon' id="icon" value="${menu.icon}" lay-filter="icon" class="hide">
+
+                <#--<input type="text" name="icon" id="icon" value="${menu.icon}" placeholder="请输入菜单显示图标" autocomplete="off" width="80%" class="layui-input">-->
+                </div>
+
+            </div>
+        </#if>
+
+    <div class="submitRole layui-form-item" style="padding-top: 20px">
         <div class="layui-row">
         <#--<div class="layui-col-xs4">-->
         <#--<div class="grid-demo grid-demo-bg1">1</div>-->
@@ -186,21 +214,25 @@
 
         });
     };
+
     loadMenu()
+    layui.config({
+        base: '${ctx}/statics/js/layer/lay/modules/' //假设这是你存放拓展模块的根目录
+    }).extend({ //设定模块别名
+        treeselect: 'treeselect', //如果 mymod.js 是在根目录，也可以不用设定别名
+        iconPicker: 'iconPicker'
+
+    });
     <#if type == 'edit'>
         // 声明扩展模块
-        layui.config({
-            base: '${ctx}/statics/js/layer/lay/modules/' //假设这是你存放拓展模块的根目录
-        }).extend({ //设定模块别名
-            treeselect: 'treeselect' //如果 mymod.js 是在根目录，也可以不用设定别名
-        });
-        layui.use(['form', 'treeselect'], function(){
+
+        layui.use(['form', 'treeselect', 'iconPicker'], function(){
 
         <#else >
-        layui.use(['form'], function(){
+        layui.use(['form', 'iconPicker'], function(){
     </#if>
 
-
+        var iconPicker = layui.iconPicker
 
         var form = layui.form;
         form.render();
@@ -252,6 +284,28 @@
             });
         </#if>
 
+        // 图标选择器渲染
+        iconPicker.render({
+            // 选择器，推荐使用input
+            elem: '#icon',
+            // 数据类型：fontClass/unicode，推荐使用fontClass
+            type: 'fontClass',
+            // 是否开启搜索：true/false，默认true
+            search: true,
+            // 是否开启分页：true/false，默认true
+            page: true,
+            // 每页显示数量，默认12
+            limit: 18,
+            // 点击回调
+            click: function (data) {
+                $("input[name=icon]").val(data.icon);
+            },
+            // 渲染成功后的回调
+            success: function(d) {
+                console.log(d);
+            }
+        });
+
         //监听指定开关
         form.on('switch(leafSwitch)', function(data){
 
@@ -264,9 +318,12 @@
             if (checkStatus) {
                 $("input[name=menuUrl]").val("");
                 $("input[name=menuUrl]").removeAttr("disabled");
+                $("#menuIcon").css("display", "none");
+                //$("input[name=icon]").val("");
             } else {
                 $("input[name=menuUrl]").val("#");
                 $("input[name=menuUrl]").attr({"disabled":"disabled"});
+                $("#menuIcon").css("display", "block");
             }
              //console.log(data);
             // layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
@@ -276,6 +333,7 @@
         form.on('submit(menuForm)', function(data){
             // layer.msg(JSON.stringify(data.field));
             //return false;
+            debugger
             var requestData = data.field;
             var isLeaf = $("input[name=leaf]").val();
             requestData.leaf = isLeaf;

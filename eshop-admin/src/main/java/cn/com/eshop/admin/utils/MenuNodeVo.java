@@ -20,5 +20,6 @@ public class MenuNodeVo implements Serializable {
     private String menuCode;
     private Integer num;
     private boolean leaf;
+    private String icon;
     private List<MenuNodeVo> children;
 }

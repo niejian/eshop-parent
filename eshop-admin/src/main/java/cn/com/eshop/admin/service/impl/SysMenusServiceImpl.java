@@ -99,6 +99,8 @@ public class SysMenusServiceImpl extends ServiceImpl<SysMenusMapper, SysMenus> i
         node.setMenuId(sysMenus.getId());
         node.setName(sysMenus.getMenuName());
         node.setLeaf(sysMenus.getLeaf());
+        node.setIcon(sysMenus.getIcon());
+
         return node;
     }
 
