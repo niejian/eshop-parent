@@ -137,9 +137,9 @@
                     <input type="text" name="icon" id="icon" value="" placeholder="请输入菜单显示图标" autocomplete="off" width="80%" class="layui-input">
 
                 </div>
-                <label class="layui-form-label">
-                    <a href="https://www.layui.com/doc/element/icon.html" style="color: green" target="_blank">图标参考链接</a>
-                </label>
+                <#--<label class="layui-form-label">-->
+                    <#--<a href="https://www.layui.com/doc/element/icon.html" style="color: green" target="_blank">图标参考链接</a>-->
+                <#--</label>-->
             </div>
             <#elseif type != 'add' && !menu.leaf>
             <div class="layui-inline" id="menuIcon" style="display: block">
@@ -313,6 +313,7 @@
             // layer.msg('开关checked：'+ (this.checked ? 'true' : 'false'), {
             //     offset: '6px'
             // });
+            debugger
             $("input[name=leaf]").val(checkStatus) ;
             // 如果是叶子节点
             if (checkStatus) {
