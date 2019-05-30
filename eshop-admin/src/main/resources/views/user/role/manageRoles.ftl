@@ -46,10 +46,11 @@
 <#--角色管理页面-->
 <fieldset class="layui-elem-field site-demo-button">
     <div class="demoTable" style="margin-bottom: 10px">
-        <button class="layui-btn" data-type="add"> <i class="layui-icon">&#xe654;</i> 添加</button>
-        <button class="layui-btn layui-btn-normal" data-type="edit"> <i class="layui-icon">&#xe642;</i>编辑</button>
-        <button class="layui-btn layui-btn-warm" onclick="view()"> <i class="layui-icon">&#xe621;</i>查看</button>
-        <button class="layui-btn  layui-btn-danger"> <i class="layui-icon">&#xe640;</i>删除</button>
+        <button class="layui-btn" data-type="add"> <i class="layui-icon layui-icon-add-1"></i> 添加</button>
+        <button class="layui-btn layui-btn-normal" data-type="edit"> <i class="layui-icon layui-icon-edit"></i>编辑</button>
+        <button class="layui-btn layui-btn-warm" onclick="view()"> <i class="layui-icon layui-icon-file"></i>查看</button>
+        <button class="layui-btn" onclick="bindMenu()"> <i class="layui-icon layui-icon-add-circle"></i>绑定菜单</button>
+        <button class="layui-btn  layui-btn-danger"> <i class="layui-icon layui-icon-delete"></i>删除</button>
     </div>
 </fieldset>
 
@@ -152,6 +153,44 @@
             layer.open({
                 id: "editRole",
                 title: "查看角色信息",
+                type: 2,
+                area: ["90%", "50%"],
+                content: url,
+                success: function(layero, index){
+                    //console.log("add--" + index);
+                },
+                end: function () {
+                    //resetForm();
+                    //刷新表格数据
+                    search();
+                },
+                cancel: function (index, layero) {
+                    layer.close(index);
+
+                    //resetForm();
+                    search();
+                    return false;
+                }
+            });
+
+        };
+
+        // 绑定菜单、按钮信息
+        window.bindMenu = function() {
+            var checkStatus = table.checkStatus('roles'); // table标签的id属性
+            var data = checkStatus.data;
+            if (null == data || data.length == 0) {
+                layer.msg('请选择一条数据进行操作');
+
+                return;
+            }
+
+            // roleId
+            var id = data[0].id;
+            var url = "${cx}/user/role/manageRoleMenu?id=" + id;
+            layer.open({
+                id: "manageRoleMenu",
+                title: "角色菜单管理",
                 type: 2,
                 area: ["90%", "50%"],
                 content: url,

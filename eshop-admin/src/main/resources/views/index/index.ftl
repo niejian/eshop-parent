@@ -206,9 +206,10 @@
         // 生成菜单信息
         initMenus();
         // 需要重新渲染一遍，不然不生效。！！！！！
-        element.render('nav', 'navtree');
+        element.render('nav');
         //顶部左侧菜单监控
         element.on('nav(leftmenu)',function(elem){
+
             //隐藏显示侧边菜单
             if(elem[0].className=="hidetab"){//隐藏
                 //侧边菜单伸缩
