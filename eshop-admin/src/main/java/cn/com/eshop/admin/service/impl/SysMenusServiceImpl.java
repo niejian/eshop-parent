@@ -4,6 +4,7 @@ import cn.com.eshop.admin.entity.SysMenus;
 import cn.com.eshop.admin.mapper.SysMenusMapper;
 import cn.com.eshop.admin.service.ISysMenusService;
 import cn.com.eshop.admin.utils.MenuNodeVo;
+import cn.com.eshop.admin.utils.XtreeNodeVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -102,6 +103,63 @@ public class SysMenusServiceImpl extends ServiceImpl<SysMenusMapper, SysMenus> i
         node.setIcon(sysMenus.getIcon());
 
         return node;
+    }
+
+    @Override
+    public List<XtreeNodeVo> getUserXtreeVo(String userId) throws Exception {
+        List<XtreeNodeVo> list = new ArrayList<>();
+
+        // 1.获取根节点信息
+        QueryWrapper<SysMenus> queryWrapper = new QueryWrapper<>();
+
+        // 根菜单并且菜单类型是0 的信息
+        queryWrapper.isNull("parent_id")
+                .eq("menu_type", 0)
+                .orderByAsc("num");
+        log.info(queryWrapper.getSqlSelect());
+        List<SysMenus> rootMenus = this.list(queryWrapper);
+        rootMenus.forEach(rootMenu -> {
+            XtreeNodeVo menuNodeVo = this.convertXTreeNode(rootMenu);
+
+            Long rootMenuId = rootMenu.getId();
+            List<XtreeNodeVo> subMenuNodeVoList = this.getSubXtreeNode(rootMenuId);
+            menuNodeVo.setData(subMenuNodeVoList);
+
+            list.add(menuNodeVo);
+        });
+
+        return list;
+    }
+
+    private XtreeNodeVo convertXTreeNode(SysMenus menu) {
+        XtreeNodeVo vo = new XtreeNodeVo();
+        vo.setTitle(menu.getMenuName());
+        vo.setValue(menu.getId() + "");
+        vo.setData(new ArrayList<>());
+
+        return vo;
+    }
+
+    private List<XtreeNodeVo> getSubXtreeNode(long parentMenuId) {
+        List<XtreeNodeVo> menuNodeVoList = new ArrayList<>();
+
+        QueryWrapper<SysMenus> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("parent_id", parentMenuId)
+                .eq("menu_type", 0)
+                .orderByAsc("num");
+        List<SysMenus> parentMenus = this.list(queryWrapper);
+        parentMenus.forEach(subMenu -> {
+            XtreeNodeVo menuNodeVo = this.convertXTreeNode(subMenu);
+
+            Long subMenuId = subMenu.getId();
+            List<XtreeNodeVo> subMenuNodeVoList = getSubXtreeNode(subMenuId);
+            menuNodeVo.setData(subMenuNodeVoList);
+
+            menuNodeVoList.add(menuNodeVo);
+
+        });
+
+        return menuNodeVoList;
     }
 
     /**

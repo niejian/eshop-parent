@@ -11,6 +11,7 @@
     <script type="text/javascript" src="${ctx}/statics/js/jquery-3.3.1.min.js"></script>
 
     <script type="text/javascript" src="${ctx}/statics/js/layer/layui.all.js"></script>
+    <script type="text/javascript" src="${ctx}/statics/js/layer/lay/modules/layui-xtree.js"></script>
 
 
 
@@ -21,29 +22,52 @@
 <body>
 <div style="width: 100%;height: 100%">
 
-    <legend>菜单树</legend>
-    <div style="display: inline-block; width: 30%; height: 500px; padding: 10px; border: 1px solid #ddd; overflow: auto; float: left">
-        <ul id="menuTree"></ul>
+    <#--<legend>菜单树</legend>-->
+    <#--<div style="display: inline-block; width: 30%; height: 500px; padding: 10px; border: 1px solid #ddd; overflow: auto; float: left">-->
+        <#--<ul id="menuTree"></ul>-->
 
 
-    </div>
+    <#--</div>-->
 
-    <div style="display: inline-block; width: 65%; height: 500px; padding: 10px; border: 1px solid #ddd; overflow: auto; float: right">
-        <#--<fieldset class="layui-elem-field site-demo-button">-->
-            <#--<legend>菜单详情</legend>-->
-            <#--<div class="demoTable" style="display: inline-block; margin-bottom: 10px; margin-top: 10px">-->
-                <#--<button class="layui-btn  layui-btn-radius" onclick="add('add')"> <i class="layui-icon">&#xe654;</i>添加菜单</button>-->
-                <#--<button class="layui-btn layui-btn-normal  layui-btn-radius" onclick="add('edit')"> <i class="layui-icon">&#xe642;</i>编辑菜单</button>-->
-                <#--<button class="layui-btn layui-btn-warm layui-btn-radius" onclick="add('view')"> <i class="layui-icon">&#xe621;</i>查看菜单</button>-->
-                <#--<button class="layui-btn  layui-btn-danger layui-btn-radius" onclick="del()"> <i class="layui-icon">&#xe640;</i>删除菜单</button>-->
-            <#--</div>-->
-        <#--</fieldset>-->
+    <#--<div style="display: inline-block; width: 65%; height: 500px; padding: 10px; border: 1px solid #ddd; overflow: auto; float: right">-->
+        <#--&lt;#&ndash;<fieldset class="layui-elem-field site-demo-button">&ndash;&gt;-->
+            <#--&lt;#&ndash;<legend>菜单详情</legend>&ndash;&gt;-->
+            <#--&lt;#&ndash;<div class="demoTable" style="display: inline-block; margin-bottom: 10px; margin-top: 10px">&ndash;&gt;-->
+                <#--&lt;#&ndash;<button class="layui-btn  layui-btn-radius" onclick="add('add')"> <i class="layui-icon">&#xe654;</i>添加菜单</button>&ndash;&gt;-->
+                <#--&lt;#&ndash;<button class="layui-btn layui-btn-normal  layui-btn-radius" onclick="add('edit')"> <i class="layui-icon">&#xe642;</i>编辑菜单</button>&ndash;&gt;-->
+                <#--&lt;#&ndash;<button class="layui-btn layui-btn-warm layui-btn-radius" onclick="add('view')"> <i class="layui-icon">&#xe621;</i>查看菜单</button>&ndash;&gt;-->
+                <#--&lt;#&ndash;<button class="layui-btn  layui-btn-danger layui-btn-radius" onclick="del()"> <i class="layui-icon">&#xe640;</i>删除菜单</button>&ndash;&gt;-->
+            <#--&lt;#&ndash;</div>&ndash;&gt;-->
+        <#--&lt;#&ndash;</fieldset>&ndash;&gt;-->
 
-        <table class="layui-hide" id="menuTable" lay-filter='menuTable' ></table>
+        <#--<table class="layui-hide" id="menuTable" lay-filter='menuTable' ></table>-->
 
-    </div>
+    <#--</div>-->
+    <fieldset class="layui-elem-field">
+        <legend>选择菜单</legend>
+    </fieldset>
+    <form class="layui-form" action="" onsubmit="return false;">
 
-    <br/>
+
+        <div id="xtree1" style="width:100%;height: 100%;"></div>
+
+        <div class="layui-row" style="padding-top: 20px">
+        <#--<div class="layui-col-xs4">-->
+        <#--<div class="grid-demo grid-demo-bg1">1</div>-->
+        <#--</div>-->
+
+            <div class="layui-col-md3 layui-col-md-offset3" style="padding-left: 150px">
+                <button class="layui-btn" lay-submit lay-filter="roleForm"><i class="layui-icon">&#xe605 </i> &nbsp;确定</button>
+
+                <button type="button" class="layui-btn layui-btn-warm"  data-type="back"><i class="layui-icon">&#xe603;</i>&nbsp;返回</button>
+
+            </div>
+        </div>
+
+    </form>
+
+
+        <br/>
 </div>
 <#--角色管理页面-->
 
@@ -58,7 +82,7 @@
 </script>
 <script type="text/javascript">
     var menus = new Array();
-
+debugger
 
     // 左侧选中的菜单信息
     var checkedMenu = {};
@@ -67,7 +91,7 @@
         //var res = [];
         var postJSON = JSON.stringify({"A":"V"});
         $.ajax({
-            url: '${cx}/user/menu/getMenuTree',
+            url: '${cx}/user/menu/getMenuXTree',
             type: 'POST',
             contentType: "application/json; charset=utf-8",
             data: postJSON,
@@ -77,6 +101,7 @@
 
                 if (null != data) {
                     menus = data;
+                    console.log(data)
                 }
 
             }
@@ -85,104 +110,20 @@
     };
 
 
-    layui.use(['tree', 'table', 'layer', 'form'], function() {
+
+
+    layui.use([ 'table', 'layer', 'form'], function() {
         var layer = layui.layer
                 , form = layui.form
                 , table = layui.table
                 , $ = layui.jquery;
-
-        // 树形初始化
-        window.initTree = function () {
-            // 清空 树形区域
-            $("#menuTree").html("");
-            loadMenu();
-            layui.tree({
-                elem: '#menuTree' //指定元素
-                , target: '_blank' //是否新选项卡打开（比如节点返回href才有效）
-                , click: function (item) { //点击节点回调
-                    //layer.msg('当前节名称：' + item.name + '<br>全部参数：' + JSON.stringify(item));
-                    checkedMenu = item;
-                    var data = new Array();
-                    data.push(item);
-                    table.init('menuTable', { //转化静态表格
-                        data: data,
-                        cols: [[ //表头, 这里要加两个中括号不然显示不出数据
-
-                            {title:'#',width:80, type: 'radio'},
-                            {title: '序号', width:80, align:"center", templet:'#tableIndex'}, //显示序号
-                            {field: 'id', title: 'id', width:80, sort: true, align: 'center', fixed:"left", hide:true},
-                            {field: 'menuCode', title: '菜单编码',  sort: true, align: 'center'},
-                            {field: 'name', title: '菜单名称',  sort: true, align: 'center'},
-                            {field: 'num', title: '排序',  sort: true, align: 'center'},
-                            {field: 'url', title: '菜单路径',  sort: true, align: 'center'},
-                            {field: 'leaf', title: '是否叶子节点',  sort: true, align: 'center',
-                                templet: function(d) {
-                                    return d.leaf ? '是' : '否'
-                                }}
-
-                        ]]
-                    });
-                }
-                , nodes: menus
-            });
-        };
-        initTree();
-
-        form.on("treeselect(treeselecttest)", function(data){
-            layer.alert(JSON.stringify(data))
+        loadMenu();
+        var xtree1 = new layuiXtree({
+            elem: 'xtree1'   //(必填) 放置xtree的容器id，不要带#号
+            , form: form     //(必填) layui 的 from
+            , data: menus     //(必填) json数组（数据格式在下面）
         });
 
-        // table模块初始化
-        table.render({
-            elem: '#menuTable',
-            url: '${cx}/user/role/getMenusByRoleId?roleId=${roleId}', //数据接口,
-            method: 'post',
-            contentType: "application/json",
-            parseData: function(res) { //res 即为原始返回的数据
-                return {
-                    "code": res.code, //解析接口状态
-                    "msg": res.msg, //解析提示文本
-                    "count": res.count, //解析数据长度
-                    "data": res.data //解析数据列表
-                };
-            },
-
-            page: false, //开启分页
-
-            cols: [[ //表头, 这里要加两个中括号不然显示不出数据
-
-                {title:'#',width:80, type: 'radio'},
-                {title: '序号', width:80, align:"center", templet:'#tableIndex'}, //显示序号
-                {field: 'id', title: 'id', width:80, sort: true, align: 'center', fixed:"left", hide:true},
-                {field: 'menuCode', title: '菜单编码',  sort: true, align: 'center'},
-                {field: 'name', title: '菜单名称',  sort: true, align: 'center'},
-                {field: 'num', title: '排序',  sort: true, align: 'center'},
-                {field: 'url', title: '菜单路径',  sort: true, align: 'center'},
-                {field: 'leaf', title: '是否叶子节点',  sort: true, align: 'center',
-                    templet: function(d) {
-                        return d.leaf ? '是' : '否'
-                    }}
-            ]]
-        });
-
-        // 选中行时，当前行被选中
-        table.on('row(menuTable)', function(obj){
-
-            obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');//选中行样式
-            obj.tr.find('input[lay-type="layTableRadio"]').prop("checked",true);
-            var index = obj.tr.data('index')
-            var thisData = table.cache.menuTable;//tableName 表名
-            //重置数据单选属性
-            layui.each(thisData, function(i, item){
-                if(index === i){
-                    item.LAY_CHECKED = true;
-                } else {
-                    delete item.LAY_CHECKED;
-                }
-            });
-
-            form.render('radio');
-        });
 
 
 

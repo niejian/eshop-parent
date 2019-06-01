@@ -16,6 +16,7 @@ public class MenuNodeVo implements Serializable {
     private String name;
     private Boolean spread;
     private Long menuId;
+    private Long pid;
     private String url;
     private String menuCode;
     private Integer num;

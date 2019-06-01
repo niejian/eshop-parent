@@ -2,6 +2,7 @@ package cn.com.eshop.admin.service;
 
 import cn.com.eshop.admin.entity.SysMenus;
 import cn.com.eshop.admin.utils.MenuNodeVo;
+import cn.com.eshop.admin.utils.XtreeNodeVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -22,6 +23,14 @@ public interface ISysMenusService extends IService<SysMenus> {
      * @return
      */
     List<MenuNodeVo> getUserMenuNodeVoList(String userId) throws Exception;
+
+    /**
+     * 带复选框的树形菜单信息
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    List<XtreeNodeVo> getUserXtreeVo(String userId) throws Exception;
 
     /**
      * 新增菜单信息

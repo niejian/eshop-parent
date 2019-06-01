@@ -5,6 +5,7 @@ import cn.com.eshop.admin.entity.SysMenus;
 import cn.com.eshop.admin.entity.SysRole;
 import cn.com.eshop.admin.service.ISysMenusService;
 import cn.com.eshop.admin.utils.MenuNodeVo;
+import cn.com.eshop.admin.utils.XtreeNodeVo;
 import cn.com.eshop.common.utils.CommonFunction;
 import cn.com.eshop.common.vo.CommonInstance;
 import cn.com.eshop.common.vo.ResultBeanVo;
@@ -97,7 +98,7 @@ public class SysMenusController {
 
     @ResponseBody
     @PostMapping(value = "/getMenuTree")
-    private List<MenuNodeVo> getMenuTree(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
+    public List<MenuNodeVo> getMenuTree(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
         List<MenuNodeVo> menuNodeVoList = new ArrayList<>();
         CommonFunction.beforeProcess(log, jsonObject);
         try {
@@ -107,6 +108,23 @@ public class SysMenusController {
         }
 
         return menuNodeVoList;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/getMenuXTree")
+    public List<XtreeNodeVo> getMenuXTree(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
+        CommonFunction.beforeProcess(log);
+        List<XtreeNodeVo> xtreeNodeVos = new ArrayList<>();
+
+        try {
+            xtreeNodeVos = this.menusService.getUserXtreeVo(null);
+        } catch (Exception e) {
+            CommonFunction.genErrorMessage(log, e);
+            e.printStackTrace();
+
+        }
+
+        return xtreeNodeVos;
     }
 
     @ResponseBody

@@ -192,7 +192,7 @@
                 id: "manageRoleMenu",
                 title: "角色菜单管理",
                 type: 2,
-                area: ["90%", "50%"],
+                area: ["500px", "500px"], // 宽200高度自适应
                 content: url,
                 success: function(layero, index){
                     //console.log("add--" + index);
