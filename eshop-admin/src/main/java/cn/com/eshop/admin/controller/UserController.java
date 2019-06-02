@@ -42,9 +42,15 @@ public class UserController {
     @Autowired
     private ISysMenusService menusService;
 
+    @GetMapping(value = "/login")
+    public ModelAndView login() {
+        ModelAndView modelAndView = new ModelAndView("login");
+        return modelAndView;
+    }
 
     @GetMapping(value = "/toIndex")
     public ModelAndView toIndex() {
+
         ModelAndView modelAndView = new ModelAndView();
         log.info("---->");
 
