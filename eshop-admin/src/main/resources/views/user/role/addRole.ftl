@@ -98,7 +98,7 @@
 
                 // 验证成功，提交数据
                 $.ajax({
-                    url: '${cx}/user/addRoleHandler',
+                    url: '${cx}/user/role/addRoleHandler',
                     type: 'POST',
                     contentType: "application/json; charset=utf-8",
                     data: postJSON,
@@ -133,7 +133,7 @@
             window.validRoleCode =  function(roleCode) {
                 var msg = '';
                 $.ajax({
-                    url: '${cx}/user/getRoleByRoleCode',
+                    url: '${cx}/user/role/getRoleByRoleCode',
                     type: 'POST',
                     contentType: "application/json; charset=utf-8",
                     data: JSON.stringify({roleCode: roleCode}),

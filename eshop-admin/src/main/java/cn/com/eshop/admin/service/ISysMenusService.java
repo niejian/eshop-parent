@@ -27,10 +27,11 @@ public interface ISysMenusService extends IService<SysMenus> {
     /**
      * 带复选框的树形菜单信息
      * @param userId
+     * @param roleId
      * @return
      * @throws Exception
      */
-    List<XtreeNodeVo> getUserXtreeVo(String userId) throws Exception;
+    List<XtreeNodeVo> getUserXtreeVo(String userId, String roleId) throws Exception;
 
     /**
      * 新增菜单信息

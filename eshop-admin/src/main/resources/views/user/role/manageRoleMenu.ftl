@@ -46,6 +46,7 @@
     <fieldset class="layui-elem-field">
         <legend>选择菜单</legend>
     </fieldset>
+        <input type="hidden" name="roleId"/>
     <form class="layui-form" action="" onsubmit="return false;">
 
 
@@ -57,9 +58,9 @@
         <#--</div>-->
 
             <div class="layui-col-md3 layui-col-md-offset3" style="padding-left: 150px">
-                <button class="layui-btn" lay-submit lay-filter="roleForm"><i class="layui-icon">&#xe605 </i> &nbsp;确定</button>
+                <button class="layui-btn" lay-submit lay-filter="form"><i class="layui-icon">&#xe605 </i> &nbsp;确定</button>
 
-                <button type="button" class="layui-btn layui-btn-warm"  data-type="back"><i class="layui-icon">&#xe603;</i>&nbsp;返回</button>
+                <button type="button" class="layui-btn layui-btn-warm"  onclick="back()"><i class="layui-icon">&#xe603;</i>&nbsp;返回</button>
 
             </div>
         </div>
@@ -81,15 +82,27 @@
     {{d.LAY_TABLE_INDEX+1}}
 </script>
 <script type="text/javascript">
+    function getRoleId(roleId) {
+
+        if(null != roleId && '' != roleId) {
+            $("input[name=roleId]").val(roleId);
+
+        }
+    }
     var menus = new Array();
-debugger
 
     // 左侧选中的菜单信息
     var checkedMenu = {};
 
     function loadMenu() {
+
+        var roleId = '${roleId! ""}';
+        if (null == roleId || '' == roleId) {
+            return;
+        }
+
         //var res = [];
-        var postJSON = JSON.stringify({"A":"V"});
+        var postJSON = JSON.stringify({"roleId":roleId});
         $.ajax({
             url: '${cx}/user/menu/getMenuXTree',
             type: 'POST',
@@ -112,17 +125,83 @@ debugger
 
 
 
-    layui.use([ 'table', 'layer', 'form'], function() {
+    layui.use(['table', 'layer', 'form'], function() {
         var layer = layui.layer
+
                 , form = layui.form
                 , table = layui.table
                 , $ = layui.jquery;
         loadMenu();
+
         var xtree1 = new layuiXtree({
             elem: 'xtree1'   //(必填) 放置xtree的容器id，不要带#号
             , form: form     //(必填) layui 的 from
             , data: menus     //(必填) json数组（数据格式在下面）
         });
+
+
+        //监听提交
+        form.on('submit(form)', function(data){
+            // layer.msg(JSON.stringify(data.field));
+            //return false;
+            var menuIdArr = new Array();
+
+            var data = xtree1.GetChecked();
+            for (var i = 0; i < data.length; i++) {
+                console.log(data[i].value);
+                menuIdArr.push(data[i].value);
+            }
+
+            if (menuIdArr.length <= 0) {
+
+                layer.msg("请选择菜单信息");
+                return false;
+            }
+
+
+            // 获取选中的菜单信息
+            var postJSON = JSON.stringify({"roleId": '${roleId}', "menuIds": menuIdArr});
+            // 验证成功，提交数据
+            $.ajax({
+                url: '${ctx}/user/roleMenu/addRoleMenuHandler',
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                data: postJSON,
+                async: false,
+                dataType: "json",
+                success: function(data){
+
+                    var isSuccess = data.success;
+                    if (!isSuccess) {
+                        layer.alert(data.errMsg);
+                    } else {
+                        var msg ='新增成功';
+                        layer.alert(msg, function(index) {
+                            // 关闭当前提示的这个弹出层
+                            layer.close(index);
+                            // 关闭当前的弹出页面
+                            var layIndex = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(layIndex);
+                        });
+
+                    }
+
+                }
+            });
+
+            // 必须加上这个
+            return false;
+
+        });
+
+
+        window.back = function() {
+            var layIndex = parent.layer.getFrameIndex(window.name);
+            layer.confirm('关闭后将无法保存已填写的数据，是否确认关闭', function () {
+                parent.layer.close(layIndex);
+                //parent.layer.close(index2);
+            });
+        };
 
 
 

@@ -7,6 +7,8 @@
     <meta charset="utf-8">
     <title>EShop Admin</title>
     <meta name="renderer" content="webkit">
+    <link rel="icon" href="${ctx}/statics/images/favicon.ico" type="image/x-icon" />
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <script type="text/javascript" src="${ctx}/statics/js/jquery-1.9.1.min.js"></script>

@@ -117,7 +117,9 @@ public class SysMenusController {
         List<XtreeNodeVo> xtreeNodeVos = new ArrayList<>();
 
         try {
-            xtreeNodeVos = this.menusService.getUserXtreeVo(null);
+            String roleId = jsonObject.optString("roleId", null);
+            String userId = jsonObject.optString("userId", null);
+            xtreeNodeVos = this.menusService.getUserXtreeVo(userId, roleId);
         } catch (Exception e) {
             CommonFunction.genErrorMessage(log, e);
             e.printStackTrace();

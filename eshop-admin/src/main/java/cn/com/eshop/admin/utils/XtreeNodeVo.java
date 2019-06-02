@@ -23,6 +23,8 @@ public class XtreeNodeVo implements Serializable {
     private String title;
     private String value;
     private List<XtreeNodeVo> data;
+    /**单选框是否选中*/
+    private Boolean checked = false;
 
 
 }

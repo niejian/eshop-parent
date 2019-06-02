@@ -69,8 +69,9 @@
     var roles = new Array();
 
 
-    layui.use(['table', 'form'], function() {
+    layui.use(['element', 'table', 'form'], function() {
         var table = layui.table;
+
         var form = layui.form;
         var index = layer.load(1); //添加laoding,0-2两种方式
 
@@ -78,7 +79,7 @@
         table.render({
             elem: '#roles',
             // height: 500,
-            url: '${cx}/user/getRoles', //数据接口,
+            url: '${cx}/user/role/getRoles', //数据接口,
             <#--data: '${roles}',-->
             method: 'post',
             contentType: "application/json",
@@ -149,7 +150,7 @@
 
             var id = data[0].id;
 
-            var url = "${cx}/user/editRole?type=view&id=" + id;
+            var url = "${cx}/user/role/editRole?type=view&id=" + id;
             layer.open({
                 id: "editRole",
                 title: "查看角色信息",
@@ -187,7 +188,7 @@
 
             // roleId
             var id = data[0].id;
-            var url = "${cx}/user/role/manageRoleMenu?id=" + id;
+            var url = "${ctx}/user/role/manageRoleMenu?id=" + id;
             layer.open({
                 id: "manageRoleMenu",
                 title: "角色菜单管理",
@@ -195,7 +196,10 @@
                 area: ["500px", "500px"], // 宽200高度自适应
                 content: url,
                 success: function(layero, index){
-                    //console.log("add--" + index);
+                    // 获取子页面的iframe
+                    var iframe = window['layui-layer-iframe' + index];
+                    // 向子页面的全局函数getRoleId传参
+                    iframe.getRoleId(id);
                 },
                 end: function () {
                     //resetForm();
@@ -245,7 +249,7 @@
 
                 var id = data[0].id;
 
-                var url = "${cx}/user/editRole?type=edit&id=" + id;
+                var url = "${cx}/user/role/editRole?type=edit&id=" + id;
                 layer.open({
                     id: "editRole",
                     title: "更新角色信息",
@@ -273,7 +277,7 @@
                 });
             },
             add: function () {
-                var url = "${cx}/user/addRole";
+                var url = "${cx}/user/role/addRole";
                 layer.open({
                     id: "addRole",
                     title: "添加角色信息",

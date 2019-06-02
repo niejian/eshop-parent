@@ -1,18 +1,24 @@
 package cn.com.eshop.admin.service.impl;
 
 import cn.com.eshop.admin.entity.SysMenus;
+import cn.com.eshop.admin.entity.SysRoleMenu;
 import cn.com.eshop.admin.mapper.SysMenusMapper;
 import cn.com.eshop.admin.service.ISysMenusService;
+import cn.com.eshop.admin.service.ISysRoleMenuService;
+import cn.com.eshop.admin.service.ISysRoleService;
 import cn.com.eshop.admin.utils.MenuNodeVo;
 import cn.com.eshop.admin.utils.XtreeNodeVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -25,6 +31,9 @@ import java.util.List;
 @Slf4j
 @Service
 public class SysMenusServiceImpl extends ServiceImpl<SysMenusMapper, SysMenus> implements ISysMenusService {
+
+    @Autowired
+    private ISysRoleMenuService roleMenuService;
 
 
     /**
@@ -106,8 +115,11 @@ public class SysMenusServiceImpl extends ServiceImpl<SysMenusMapper, SysMenus> i
     }
 
     @Override
-    public List<XtreeNodeVo> getUserXtreeVo(String userId) throws Exception {
+    public List<XtreeNodeVo> getUserXtreeVo(String userId, String roleId) throws Exception {
         List<XtreeNodeVo> list = new ArrayList<>();
+
+        // 获取该角色绑定的菜单信息
+        Set<Long> menuIdSet = getMenuIdsByRoleId(roleId);
 
         // 1.获取根节点信息
         QueryWrapper<SysMenus> queryWrapper = new QueryWrapper<>();
@@ -122,13 +134,36 @@ public class SysMenusServiceImpl extends ServiceImpl<SysMenusMapper, SysMenus> i
             XtreeNodeVo menuNodeVo = this.convertXTreeNode(rootMenu);
 
             Long rootMenuId = rootMenu.getId();
-            List<XtreeNodeVo> subMenuNodeVoList = this.getSubXtreeNode(rootMenuId);
+            if (menuIdSet.contains(rootMenuId)) {
+                menuNodeVo.setChecked(true);
+            }
+            List<XtreeNodeVo> subMenuNodeVoList = this.getSubXtreeNode(rootMenuId, menuIdSet);
             menuNodeVo.setData(subMenuNodeVoList);
 
             list.add(menuNodeVo);
         });
 
         return list;
+    }
+
+    /**
+     * 通过角色Id获取所有绑定的菜单集合信息
+     * @param roleId
+     * @return
+     */
+    private Set<Long> getMenuIdsByRoleId(String roleId) throws Exception{
+
+        Set<Long> menuIdSet = new HashSet<>();
+        QueryWrapper<SysRoleMenu> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("role_id", roleId);
+        List<SysRoleMenu> sysRoleMenus = this.roleMenuService.list(queryWrapper);
+        sysRoleMenus.forEach(sysRoleMenu -> {
+            menuIdSet.add(sysRoleMenu.getMenuId());
+        });
+
+
+        return menuIdSet;
+
     }
 
     private XtreeNodeVo convertXTreeNode(SysMenus menu) {
@@ -140,7 +175,7 @@ public class SysMenusServiceImpl extends ServiceImpl<SysMenusMapper, SysMenus> i
         return vo;
     }
 
-    private List<XtreeNodeVo> getSubXtreeNode(long parentMenuId) {
+    private List<XtreeNodeVo> getSubXtreeNode(long parentMenuId,  Set<Long> menuIdSet) {
         List<XtreeNodeVo> menuNodeVoList = new ArrayList<>();
 
         QueryWrapper<SysMenus> queryWrapper = new QueryWrapper<>();
@@ -152,7 +187,10 @@ public class SysMenusServiceImpl extends ServiceImpl<SysMenusMapper, SysMenus> i
             XtreeNodeVo menuNodeVo = this.convertXTreeNode(subMenu);
 
             Long subMenuId = subMenu.getId();
-            List<XtreeNodeVo> subMenuNodeVoList = getSubXtreeNode(subMenuId);
+            if (menuIdSet.contains(subMenuId)) {
+                menuNodeVo.setChecked(true);
+            }
+            List<XtreeNodeVo> subMenuNodeVoList = getSubXtreeNode(subMenuId, menuIdSet);
             menuNodeVo.setData(subMenuNodeVoList);
 
             menuNodeVoList.add(menuNodeVo);

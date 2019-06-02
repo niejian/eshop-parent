@@ -97,7 +97,7 @@
 
                 // 验证成功，提交数据
                 $.ajax({
-                    url: '${cx}/user/updateRole',
+                    url: '${cx}/user/role/updateRole',
                     type: 'POST',
                     contentType: "application/json; charset=utf-8",
                     data: postJSON,

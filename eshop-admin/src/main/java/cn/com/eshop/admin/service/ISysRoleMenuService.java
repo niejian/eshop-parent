@@ -2,6 +2,9 @@ package cn.com.eshop.admin.service;
 
 import cn.com.eshop.admin.entity.SysRoleMenu;
 import com.baomidou.mybatisplus.extension.service.IService;
+import net.sf.json.JSONArray;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +15,22 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2019-05-19
  */
 public interface ISysRoleMenuService extends IService<SysRoleMenu> {
+
+    /**
+     * 新增
+     * @param roleId
+     * @param menuIds
+     * @return
+     * @throws Exception
+     */
+    boolean addRoleMenu(String roleId, JSONArray menuIds) throws Exception;
+
+    /**
+     *
+     * @param roleId
+     * @return
+     * @throws Exception
+     */
+    List<SysRoleMenu> getRoleMenuByRoleId(String roleId) throws Exception;
 
 }
