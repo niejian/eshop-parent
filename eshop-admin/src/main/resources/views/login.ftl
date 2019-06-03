@@ -72,7 +72,7 @@
             var username = $(" input[ name='username' ] ").val();
             var password = $(" input[ name='password' ] ").val();
             $.ajax({
-                url:"login",
+                url:"${base}/doLogin",
                 data:{"username":username,"password":password},
                 type:"post",
                 dataType:"json",
