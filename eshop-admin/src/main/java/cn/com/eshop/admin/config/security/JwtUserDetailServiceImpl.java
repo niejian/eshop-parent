@@ -1,29 +1,34 @@
-//package cn.com.eshop.admin.config.security;/**
-// * Created by niejian on 2019/6/3.
-// */
-//
-//import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.security.core.authority.SimpleGrantedAuthority;
-//import org.springframework.security.core.userdetails.UserDetails;
-//import org.springframework.security.core.userdetails.UserDetailsService;
-//import org.springframework.security.core.userdetails.UsernameNotFoundException;
-//import org.springframework.stereotype.Service;
-//
-//import java.util.ArrayList;
-//import java.util.HashSet;
-//import java.util.List;
-//import java.util.Set;
-//
-///**
-// * @author niejian
-// * @date 2019/6/3
-// */
-//@Slf4j
-//@Service
-//public class JwtUserDetailServiceImpl implements UserDetailsService {
-//
+package cn.com.eshop.admin.config.security;/**
+ * Created by niejian on 2019/6/3.
+ */
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * @author niejian
+ * @date 2019/6/3
+ */
+@Slf4j
+@Service
+public class JwtUserDetailServiceImpl implements UserDetailsService {
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        return null;
+    }
+
+    //
 //    @Autowired
 //    private IVandesrUserService userService;
 //    @Autowired
@@ -59,7 +64,7 @@
 //            }
 //
 //            return new JwtUser(null, null, null);
-//
+//c
 //
 //        } else {
 //
@@ -111,5 +116,5 @@
 //
 //        return roleCodeList;
 //    }
-//
-//}
+
+}

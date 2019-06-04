@@ -59,7 +59,7 @@ public class UserController {
 
     @ResponseBody
     @PostMapping(value = "/doLogin")
-    public ResultBeanVo<String> doLogin(HttpServletRequest request, @RequestMapping JSONObject jsonObject) {
+    public ResultBeanVo<String> doLogin(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
         CommonFunction.beforeProcess(log, jsonObject);
 
 

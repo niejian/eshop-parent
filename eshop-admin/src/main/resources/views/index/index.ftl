@@ -123,6 +123,11 @@
             var menuDatas = JSON.parse(response);
             menuDatas = menuDatas[0].children;
             var menuHtml = '';
+            if (null == menuDatas || typeof (menuDatas) == 'undefined' ||
+                menuDatas.length <= 0) {
+                return false;
+            }
+
             // 一级菜单
             for (var i = 0; i < menuDatas.length; i++) {
 

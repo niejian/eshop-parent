@@ -1,6 +1,7 @@
 package cn.com.eshop.admin.utils;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
@@ -151,8 +152,20 @@ public class MPGenerateUtil {
                "sys_menus"
         });
 
+        String jack = "jack";
+        if (jack == null) {
 
-                //strategy.setTablePrefix(new String[]{tablePrefix});
+        }
+
+
+
+        List<String> list = new ArrayList<>();
+        if (CollectionUtils.isEmpty(list)) {
+
+        }
+
+
+        //strategy.setTablePrefix(new String[]{tablePrefix});
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
 //        strategy.setSuperEntityClass("cn.com.vandesr.admin.entity");
