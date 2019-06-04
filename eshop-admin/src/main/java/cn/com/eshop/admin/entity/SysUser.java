@@ -26,6 +26,8 @@ package cn.com.eshop.admin.entity;
 
     private String userNickName;
 
+    private String userPassword;
+
             /**
             * 头像信息
             */
@@ -39,7 +41,19 @@ package cn.com.eshop.admin.entity;
 
     private String modifyBy;
 
-        public Long getId() {
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public String getUserPassword() {
+        return userPassword;
+    }
+
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
+    }
+
+    public Long getId() {
         return id;
         }
 

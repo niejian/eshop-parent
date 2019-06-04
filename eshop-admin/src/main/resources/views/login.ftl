@@ -39,7 +39,27 @@
                             </div>
 
                         </div>
-                        <div class="mb2"><a id = "sub" lay-filter="sub" class="act-but submit" href="javascript:;" style="color: #FFFFFF">登录</a></div>
+                        <div class="mb2">
+                            <a id = "sub" lay-filter="sub" class="act-but submit" href="javascript:;" style="color: #FFFFFF">登录</a>
+                        </div>
+                        <div class="layui-row">
+                            <div class="layui-col-xs8">
+                                <div class="" style="line-height: 40px; height: 40px;">
+                                    <babel style="font-size: 18px">社交账号登录：</babel>
+                                    <i class="layui-icon layui-icon-login-qq"></i>
+                                    &nbsp;
+                                    <i class="layui-icon layui-icon-login-weibo"></i>
+                                    &nbsp;
+                                    <i class="layui-icon layui-icon-login-wechat"></i>
+                                </div>
+                            </div>
+                            <div class="layui-col-xs4">
+                                <div class="" style="line-height: 40px; height: 40px; float: right ">
+
+                                    <a style="color: white; font-size: 18px; cursor: pointer" onclick="register()">注册账号</a>
+                                </div>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -51,6 +71,35 @@
     <script src="${base}/statics/login/js/demo-1.js"></script>
 </body>
 <script>
+    // 注册
+    function register() {
+        var layer = layui.layer;
+        var url = "${base}/user/register";
+        layer.open({
+            id: "register",
+            title: "用户注册",
+            type: 2,
+            area: ["500px", "600px",],
+            content: url,
+            success: function(layero, index){
+                //console.log("add--" + index);
+            },
+            end: function () {
+                //resetForm();
+                //刷新表格数据
+                search();
+            },
+            cancel: function (index, layero) {
+                layer.close(index);
+
+                //resetForm();
+                search();
+                return false;
+            }
+        });
+    }
+
+
     //加载弹出层组件
     layui.use('layer',function(){
 

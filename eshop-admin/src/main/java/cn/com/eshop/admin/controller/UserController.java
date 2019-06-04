@@ -113,6 +113,11 @@ public class UserController {
         return vo.data(token).success(success).errMsg(errMsg).errCode(errCode);
     }
 
+    @GetMapping(value = "/register")
+    public ModelAndView register() {
+        return new ModelAndView("user/signup");
+    }
+
     @GetMapping(value = "/login")
     public ModelAndView login() {
 

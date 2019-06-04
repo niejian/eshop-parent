@@ -1,15 +1,19 @@
 drop table if exists sys_user;
-create table sys_user(
-  id bigint(10) primary key auto_increment,
-  user_code varchar (16) not null ,
-  user_name varchar (32) not null ,
-  user_nick_name varchar (32) default '',
-  avatar varchar (64) default '' comment '头像信息',
-  create_time datetime(3) not null ,
-  create_by varchar (32) not null ,
-  modify_time datetime(3) not null ,
-  modify_by varchar (32) not null
-)ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
+CREATE TABLE `sys_user` (
+  `id` bigint(10) NOT NULL AUTO_INCREMENT,
+  `user_code` varchar(16) NOT NULL,
+  `user_name` varchar(32) NOT NULL,
+  `user_nick_name` varchar(32) DEFAULT '',
+  `user_password` varchar(64) DEFAULT NULL,
+  `avatar` varchar(64) DEFAULT '' COMMENT '头像信息',
+  `create_time` datetime(3) NOT NULL,
+  `create_by` varchar(32) NOT NULL,
+  `modify_time` datetime(3) NOT NULL,
+  `modify_by` varchar(32) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
+
+
 drop table if exists sys_role;
 create table sys_role (
   id bigint(10) primary key auto_increment,
