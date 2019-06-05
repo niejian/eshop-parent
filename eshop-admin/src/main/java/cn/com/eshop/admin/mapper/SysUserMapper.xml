@@ -13,6 +13,8 @@
         <result column="create_by" property="createBy" />
         <result column="modify_time" property="modifyTime" />
         <result column="modify_by" property="modifyBy" />
+        <result column="user_password" property="userPassword" />
+
     </resultMap>
 
     <!-- 通用查询结果列 -->

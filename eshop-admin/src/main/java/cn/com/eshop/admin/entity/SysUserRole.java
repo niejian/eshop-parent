@@ -23,6 +23,7 @@ package cn.com.eshop.admin.entity;
     private Long roleId;
 
     private Long userId;
+    private String roleCode;
 
     private Date createTime;
 
@@ -32,7 +33,15 @@ package cn.com.eshop.admin.entity;
 
     private String modifyBy;
 
-        public Long getId() {
+    public String getRoleCode() {
+        return roleCode;
+    }
+
+    public void setRoleCode(String roleCode) {
+        this.roleCode = roleCode;
+    }
+
+    public Long getId() {
         return id;
         }
 

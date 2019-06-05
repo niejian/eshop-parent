@@ -18,7 +18,7 @@ public class JasytTest {
         config.setAlgorithm("PBEWithMD5AndDES");          // 加密的算法，这个算法是默认的
         config.setPassword("code4fun");                        // 加密的密钥
         standardPBEStringEncryptor.setConfig(config);
-        String plainText = "code4fun1234";
+        String plainText = "code";
         String encryptedText = standardPBEStringEncryptor.encrypt(plainText);
         System.out.println(encryptedText);
     }
@@ -32,7 +32,7 @@ public class JasytTest {
         config.setAlgorithm("PBEWithMD5AndDES");
         config.setPassword("code4fun");
         standardPBEStringEncryptor.setConfig(config);
-        String encryptedText = "bjDp79abkB39FQfBsj89GtvV46kqIyU4";
+        String encryptedText = "bjDp79abkB39FQfBsj89GtvV46kqIyU41";
         String plainText = standardPBEStringEncryptor.decrypt(encryptedText);
         System.out.println(plainText);
     }

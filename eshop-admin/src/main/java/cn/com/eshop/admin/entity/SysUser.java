@@ -32,6 +32,7 @@ package cn.com.eshop.admin.entity;
             * 头像信息
             */
     private String avatar;
+    private Boolean deleteFlag;
 
     private Date createTime;
 
@@ -41,8 +42,17 @@ package cn.com.eshop.admin.entity;
 
     private String modifyBy;
 
+
     public static long getSerialVersionUID() {
         return serialVersionUID;
+    }
+
+    public Boolean getDeleteFlag() {
+        return deleteFlag;
+    }
+
+    public void setDeleteFlag(Boolean deleteFlag) {
+        this.deleteFlag = deleteFlag;
     }
 
     public String getUserPassword() {

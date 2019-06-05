@@ -11,6 +11,8 @@
     <link rel="stylesheet" type="text/css" href="${base}/statics/js/layer/css/layui.css" />
     <script type="text/javascript" src="${base}/statics/js/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="${base}/statics/js/layer/layui.js"></script>
+    <script type="text/javascript" src="${ctx}/statics/js/md5.js"></script>
+
 </head>
 <body>
     <div class="container demo-1">
@@ -23,11 +25,11 @@
                         <div class="input_outer">
 
                             <span class="u_user"></span>
-                            <input name="username" class="text" style="color: #FFFFFF !important" type="text" placeholder="请输入账户">
+                            <input name="username" class="text" style="color: #FFFFFF !important" lay-verify="username" type="text" placeholder="请输入账户">
                         </div>
                         <div class="input_outer">
                             <span class="us_uer"></span>
-                            <input name="password" class="text" style="color: #FFFFFF !important; position:absolute; z-index:100;"value="" type="password" placeholder="请输入密码">
+                            <input name="password" class="text" style="color: #FFFFFF !important; position:absolute; z-index:100;"value="" lay-verify="password" type="password" placeholder="请输入密码">
                         </div>
                         <div class="input_outer">
                             <div style="float:left; width: 45%">
@@ -101,12 +103,40 @@
 
 
     //加载弹出层组件
-    layui.use('layer',function(){
+    layui.use(['form', 'layer'],function(){
 
         var layer = layui.layer;
+        var form = layui.form;
+        
+        form.verify({
+            username: function (value) {
+                if (null == value || '' == value) {
+                    return '请输入用户名';
+                }
+
+                if (value.length < 4) {
+                    return '用户名长度至少为4';
+                }
+
+            },
+            password: function (value) {
+                if (null == value || '' == value) {
+                    return '请输入密码';
+                }
+                // 校验密码复杂度
+                if (value.length < 6) {
+                    return '密码长度最少为6位';
+                }
+
+                if (! (/[A-Za-z]{1}/.test(value))) {
+                    return '密码需要至少包含一个英文字母';
+                }
+            }
+        });
 
         //登录的点击事件
         $("#sub").on("click",function(){
+            debugger
             login();
         })
 
@@ -118,18 +148,23 @@
 
         //登录函数
         function login(){
-            var username = $(" input[ name='username' ] ").val();
-            var password = $(" input[ name='password' ] ").val();
+
+            var username = $("input[ name='username' ] ").val();
+            var password = $("input[ name='password' ] ").val();
+            password = md5(password);
             $.ajax({
-                url:"${base}/doLogin",
-                data:{"username":username,"password":password},
+                url:"${base}/user/doLogin",
+                data:JSON.stringify({"username":username,"password":password}),
                 type:"post",
+                contentType: "application/json; charset=utf-8",
                 dataType:"json",
                     success:function(data){
                     if(data.success){
+                        var token = data.data;
+                        window.localStorage.setItem("token", token);
                         window.location = "index";
                     }else{
-                        layer.msg(data.msg);
+                        layer.msg(data.errMsg);
                     }
                 }
             })

@@ -8,6 +8,7 @@ import cn.com.eshop.admin.entity.SysRole;
 import cn.com.eshop.admin.entity.SysUser;
 import cn.com.eshop.admin.service.ISysMenusService;
 import cn.com.eshop.admin.service.ISysRoleService;
+import cn.com.eshop.admin.service.ISysUserService;
 import cn.com.eshop.admin.utils.MenuNodeVo;
 import cn.com.eshop.common.utils.CommonFunction;
 import cn.com.eshop.common.vo.CommonInstance;
@@ -23,6 +24,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -53,6 +56,8 @@ public class UserController {
     private ISysMenusService menusService;
     @Autowired
     private TokenUtil tokenUtil;
+    @Autowired
+    private ISysUserService sysUserService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -61,8 +66,6 @@ public class UserController {
     @PostMapping(value = "/doLogin")
     public ResultBeanVo<String> doLogin(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
         CommonFunction.beforeProcess(log, jsonObject);
-
-
         boolean success = CommonInstance.ERR;
         boolean isContinue = true;
         Integer errCode = CommonInstance.ERR_CODE;
@@ -104,11 +107,17 @@ public class UserController {
 
         } catch (Exception e) {
             errMsg = e.getMessage();
+            if (e instanceof BadCredentialsException) {
+                errMsg = "密码错误，请重新输入";
+            } else if (e instanceof InternalAuthenticationServiceException) {
+                errMsg = "用户不存在，请先注册再登陆";
+            }
+
+
             CommonFunction.genErrorMessage(log, e);
             e.printStackTrace();
 
         }
-
 
         return vo.data(token).success(success).errMsg(errMsg).errCode(errCode);
     }
@@ -116,6 +125,55 @@ public class UserController {
     @GetMapping(value = "/register")
     public ModelAndView register() {
         return new ModelAndView("user/signup");
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/doRegistry")
+    public ResultBeanVo<String> doRegistry(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
+        CommonFunction.beforeProcess(log, jsonObject);
+        boolean success = CommonInstance.ERR;
+        boolean isContinue = true;
+        Integer errCode = CommonInstance.ERR_CODE;
+        String errMsg = CommonInstance.ERR_MSG;
+        ResultBeanVo<String> vo = new ResultBeanVo<>();
+
+        try {
+            String userName = jsonObject.optString("userName", "");
+            String password = jsonObject.optString("userPassword", "");
+            String userNickName = jsonObject.optString("userNickName", "");
+            if (StringUtils.isEmpty(userName)) {
+                errMsg = "请输入用户名";
+                isContinue = false;
+
+            }
+
+            if (isContinue && StringUtils.isEmpty(password)) {
+                errMsg = "请输入密码";
+                isContinue = false;
+
+            }
+
+            if (isContinue && StringUtils.isEmpty(userNickName)) {
+                errMsg = "请输入昵称";
+                isContinue = false;
+            }
+
+            if (isContinue) {
+                sysUserService.registryUser(userName, userNickName, password);
+
+                success = CommonInstance.SUCCESS;
+                errCode = CommonInstance.SUCCESS_CODE;
+                errMsg = CommonInstance.SUCCESS_MSG;
+            }
+
+        } catch (Exception e) {
+            CommonFunction.genErrorMessage(log, e);
+            errMsg = e.getMessage();
+            e.printStackTrace();
+        }
+
+
+        return vo.data("").success(success).errMsg(errMsg).errCode(errCode);
     }
 
     @GetMapping(value = "/login")

@@ -13,4 +13,13 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ISysUserService extends IService<SysUser> {
 
+    /**
+     * 注册用户
+     * @param userName
+     * @param nickName
+     * @param password
+     * @return
+     */
+    boolean registryUser(String userName, String nickName, String password) throws Exception;
+
 }

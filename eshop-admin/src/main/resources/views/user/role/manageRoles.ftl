@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<#include "common/base.ftl">
+
 <html>
 <head>
     <meta charset="utf-8">
@@ -7,10 +9,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
-    <link href="${ctx}/statics/js/layer/css/layui.css" rel="stylesheet">
-    <script type="text/javascript" src="${ctx}/statics/js/jquery-3.3.1.min.js"></script>
+<#--    <link href="${ctx}/statics/js/layer/css/layui.css" rel="stylesheet">-->
+<#--    <script type="text/javascript" src="${ctx}/statics/js/jquery-3.3.1.min.js"></script>-->
 
-    <script type="text/javascript" src="${ctx}/statics/js/layer/layui.all.js"></script>
+<#--    <script type="text/javascript" src="${ctx}/statics/js/layer/layui.all.js"></script>-->
 
 
 
@@ -37,8 +39,8 @@
         </div>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <div class="layui-inline demoTable">
-            <button class="layui-btn" onclick="search()"><i class="layui-icon">&#xe615</i> &nbsp; 查询</button>
-            <button type="reset" class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe9aa;</i>&nbsp;重置</button>
+            <button class="layui-btn layui-btn-radius" onclick="search()"><i class="layui-icon layui-icon-search"></i>查询</button>
+            <button type="reset" class="layui-btn layui-btn-primary layui-btn-radius"><i class="layui-icon layui-icon-refresh-1"></i>&nbsp;重置</button>
         </div>
     </form>
     <br/>
@@ -46,11 +48,11 @@
 <#--角色管理页面-->
 <fieldset class="layui-elem-field site-demo-button">
     <div class="demoTable" style="margin-bottom: 10px">
-        <button class="layui-btn" data-type="add"> <i class="layui-icon layui-icon-add-1"></i> 添加</button>
-        <button class="layui-btn layui-btn-normal" data-type="edit"> <i class="layui-icon layui-icon-edit"></i>编辑</button>
-        <button class="layui-btn layui-btn-warm" onclick="view()"> <i class="layui-icon layui-icon-file"></i>查看</button>
-        <button class="layui-btn" onclick="bindMenu()"> <i class="layui-icon layui-icon-add-circle"></i>绑定菜单</button>
-        <button class="layui-btn  layui-btn-danger"> <i class="layui-icon layui-icon-delete"></i>删除</button>
+        <button class="layui-btn layui-btn-radius" data-type="add"> <i class="layui-icon layui-icon-add-1"></i> 添加</button>
+        <button class="layui-btn layui-btn-normal layui-btn-radius" data-type="edit"> <i class="layui-icon layui-icon-edit"></i>编辑</button>
+        <button class="layui-btn layui-btn-warm layui-btn-radius" onclick="view()"> <i class="layui-icon layui-icon-file"></i>查看</button>
+        <button class="layui-btn layui-btn-radius" onclick="bindMenu()"> <i class="layui-icon layui-icon-add-circle"></i>绑定菜单</button>
+        <button class="layui-btn  layui-btn-danger layui-btn-radius"> <i class="layui-icon layui-icon-delete"></i>删除</button>
     </div>
 </fieldset>
 

@@ -67,3 +67,5 @@ create table sys_role_menu(
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='菜单角色信息表';
 alter table sys_menus add COLUMN parent_menu_name varchar(32) comment '父菜单名称';
 alter table sys_menus add COLUMN parent_menu_code varchar(16) comment '父菜单编码';
+ALTER table sys_user add COLUMN delete_flag TINYINT(1) DEFAULT 0 COMMENT '是否删除;1：删除；0:未删除’'
+ALTER table sys_user_role add  COLUMN role_code VARCHAR(32) DEFAULT NULL COMMENT '角色编码';

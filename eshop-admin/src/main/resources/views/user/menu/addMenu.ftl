@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<#include "common/base.ftl">
 <html>
 <head>
     <meta charset="utf-8">
@@ -7,11 +8,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
-    <link href="${ctx}/statics/js/layer/css/layui.css" rel="stylesheet" media="all">
+<#--    <link href="${ctx}/statics/js/layer/css/layui.css" rel="stylesheet" media="all">-->
     <#--<link href="${ctx}/statics/js/layer/css/modules/layer/default/layer.css" rel="stylesheet" media="all">-->
-    <script type="text/javascript" src="${ctx}/statics/js/jquery-1.9.1.min.js"></script>
+<#--    <script type="text/javascript" src="${ctx}/statics/js/jquery-1.9.1.min.js"></script>-->
 
-    <script type="text/javascript" src="${ctx}/statics/js/layer/layui.all.js"></script>
+<#--    <script type="text/javascript" src="${ctx}/statics/js/layer/layui.all.js"></script>-->
     <#--引入图标选择器-->
     <#--<script type="text/javascript" src="${ctx}/statics/js/layer/lay/modules/iconPicker-extend.js"></script>-->
     <#--<script type="text/javascript" src="${ctx}/statics/js/layer/lay/modules/iconPicker.js"></script>-->

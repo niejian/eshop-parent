@@ -2,6 +2,12 @@ package cn.com.eshop.admin.config.security;/**
  * Created by niejian on 2019/6/3.
  */
 
+import cn.com.eshop.admin.entity.SysUser;
+import cn.com.eshop.admin.entity.SysUserRole;
+import cn.com.eshop.admin.service.ISysRoleService;
+import cn.com.eshop.admin.service.ISysUserRoleService;
+import cn.com.eshop.admin.service.ISysUserService;
+import cn.com.eshop.common.utils.CommonFunction;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +29,47 @@ import java.util.Set;
 @Slf4j
 @Service
 public class JwtUserDetailServiceImpl implements UserDetailsService {
+
+    @Autowired
+    private ISysUserService userService;
+    @Autowired
+    private ISysRoleService roleService;
+    @Autowired
+    private ISysUserRoleService userRoleService;
+
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        return null;
+        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_name", s).eq("delete_flag", 0);
+        SysUser user = userService.getOne(queryWrapper);
+        if (user == null) {
+            try {
+                throw new RuntimeException("登陆账号不存在");
+            } catch (Exception e) {
+
+            } finally {
+                return null;
+            }
+
+        } else {
+            String userPassword = user.getUserPassword();
+            Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+
+            try {
+                // 获取用户权限信息
+                List<SysUserRole> userRoles = this.userRoleService.getUserRoleByUserId(user.getId());
+                userRoles.forEach(userRole -> {
+                    authorities.add(new SimpleGrantedAuthority(userRole.getRoleCode()));
+                });
+            } catch (Exception e) {
+                CommonFunction.genErrorMessage(log, e);
+            }
+
+            return new JwtUser(s, userPassword, authorities);
+
+
+        }
+
     }
 
     //
