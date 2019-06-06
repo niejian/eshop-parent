@@ -136,7 +136,7 @@
 
         //登录的点击事件
         $("#sub").on("click",function(){
-            debugger
+            //debugger
             login();
         })
 

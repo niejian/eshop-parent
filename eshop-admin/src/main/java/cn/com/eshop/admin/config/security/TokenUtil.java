@@ -5,7 +5,10 @@ package cn.com.eshop.admin.config.security;/**
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +24,10 @@ public class TokenUtil extends JwtTokenUtil {
 //    @Autowired
 //    private RedisService redisService;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+
     /**
      * 从缓存中获取用户信息
      *
@@ -32,6 +39,9 @@ public class TokenUtil extends JwtTokenUtil {
         String userName = getUsernameFromToken(token);
         try {
             // String userInfo = (String)redisService.getValue("auth_user_info_" + userName, String.class);
+//            Authentication authentication = authenticationManager.authenticate(token);
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+//            UserDetails jwtUser = (UserDetails)authentication.getPrincipal();
             String userInfo = "";
             JSONObject userObj = JSONObject.fromObject(userInfo);
             JwtUser jwtUser = this.convertUser(userObj);

@@ -58,13 +58,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .antMatchers("/user/**", "/login",
+                .antMatchers("/**/**", "/user/doLogin",
                         "/statics/**").permitAll() //静态文件拦截
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()//设置可跨域请求时的放行
 
                 .anyRequest().authenticated()
                 .and().headers().cacheControl();
-        httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+////        httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+////        httpSecurity.add
         httpSecurity.headers().frameOptions().sameOrigin();
 
 //        httpSecurity.exceptionHandling().authenticationEntryPoint(entryPointUnauthorizedHandler).accessDeniedHandler(restAccessDeniedHandler);

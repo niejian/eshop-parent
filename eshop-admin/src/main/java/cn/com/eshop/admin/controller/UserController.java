@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -98,6 +99,9 @@ public class UserController {
                 UserDetails userDetails = (UserDetails)authentication.getPrincipal();
                 // 将token返回出去
                 token = tokenUtil.generateToken(userDetails);
+                HttpSession session = request.getSession();
+                session.setAttribute("login_token", token);
+                session.setAttribute("auth_user_info_" + username, JSONObject.fromObject(userDetails));
 
                 success = CommonInstance.SUCCESS;
                 errCode = CommonInstance.SUCCESS_CODE;

@@ -2,6 +2,7 @@ package cn.com.eshop.admin.test;
 
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.encryption.pbe.config.EnvironmentPBEConfig;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -24,6 +25,7 @@ public class JasytTest {
     }
 
 
+    @Ignore
     @Test
     public void testDe() throws Exception {
         StandardPBEStringEncryptor standardPBEStringEncryptor = new StandardPBEStringEncryptor();
