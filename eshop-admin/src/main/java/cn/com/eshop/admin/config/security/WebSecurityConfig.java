@@ -3,6 +3,7 @@ package cn.com.eshop.admin.config.security;/**
  */
 
 import cn.com.eshop.admin.filter.JwtAuthenticationTokenFilter;
+import cn.com.eshop.admin.utils.ClassPathTldsLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsUtils;
+import cn.com.eshop.admin.utils.ClassPathTldsLoader;
 
 /**
  * @author niejian
@@ -51,6 +53,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    /**
+     * 自动加载security-taglibs
+     * @return
+     */
+    @Bean
+    public ClassPathTldsLoader classPathTldsLoader(){
+        return new ClassPathTldsLoader();
     }
 
     @Override

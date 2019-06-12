@@ -25,11 +25,11 @@
                         <div class="input_outer">
 
                             <span class="u_user"></span>
-                            <input name="username" class="text" style="color: #FFFFFF !important" lay-verify="username" type="text" placeholder="请输入账户">
+                            <input name="username" class="text" value="sysadmin" style="color: #FFFFFF !important" lay-verify="username" type="text" placeholder="请输入账户">
                         </div>
                         <div class="input_outer">
                             <span class="us_uer"></span>
-                            <input name="password" class="text" style="color: #FFFFFF !important; position:absolute; z-index:100;"value="" lay-verify="password" type="password" placeholder="请输入密码">
+                            <input name="password" class="text" style="color: #FFFFFF !important; position:absolute; z-index:100;"value="qq123123" lay-verify="password" type="password" placeholder="请输入密码">
                         </div>
                         <div class="input_outer">
                             <div style="float:left; width: 45%">
