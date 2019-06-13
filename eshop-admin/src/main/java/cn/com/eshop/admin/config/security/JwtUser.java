@@ -4,6 +4,7 @@ package cn.com.eshop.admin.config.security;/**
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,6 +17,7 @@ import java.util.Collection;
  * @date 2019/6/3
  */
 @Data
+@ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class JwtUser implements UserDetails {
     private String username;

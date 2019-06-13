@@ -1,3 +1,4 @@
+<#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
 <!DOCTYPE html>
 <#include "common/base.ftl">
 <html>
@@ -168,9 +169,12 @@
             <#if type == 'view'>
                 <div class="layui-col-md6 layui-col-md-offset5">
             </#if>
-                <#if type != 'view'>
-                    <button class="layui-btn" lay-submit lay-filter="menuForm"><i class="layui-icon">&#xe605 </i> &nbsp;确定</button>
-                </#if>
+                    <@security.authorize access="hasRole('sysadmin')">
+
+                        <#if type != 'view'>
+                            <button class="layui-btn" lay-submit lay-filter="menuForm"><i class="layui-icon">&#xe605 </i> &nbsp;确定</button>
+                        </#if>
+                    </@security.authorize>
                 <#if type == 'add'>
                     <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                 </#if>

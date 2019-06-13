@@ -99,6 +99,8 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter
         try {
             if (username != null) {
                 UserDetails userDetails = this.convetJwtUser(username);
+
+                log.info("查询的用户角色信息：{}", userDetails.toString());
 //
                 if (tokenUtil.validateToken(authToken, userDetails)) {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -121,7 +123,7 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter
         // 获取用户权限信息
         List<SysUserRole> userRoles = this.userRoleService.getUserRoleByUserId(user.getId());
         userRoles.forEach(userRole -> {
-            authorities.add(new SimpleGrantedAuthority(userRole.getRoleCode()));
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + userRole.getRoleCode()));
         });
 
         return new JwtUser(userName, user.getUserPassword(), authorities);

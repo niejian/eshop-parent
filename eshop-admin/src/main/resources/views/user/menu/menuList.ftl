@@ -1,3 +1,4 @@
+<#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
 <!DOCTYPE html>
 <#include "common/base.ftl">
 <html>
@@ -32,10 +33,12 @@
         <fieldset class="layui-elem-field site-demo-button">
             <legend>菜单详情</legend>
             <div class="demoTable" style="display: inline-block; margin-bottom: 10px; margin-top: 10px">
-                <button class="layui-btn  layui-btn-radius" onclick="add('add')"> <i class="layui-icon">&#xe654;</i>添加菜单</button>
-                <button class="layui-btn layui-btn-normal  layui-btn-radius" onclick="add('edit')"> <i class="layui-icon">&#xe642;</i>编辑菜单</button>
-                <button class="layui-btn layui-btn-warm layui-btn-radius" onclick="add('view')"> <i class="layui-icon">&#xe621;</i>查看菜单</button>
-                <button class="layui-btn  layui-btn-danger layui-btn-radius" onclick="del()"> <i class="layui-icon">&#xe640;</i>删除菜单</button>
+                <@security.authorize access="hasRole('sysadmin')">
+                    <button class="layui-btn  layui-btn-radius" onclick="add('add')"> <i class="layui-icon">&#xe654;</i>添加菜单</button>
+                    <button class="layui-btn layui-btn-normal  layui-btn-radius" onclick="add('edit')"> <i class="layui-icon">&#xe642;</i>编辑菜单</button>
+                    <button class="layui-btn layui-btn-warm layui-btn-radius" onclick="add('view')"> <i class="layui-icon">&#xe621;</i>查看菜单</button>
+                    <button class="layui-btn  layui-btn-danger layui-btn-radius" onclick="del()"> <i class="layui-icon">&#xe640;</i>删除菜单</button>
+                </@security.authorize>
             </div>
         </fieldset>
 

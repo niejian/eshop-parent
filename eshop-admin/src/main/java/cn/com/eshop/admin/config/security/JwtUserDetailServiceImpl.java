@@ -59,12 +59,12 @@ public class JwtUserDetailServiceImpl implements UserDetailsService {
                 // 获取用户权限信息
                 List<SysUserRole> userRoles = this.userRoleService.getUserRoleByUserId(user.getId());
                 userRoles.forEach(userRole -> {
-                    authorities.add(new SimpleGrantedAuthority(userRole.getRoleCode()));
+                    authorities.add(new SimpleGrantedAuthority("ROLE_" + userRole.getRoleCode()));
                 });
             } catch (Exception e) {
                 CommonFunction.genErrorMessage(log, e);
             }
-
+            log.info("rights: {}", authorities.toString());
             return new JwtUser(s, userPassword, authorities);
 
 

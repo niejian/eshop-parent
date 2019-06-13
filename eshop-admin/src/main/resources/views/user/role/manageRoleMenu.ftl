@@ -1,3 +1,4 @@
+<#assign security=JspTaglibs["http://www.springframework.org/security/tags"] />
 <!DOCTYPE html>
 <#include "common/base.ftl">
 <html>
@@ -59,7 +60,9 @@
         <#--</div>-->
 
             <div class="layui-col-md3 layui-col-md-offset3" style="padding-left: 150px">
-                <button class="layui-btn" lay-submit lay-filter="form"><i class="layui-icon">&#xe605 </i> &nbsp;确定</button>
+                <@security.authorize access="hasRole('sysadmin')">
+                    <button class="layui-btn" lay-submit lay-filter="form"><i class="layui-icon">&#xe605 </i> &nbsp;确定</button>
+                </@security.authorize>
 
                 <button type="button" class="layui-btn layui-btn-warm"  onclick="back()"><i class="layui-icon">&#xe603;</i>&nbsp;返回</button>
 
