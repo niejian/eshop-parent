@@ -217,11 +217,7 @@ public class UserController {
             CommonFunction.genErrorMessage(log, e);
         }
 
-
-
         return modelAndView;
-
-
     }
 
     /**
@@ -250,6 +246,44 @@ public class UserController {
 
         modelAndView.setViewName("user/manageRights");
         return modelAndView;
+    }
+
+
+    @ResponseBody
+    @PostMapping(value = "/getUserByUserName")
+    public ResultBeanVo<SysUser> getUserByUserName(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
+        CommonFunction.beforeProcess(log, jsonObject);
+        boolean success = CommonInstance.ERR;
+        boolean isContinue = true;
+        Integer errCode = CommonInstance.ERR_CODE;
+        String errMsg = CommonInstance.ERR_MSG;
+        ResultBeanVo<SysUser> vo = new ResultBeanVo<>();
+        SysUser sysUser = null;
+
+        try {
+            String userName = jsonObject.optString("userName", "");
+            if (StringUtils.isEmpty(userName)) {
+                errMsg = "请输入用户名";
+                isContinue = false;
+
+            }
+
+            if (isContinue) {
+                sysUser = sysUserService.getUserByUserName(userName);
+
+                success = CommonInstance.SUCCESS;
+                errCode = CommonInstance.SUCCESS_CODE;
+                errMsg = CommonInstance.SUCCESS_MSG;
+            }
+
+        } catch (Exception e) {
+            CommonFunction.genErrorMessage(log, e);
+            errMsg = e.getMessage();
+            e.printStackTrace();
+        }
+
+
+        return vo.data(sysUser).success(success).errMsg(errMsg).errCode(errCode);
     }
 
 

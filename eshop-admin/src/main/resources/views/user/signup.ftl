@@ -39,6 +39,14 @@
                 </div>
 
                 <div class="registDiv layui-inline">
+                    <label class="layui-form-label">确认密码：</label>
+                    <div class="layui-input-inline">
+                        <label class="iconLabel layui-icon layui-icon-vercode" ></label>
+                        <input type="password" name="confirmPassword" lay-verify="confirmPassword" autocomplete="off" placeholder="密码" class="registInput layui-input">
+                    </div>
+                </div>
+
+                <div class="registDiv layui-inline">
                     <label class="layui-form-label">头像：</label>
                     <div class="layui-input-inline">
                         <label class="iconLabel layui-icon layui-icon-picture" ></label>
@@ -107,12 +115,13 @@
                     return '用户名长度至少为4';
                 }
 
-                // // 校验角色编码唯一
-                // var msg = validRoleCode(value);
-                //
-                // if (null != msg && '' != msg && typeof (msg) != 'undefined') {
-                //     return msg
-                // }
+                debugger
+                 // 校验用户名是否唯一
+                 var msg = valifyUserName(value);
+
+                 if (null != msg && '' != msg && typeof (msg) != 'undefined') {
+                     return msg
+                 }
 
             },
             userNickName: function (value) {
@@ -132,8 +141,45 @@
                 if (! (/[A-Za-z]{1}/.test(value))) {
                     return '密码需要至少包含一个英文字母';
                 }
+            },
+            // 确认密码
+            confirmPassword: function(value) {
+                // 获取用户密码
+                var userPassword = $("input[name=userPassword]").val();
+
+                if (userPassword !== value) {
+                    return '两次密码输入不一致，请重新输入！';
+                }
+
             }
         });
+
+        // 校验登录名是否唯一
+        window.valifyUserName =  function(userName) {
+            var msg = '';
+            $.ajax({
+                url: '${cx}/user/getUserByUserName',
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({userName: userName}),
+                async: false,
+                dataType: "json",
+                success: function(data){
+
+                    var isSuccess = data.success;
+                    var responseData = data.data;
+debugger
+                    if (!isSuccess) {
+                        layer.alert(data.errMsg);
+                    } else if (isSuccess && null != responseData){
+                        msg =  "用户名：" + userName + "已存在";
+                    }
+
+                }
+            });
+
+            return msg;
+        };
 
         //监听提交
         form.on('submit(registry)', function(data){
@@ -164,7 +210,7 @@
                     if (!isSuccess) {
                         layer.alert(data.errMsg);
                     } else {
-                        var msg ='新增成功';
+                        var msg ='注册成功';
                         layer.alert(msg, function(index) {
                             // 关闭当前提示的这个弹出层
                             layer.close(index);

@@ -3,6 +3,9 @@ package cn.com.eshop.admin.entity;
     import com.baomidou.mybatisplus.annotation.IdType;
     import java.util.Date;
     import com.baomidou.mybatisplus.annotation.TableId;
+    import com.fasterxml.jackson.annotation.JsonIgnore;
+    import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
     import java.io.Serializable;
 
 /**
@@ -13,6 +16,7 @@ package cn.com.eshop.admin.entity;
 * @author code4fun
 * @since 2019-05-19
 */
+@JsonIgnoreProperties({"userPassword"})
     public class SysUser implements Serializable {
 
     private static final long serialVersionUID = 1L;

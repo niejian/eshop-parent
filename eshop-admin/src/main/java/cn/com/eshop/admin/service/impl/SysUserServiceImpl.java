@@ -3,6 +3,7 @@ package cn.com.eshop.admin.service.impl;
 import cn.com.eshop.admin.entity.SysUser;
 import cn.com.eshop.admin.mapper.SysUserMapper;
 import cn.com.eshop.admin.service.ISysUserService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,5 +51,20 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         user.setCreateBy("sys");
 
         return save(user);
+    }
+
+    /**
+     * 通过用户名获取用户信息
+     *
+     * @param userName
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public SysUser getUserByUserName(String userName) throws Exception {
+        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_name", userName);
+        SysUser user = this.getOne(queryWrapper);
+        return user;
     }
 }

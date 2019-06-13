@@ -22,4 +22,11 @@ public interface ISysUserService extends IService<SysUser> {
      */
     boolean registryUser(String userName, String nickName, String password) throws Exception;
 
+    /**
+     * 通过用户名获取用户信息
+     * @param userName
+     * @return
+     * @throws Exception
+     */
+    SysUser getUserByUserName(String userName) throws Exception;
 }

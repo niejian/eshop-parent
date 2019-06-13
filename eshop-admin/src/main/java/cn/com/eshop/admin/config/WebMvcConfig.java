@@ -52,7 +52,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter implements Application
         //拦截规则：除了login，其他都拦截判断
         registry.addInterceptor(this.authenticationInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/statics/**","/user/register","/user/doRegistry","/user/login","/user/doLogin","/error");
+                .excludePathPatterns("/statics/**","/user/register","/user/doRegistry","/user/login","/user/doLogin","/user/getUserByUserName");
         //super.addInterceptors(registry);
     }
 
