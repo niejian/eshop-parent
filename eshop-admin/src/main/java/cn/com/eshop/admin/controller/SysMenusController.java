@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +46,7 @@ public class SysMenusController {
     @Autowired
     private ISysMenusService menusService;
 
+    @PreAuthorize("hasRole('sysadmin')")
     @GetMapping(value = "/menuList")
     public ModelAndView menuList(HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView("user/menu/menuList");
@@ -57,6 +59,7 @@ public class SysMenusController {
      * @param request
      * @return
      */
+    @PreAuthorize("hasRole('sysadmin')")
     @GetMapping(value = "/addMenuView")
     public ModelAndView addMenuView(HttpServletRequest request) {
         String parentIdStr = request.getParameter("parentId");

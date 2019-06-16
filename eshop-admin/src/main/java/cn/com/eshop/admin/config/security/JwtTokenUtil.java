@@ -5,6 +5,7 @@ package cn.com.eshop.admin.config.security;/**
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
@@ -122,6 +123,20 @@ public abstract class JwtTokenUtil implements Serializable {
             refreshedToken = null;
         }
         return refreshedToken;
+    }
+
+    public String expireToken(String token) {
+        String expireToken;
+        try {
+            Claims claims = getClaimsFromToken(token);
+            Date date = new Date();
+            claims.put("created", DateUtils.addDays(date, -10));
+            expireToken = generateToken(claims);
+        } catch (Exception e) {
+            e.printStackTrace();
+            expireToken = null;
+        }
+        return expireToken;
     }
 
     /**

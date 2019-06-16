@@ -36,6 +36,12 @@
         };
     </script>
 
+    <style type="text/css">
+        a {
+            cursor: pointer;
+        }
+    </style>
+
 
 </head>
 <body class="layui-layout-body">
@@ -65,7 +71,7 @@
             <li class="layui-nav-item">
                 <a href="javascript:;">
                     <i class="layui-icon layui-icon-user"></i>
-                    心的远行
+                    <span id="login_user_name"></span>
                 </a>
                 <dl class="layui-nav-child">
                     <dd><a href="javascript:;" lay-href="./userinfo.html"><i class="layui-icon layui-icon-form"></i>基本资料</a></dd>
@@ -75,7 +81,7 @@
             <li class="layui-nav-item">
                 <a href="javascript:;">锁屏<i class="layui-icon layui-icon-password"></i></a>
             </li>
-            <li class="layui-nav-item"><a href="./login.html">退出</a></li>
+            <li class="layui-nav-item"><a onclick="logout()">退出</a></li>
         </ul>
     </div>
     <!--左侧-->
@@ -114,6 +120,14 @@
 <script type="text/javascript">
 
     var menus = new Array();
+
+    var login_user_name = window.localStorage.getItem('login_user_name');
+    if (null !== login_user_name
+            || '' !== login_user_name
+            || typeof (login_user_name) !== 'undefined') {
+        $("#login_user_name").text(login_user_name);
+    }
+
 
     function initMenus() {
 
@@ -317,6 +331,38 @@
                 }
             }
         });
+        
+        window.logout = function () {
+            var token = window.localStorage.getItem('token');
+            if (null == token || '' == token || typeof (token) === 'undefined') {
+                layer.msg('登录信息已过期，请重新登录！');
+                window.location = "login";
+
+                return;
+            }
+
+            $.ajax({
+                url:"${base}/user/logout",
+                data:JSON.stringify({"token":token}),
+                type:"post",
+                contentType: "application/json; charset=utf-8",
+                dataType:"json",
+                success:function(data){
+                    if(data.success){
+                        var token2 = data.data;
+//                        alert(token2 == token)
+//                        window.localStorage.setItem("token2", token2);
+//                        window.localStorage.setItem("login_user_name", username);
+                        window.localStorage.clear();
+                        window.location = "index";
+                    }else{
+                        layer.msg(data.errMsg);
+                    }
+                }
+            })
+
+
+        }
     });
 </script>
 

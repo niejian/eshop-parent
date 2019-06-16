@@ -18,6 +18,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
@@ -52,8 +53,6 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    private ISysRoleService roleService;
-    @Autowired
     private ISysMenusService menusService;
     @Autowired
     private TokenUtil tokenUtil;
@@ -62,6 +61,8 @@ public class UserController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+    private static final String LOGIN_TOKEN = "login_token";
+    private static final String TOKEN_HEADER = "Bearer ";
 
     @ResponseBody
     @PostMapping(value = "/doLogin")
@@ -220,35 +221,6 @@ public class UserController {
         return modelAndView;
     }
 
-    /**
-     * 菜单管理
-     *
-     * @return
-     */
-    @GetMapping(value = "/manageMenus")
-    public ModelAndView menu() {
-        ModelAndView modelAndView = new ModelAndView();
-
-        modelAndView.setViewName("user/manageMenus");
-        return modelAndView;
-    }
-
-
-    /**
-     * 菜单管理
-     *
-     * @return
-     */
-    @GetMapping(value = "/manageRights")
-    public ModelAndView manageRights() {
-        ModelAndView modelAndView = new ModelAndView();
-
-
-        modelAndView.setViewName("user/manageRights");
-        return modelAndView;
-    }
-
-
     @ResponseBody
     @PostMapping(value = "/getUserByUserName")
     public ResultBeanVo<SysUser> getUserByUserName(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
@@ -284,6 +256,65 @@ public class UserController {
 
 
         return vo.data(sysUser).success(success).errMsg(errMsg).errCode(errCode);
+    }
+
+    /**
+     * 退出登录
+     * 1.清空session
+     * 2.将token失效
+     * @param request
+     * @param jsonObject
+     * @return
+     */
+    @ResponseBody
+    @PostMapping(value = "/logout")
+    public ResultBeanVo<String> logout(HttpServletRequest request, @RequestBody  JSONObject jsonObject) {
+        CommonFunction.beforeProcess(log, jsonObject);
+        boolean success = CommonInstance.ERR;
+        boolean isContinue = true;
+        Integer errCode = CommonInstance.ERR_CODE;
+        String errMsg = CommonInstance.ERR_MSG;
+        ResultBeanVo<String> vo = new ResultBeanVo<>();
+        String token = null;
+        try {
+            token = jsonObject.optString("token", "");
+            if (StringUtils.isEmpty(token)) {
+                errMsg = "请输入用户名";
+                isContinue = false;
+
+            }
+
+            if (isContinue) {
+                token = token.replace(TOKEN_HEADER, "");
+                // 判断token是否过期
+                Boolean tokenExpired = this.tokenUtil.isTokenExpired(token);
+                if (tokenExpired) {
+                    errMsg = "登录信息已过期，请重新登录！";
+                    isContinue = false;
+                }
+
+            }
+
+            if (isContinue) {
+                //1.清空session
+                request.getSession().removeAttribute(LOGIN_TOKEN);
+                //2.将token失效
+                errMsg = this.tokenUtil.expireToken(token);
+
+
+                success = CommonInstance.SUCCESS;
+                errCode = CommonInstance.SUCCESS_CODE;
+                //errMsg = CommonInstance.SUCCESS_MSG;
+            }
+
+        } catch (Exception e) {
+            CommonFunction.genErrorMessage(log, e);
+            errMsg = e.getMessage();
+            e.printStackTrace();
+        }
+
+
+        return vo.data(errMsg).success(success).errMsg("").errCode(errCode);
     }
 
 

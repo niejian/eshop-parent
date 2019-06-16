@@ -162,6 +162,7 @@
                     if(data.success){
                         var token = data.data;
                         window.localStorage.setItem("token", token);
+                        window.localStorage.setItem("login_user_name", username);
                         window.location = "index";
                     }else{
                         layer.msg(data.errMsg);

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,6 +48,7 @@ public class SysRoleController {
      *
      * @return
      */
+    @PreAuthorize("hasRole('sysadmin')")
     @GetMapping(value = "/manageRoles")
     public ModelAndView manageRoles() {
         log.info("获取角色信息");
@@ -64,6 +66,7 @@ public class SysRoleController {
         return modelAndView;
     }
 
+    @PreAuthorize("hasRole('sysadmin')")
     @GetMapping(value = "/editRole")
     public ModelAndView editRole(HttpServletRequest request) {
         log.info("获取角色信息");
@@ -137,6 +140,7 @@ public class SysRoleController {
 
     }
 
+    @PreAuthorize("hasRole('sysadmin')")
     @ResponseBody
     @PostMapping(value = "/updateRole")
     public ResultBeanVo<SysRole> updateRole(@RequestBody JSONObject jsonObject) {
@@ -209,6 +213,7 @@ public class SysRoleController {
         return roleResultBeanVo.errCode(errCode).errMsg(errMsg).success(success).data(bean);
     }
 
+    @PreAuthorize("hasRole('sysadmin')")
     @ResponseBody
     @PostMapping(value = "/addRoleHandler")
     public ResultBeanVo<SysRole> addRoleHandler(@RequestBody JSONObject jsonObject) {
