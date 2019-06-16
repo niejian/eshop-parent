@@ -2,12 +2,15 @@ package cn.com.eshop.admin.controller;/**
  * Created by niejian on 2019/5/18.
  */
 
+import cn.com.eshop.admin.config.security.JwtUser;
 import cn.com.eshop.admin.config.security.TokenUtil;
 import cn.com.eshop.admin.entity.SysMenus;
 import cn.com.eshop.admin.entity.SysRole;
 import cn.com.eshop.admin.entity.SysUser;
+import cn.com.eshop.admin.entity.SysUserRole;
 import cn.com.eshop.admin.service.ISysMenusService;
 import cn.com.eshop.admin.service.ISysRoleService;
+import cn.com.eshop.admin.service.ISysUserRoleService;
 import cn.com.eshop.admin.service.ISysUserService;
 import cn.com.eshop.admin.utils.MenuNodeVo;
 import cn.com.eshop.common.utils.CommonFunction;
@@ -58,6 +61,9 @@ public class UserController {
     private TokenUtil tokenUtil;
     @Autowired
     private ISysUserService sysUserService;
+    @Autowired
+    private ISysUserRoleService userRoleService;
+
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -205,10 +211,40 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView();
         CommonFunction.beforeProcess(log);
         // 获取用户菜单信息
-        List<MenuNodeVo> menuNodeVoList = new ArrayList<>();
+        List<MenuNodeVo> menuNodeVoList = null;
+        boolean isContinue = true;
 
         try {
-            menuNodeVoList = this.menusService.getUserMenuNodeVoList(null);
+            String token = (String) request.getSession().getAttribute(LOGIN_TOKEN);
+            String userName = tokenUtil.getUsernameFromToken(token.replace(TOKEN_HEADER, ""));
+            String userId = null;
+            if (!"sysadmin".equalsIgnoreCase(userName)) {
+                SysUser sysUser = this.sysUserService.getUserByUserName(userName);
+                if (null != sysUser) {
+                    userId = sysUser.getId() + "";
+                }else {
+                    userId = "-1";
+                }
+
+                // 获取当前用户的角色是否包含sysadmin，如果包含，则userId置空
+                List<SysUserRole> userRoles = userRoleService.getUserRoleByUserId(Long.parseLong(userId));
+                if (userRoles == null) {
+                    userRoles = new ArrayList<>();
+                }
+
+                for (SysUserRole userRole : userRoles) {
+                    if ("sysadmin".equals(userRole.getRoleCode())) {
+                        userId = null;
+                        break;
+                    }
+                }
+
+
+            }
+
+
+
+            menuNodeVoList = this.menusService.getUserMenuNodeVoList(userId);
             if (null == menuNodeVoList) {
                 menuNodeVoList = new ArrayList<>();
             }

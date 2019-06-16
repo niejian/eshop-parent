@@ -11,14 +11,12 @@ import cn.com.eshop.admin.utils.XtreeNodeVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * <p>
@@ -36,6 +34,25 @@ public class SysMenusServiceImpl extends ServiceImpl<SysMenusMapper, SysMenus> i
     private ISysRoleMenuService roleMenuService;
 
 
+
+    private Set<String> userUniqueMenuId(String userId) throws Exception {
+        List<SysRoleMenu> roleMenuList = roleMenuService.getRoleMenuByUserId(userId);
+        Set<String> set = new HashSet<>();
+        roleMenuList.forEach(roleMenu -> {
+            long menuId = roleMenu.getMenuId();
+            SysMenus menu = this.getById(menuId);
+            if (null != menu) {
+                String parentIds = menu.getParentIds();
+                String[] parentArr = parentIds.split(",");
+                set.addAll(Arrays.asList(parentArr));
+            }
+            set.add(roleMenu.getMenuId() + "");
+        });
+        return set;
+
+    }
+
+
     /**
      * 获取登陆用户的管理菜单信息，如果有传userId的话
      *
@@ -45,6 +62,12 @@ public class SysMenusServiceImpl extends ServiceImpl<SysMenusMapper, SysMenus> i
     @Override
     public List<MenuNodeVo> getUserMenuNodeVoList(String userId) throws Exception {
         List<MenuNodeVo> menuNodeVoList = new ArrayList<>();
+        Set<String> userMenuIdSet = new HashSet<>();
+
+        // userId不为空，说明登录用户是 普通用户否则是sysadmin
+        if (!StringUtils.isEmpty(userId)) {
+            userMenuIdSet = userUniqueMenuId(userId);
+        }
         // 1.获取根节点信息
         QueryWrapper<SysMenus> queryWrapper = new QueryWrapper<>();
 
@@ -54,19 +77,29 @@ public class SysMenusServiceImpl extends ServiceImpl<SysMenusMapper, SysMenus> i
                 .orderByAsc("num");
         log.info(queryWrapper.getSqlSelect());
         List<SysMenus> rootMenus = this.list(queryWrapper);
-        rootMenus.forEach(rootMenu -> {
+        for (SysMenus rootMenu : rootMenus) {
             MenuNodeVo menuNodeVo = this.convertMenuNode(rootMenu);
 
             Long rootMenuId = rootMenu.getId();
-            List<MenuNodeVo> subMenuNodeVoList = this.getSubMenuNodeVoList(rootMenuId);
+            List<MenuNodeVo> subMenuNodeVoList = this.getSubMenuNodeVoList(rootMenuId, userId, userMenuIdSet);
             menuNodeVo.setChildren(subMenuNodeVoList);
             menuNodeVo.setSpread(true);
-//            menuNodeVo.setUrl(rootMenu.getMenuUrl());
 
-//            menuNodeVo.setName(rootMenu.getMenuName());
-//            menuNodeVo.setMenuId(rootMenuId);
             menuNodeVoList.add(menuNodeVo);
-        });
+        }
+//        rootMenus.forEach(rootMenu -> {
+//            MenuNodeVo menuNodeVo = this.convertMenuNode(rootMenu);
+//
+//            Long rootMenuId = rootMenu.getId();
+//            List<MenuNodeVo> subMenuNodeVoList = this.getSubMenuNodeVoList(rootMenuId, userId, userMenuIdSet);
+//            menuNodeVo.setChildren(subMenuNodeVoList);
+//            menuNodeVo.setSpread(true);
+////            menuNodeVo.setUrl(rootMenu.getMenuUrl());
+//
+////            menuNodeVo.setName(rootMenu.getMenuName());
+////            menuNodeVo.setMenuId(rootMenuId);
+//            menuNodeVoList.add(menuNodeVo);
+//        });
         
         return menuNodeVoList;
     }
@@ -77,27 +110,56 @@ public class SysMenusServiceImpl extends ServiceImpl<SysMenusMapper, SysMenus> i
      * @param menuId
      * @return
      */
-    public List<MenuNodeVo> getSubMenuNodeVoList(Long menuId) {
+    public List<MenuNodeVo> getSubMenuNodeVoList(Long menuId, String userId, Set<String> userMenuIdSet) {
         List<MenuNodeVo> menuNodeVoList = new ArrayList<>();
 
-        QueryWrapper<SysMenus> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("parent_id", menuId)
-                .eq("menu_type", 0)
-                .orderByAsc("num");;
-        List<SysMenus> parentMenus = this.list(queryWrapper);
-        parentMenus.forEach(subMenu -> {
-            MenuNodeVo menuNodeVo = this.convertMenuNode(subMenu);
+        if (!StringUtils.isEmpty(userId) && null == userMenuIdSet) {
+            userMenuIdSet = new HashSet<>();
+        }
 
-            Long rootMenuId = subMenu.getId();
-            List<MenuNodeVo> subMenuNodeVoList = getSubMenuNodeVoList(rootMenuId);
-            menuNodeVo.setChildren(subMenuNodeVoList);
-            menuNodeVo.setSpread(true);
-//            menuNodeVo.setUrl(subMenu.getMenuUrl());
+        // 如果当前登录用户是sysadmin或者说菜单列表包含当前菜单id
+        if (StringUtils.isEmpty(userId) ||
+                (!StringUtils.isEmpty(userId) && userMenuIdSet.contains(menuId + ""))
+                ) {
+
+            QueryWrapper<SysMenus> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("parent_id", menuId)
+                    .eq("menu_type", 0)
+                    .orderByAsc("num");
+            List<SysMenus> parentMenus = this.list(queryWrapper);
+            for (SysMenus subMenu : parentMenus) {
+                MenuNodeVo menuNodeVo = this.convertMenuNode(subMenu);
+
+                Long rootMenuId = subMenu.getId();
+                if (StringUtils.isEmpty(userId) ||
+                        (!StringUtils.isEmpty(userId) && userMenuIdSet.contains(rootMenuId + ""))
+                        ) {
+                    List<MenuNodeVo> subMenuNodeVoList = getSubMenuNodeVoList(rootMenuId, userId, userMenuIdSet);
+                    menuNodeVo.setChildren(subMenuNodeVoList);
+                    menuNodeVo.setSpread(true);
 //
-//            menuNodeVo.setName(subMenu.getMenuName());
-//            menuNodeVo.setMenuId(rootMenuId);
-            menuNodeVoList.add(menuNodeVo);
-        });
+                    menuNodeVoList.add(menuNodeVo);
+                } else {
+                    continue;
+                }
+
+            }
+        }
+
+
+//        parentMenus.forEach(subMenu -> {
+//            MenuNodeVo menuNodeVo = this.convertMenuNode(subMenu);
+//
+//            Long rootMenuId = subMenu.getId();
+//            List<MenuNodeVo> subMenuNodeVoList = getSubMenuNodeVoList(rootMenuId, userId, userMenuIdSet);
+//            menuNodeVo.setChildren(subMenuNodeVoList);
+//            menuNodeVo.setSpread(true);
+////            menuNodeVo.setUrl(subMenu.getMenuUrl());
+////
+////            menuNodeVo.setName(subMenu.getMenuName());
+////            menuNodeVo.setMenuId(rootMenuId);
+//            menuNodeVoList.add(menuNodeVo);
+//        });
         return menuNodeVoList;
     }
 

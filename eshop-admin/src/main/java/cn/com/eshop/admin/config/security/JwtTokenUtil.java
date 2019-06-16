@@ -50,6 +50,7 @@ public abstract class JwtTokenUtil implements Serializable {
         try {
             claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
         } catch (Exception e) {
+            e.printStackTrace();
             claims = null;
         }
         return claims;
@@ -86,6 +87,7 @@ public abstract class JwtTokenUtil implements Serializable {
             Claims claims = getClaimsFromToken(token);
             username = claims.getSubject();
         } catch (Exception e) {
+            e.printStackTrace();
             username = null;
         }
         return username;
@@ -103,6 +105,7 @@ public abstract class JwtTokenUtil implements Serializable {
             Date expiration = claims.getExpiration();
             return expiration.before(new Date());
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -120,6 +123,7 @@ public abstract class JwtTokenUtil implements Serializable {
             claims.put("created", new Date());
             refreshedToken = generateToken(claims);
         } catch (Exception e) {
+            e.printStackTrace();
             refreshedToken = null;
         }
         return refreshedToken;

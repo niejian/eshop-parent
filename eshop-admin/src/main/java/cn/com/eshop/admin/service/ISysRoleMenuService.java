@@ -33,4 +33,12 @@ public interface ISysRoleMenuService extends IService<SysRoleMenu> {
      */
     List<SysRoleMenu> getRoleMenuByRoleId(String roleId) throws Exception;
 
+    /**
+     * 通过用户Id获取该账号的菜单信息
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    List<SysRoleMenu> getRoleMenuByUserId(String userId) throws Exception;
+
 }

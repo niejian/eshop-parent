@@ -135,6 +135,10 @@
 
         if (null != response) {
             var menuDatas = JSON.parse(response);
+            if (null == menuDatas || menuDatas.length <= 0) {
+                layer.alert("您还没有任何菜单，请联系管理员！")
+                return;
+            }
             menuDatas = menuDatas[0].children;
             var menuHtml = '';
             if (null == menuDatas || typeof (menuDatas) == 'undefined' ||
@@ -333,33 +337,40 @@
         });
         
         window.logout = function () {
-            var token = window.localStorage.getItem('token');
-            if (null == token || '' == token || typeof (token) === 'undefined') {
-                layer.msg('登录信息已过期，请重新登录！');
-                window.location = "login";
 
-                return;
-            }
+            layer.confirm('是否真的退出登录?', {icon: 3, title:'提示'}, function(index){
 
-            $.ajax({
-                url:"${base}/user/logout",
-                data:JSON.stringify({"token":token}),
-                type:"post",
-                contentType: "application/json; charset=utf-8",
-                dataType:"json",
-                success:function(data){
-                    if(data.success){
-                        var token2 = data.data;
+                var token = window.localStorage.getItem('token');
+                if (null == token || '' == token || typeof (token) === 'undefined') {
+                    layer.msg('登录信息已过期，请重新登录！');
+                    window.location = "login";
+
+                    return;
+                }
+
+                $.ajax({
+                    url:"${base}/user/logout",
+                    data:JSON.stringify({"token":token}),
+                    type:"post",
+                    contentType: "application/json; charset=utf-8",
+                    dataType:"json",
+                    async: false,
+                    success:function(data){
+                        if(data.success){
+                            var token2 = data.data;
 //                        alert(token2 == token)
 //                        window.localStorage.setItem("token2", token2);
 //                        window.localStorage.setItem("login_user_name", username);
-                        window.localStorage.clear();
-                        window.location = "index";
-                    }else{
-                        layer.msg(data.errMsg);
+                            window.localStorage.clear();
+                            window.location = "index";
+                        }else{
+                            layer.msg(data.errMsg);
+                        }
                     }
-                }
-            })
+                });
+                layer.close(index);
+            });
+
 
 
         }

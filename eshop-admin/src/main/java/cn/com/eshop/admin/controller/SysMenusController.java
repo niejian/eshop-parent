@@ -189,7 +189,13 @@ public class SysMenusController {
             bean = (SysMenus)JSONObject.toBean(jsonObject, SysMenus.class);
             // 设置parentIds
             String parentIds = bean.getParentIds();
-            bean.setParentIds(parentIds + "," + bean.getParentId());
+            if (StringUtils.isEmpty(parentIds)) {
+                bean.setParentIds("" + bean.getParentId());
+
+            } else {
+                bean.setParentIds(parentIds + "," + bean.getParentId());
+
+            }
             Date date = new Date();
             bean.setCreateBy("sys");
             bean.setCreateTime(date);
