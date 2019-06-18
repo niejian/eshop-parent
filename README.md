@@ -1,7 +1,16 @@
 ### 简介
 使用的是springboot搭建的快速开发框架。springboot模块只用了web模块。后续有需要会继续加上
 需要装上lomok插件
-#### 代码生成模块
+#### 主要插件
+##### 前端 
+ 1. jquery
+ 2. layui
+##### 后端 
+ 1. springboot 2.1.0
+ 2. mybatisplus
+ 3. jjwt
+ 4. freemarker
+##### 代码生成模块
 代码在`admin模块`下的`utils`包下面。
 1. 确定该模块下有哪些业务表。将页面表名复制到下面，144行左右
     ```java
