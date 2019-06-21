@@ -63,8 +63,21 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public SysUser getUserByUserName(String userName) throws Exception {
         QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+        // 用户名唯一，即使是置为无效用户，也是唯一
         queryWrapper.eq("user_name", userName);
         SysUser user = this.getOne(queryWrapper);
         return user;
+    }
+
+    /**
+     * @param user
+     * @return
+     * @throws Exception
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public boolean updateUser(SysUser user) throws Exception {
+
+        return updateById(user);
     }
 }

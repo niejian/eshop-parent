@@ -2,14 +2,10 @@ package cn.com.eshop.admin.controller;/**
  * Created by niejian on 2019/5/18.
  */
 
-import cn.com.eshop.admin.config.security.JwtUser;
 import cn.com.eshop.admin.config.security.TokenUtil;
-import cn.com.eshop.admin.entity.SysMenus;
-import cn.com.eshop.admin.entity.SysRole;
 import cn.com.eshop.admin.entity.SysUser;
 import cn.com.eshop.admin.entity.SysUserRole;
 import cn.com.eshop.admin.service.ISysMenusService;
-import cn.com.eshop.admin.service.ISysRoleService;
 import cn.com.eshop.admin.service.ISysUserRoleService;
 import cn.com.eshop.admin.service.ISysUserService;
 import cn.com.eshop.admin.utils.MenuNodeVo;
@@ -21,12 +17,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -35,14 +30,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -242,8 +235,6 @@ public class UserController {
 
             }
 
-
-
             menuNodeVoList = this.menusService.getUserMenuNodeVoList(userId);
             if (null == menuNodeVoList) {
                 menuNodeVoList = new ArrayList<>();
@@ -351,6 +342,126 @@ public class UserController {
 
 
         return vo.data(errMsg).success(success).errMsg("").errCode(errCode);
+    }
+
+    /**
+     * 用户信息管理
+     * @param request
+     * @return
+     */
+    @PreAuthorize("hasRole('sysadmin')")
+    @GetMapping("/userManage")
+    public ModelAndView userManage(HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView();
+
+        modelAndView.setViewName("user/userManage");
+        return modelAndView;
+
+    }
+
+    @PreAuthorize("hasRole('sysadmin')")
+    @ResponseBody
+    @PostMapping(value = "/manageUserList")
+    public TableResultVo<SysUser> editRole(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
+
+        TableResultVo<SysUser> tableResultVo = new TableResultVo<>();
+        ResultBeanVo<List<SysUser>> userResultBeanVo = new ResultBeanVo<>();
+        boolean success = CommonInstance.ERR;
+        Integer errCode = CommonInstance.ERR_CODE;
+        String errMsg = CommonInstance.ERR_MSG;
+        List<SysUser> beans = new ArrayList<>();
+        int count = 0;
+
+        try {
+            String userName = jsonObject.optString("userName", null);
+            String userNickName = jsonObject.optString("userNickName", null);
+            Integer pageNum = jsonObject.optInt("page", 1);
+            Integer pageSize = jsonObject.optInt("limit", 10);
+            Page<SysUser> page = new Page<>(pageNum, pageSize);
+            QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+
+            if (null != userName) {
+                queryWrapper.like("user_name", "%" + userName + "%");
+
+
+            }
+
+            if (null != userNickName) {
+                queryWrapper.like("user_nick_name", "%" + userNickName + "%");
+
+            }
+            IPage<SysUser> sysUserPages = this.sysUserService.page(page, queryWrapper);
+            if (null != sysUserPages) {
+                beans = sysUserPages.getRecords();
+            }
+            // 获取记录总数
+            count = this.sysUserService.count(queryWrapper);
+            success = CommonInstance.SUCCESS;
+            errCode = CommonInstance.SUCCESS_CODE;
+            errMsg = CommonInstance.SUCCESS_MSG;
+
+
+        } catch (Exception e) {
+            errMsg = e.getMessage();
+            log.error(e.getMessage());
+            e.printStackTrace();
+        }
+
+
+        return tableResultVo.code(errCode).count(count).data(beans).msg(errMsg);
+
+    }
+
+    @PreAuthorize("hasRole('sysadmin')")
+    @ResponseBody
+    @PostMapping(value = "/updateUser")
+    public ResultBeanVo<String> updateUser(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
+        boolean success = CommonInstance.ERR;
+        Integer errCode = CommonInstance.ERR_CODE;
+        String errMsg = CommonInstance.ERR_MSG;
+        ResultBeanVo<String> result = new ResultBeanVo<>();
+        CommonFunction.beforeProcess(log, jsonObject);
+        boolean isContinue = true;
+
+        try {
+            String id = jsonObject.optString("id", null);
+            boolean deleteFlag = jsonObject.optBoolean("deleteFlag", false);
+
+            if (StringUtils.isEmpty(id)) {
+                isContinue = false;
+                errMsg = "请选择一条数据";
+            }
+            SysUser user = null;
+            if (isContinue) {
+                user = this.sysUserService.getById(id);
+                if (null == user) {
+                    isContinue = false;
+                    errMsg = "用户不存在，请重新选择";
+                }
+            }
+
+            if (isContinue) {
+                user.setDeleteFlag(deleteFlag);
+                user.setModifyTime(new Date());
+                this.sysUserService.updateUser(user);
+                success = CommonInstance.SUCCESS;
+                errCode = CommonInstance.SUCCESS_CODE;
+                errMsg = CommonInstance.SUCCESS_MSG;
+
+            }
+
+
+        } catch (Exception e) {
+            CommonFunction.genErrorMessage(log, e);
+            e.printStackTrace();
+        }
+
+        return result.success(success)
+                .errCode(errCode)
+                .errMsg(errMsg);
+
+
+
     }
 
 

@@ -29,4 +29,12 @@ public interface ISysUserService extends IService<SysUser> {
      * @throws Exception
      */
     SysUser getUserByUserName(String userName) throws Exception;
+
+    /**
+     *
+     * @param user
+     * @return
+     * @throws Exception
+     */
+    boolean updateUser(SysUser user) throws Exception;
 }

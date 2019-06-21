@@ -1,12 +1,12 @@
 package cn.com.eshop.admin.entity;
 
     import com.baomidou.mybatisplus.annotation.IdType;
-    import java.util.Date;
-    import com.baomidou.mybatisplus.annotation.TableId;
-    import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.baomidou.mybatisplus.annotation.TableId;
+    import com.fasterxml.jackson.annotation.JsonFormat;
     import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-    import java.io.Serializable;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
 * <p>
@@ -37,11 +37,12 @@ package cn.com.eshop.admin.entity;
             */
     private String avatar;
     private Boolean deleteFlag;
-
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
     private Date createTime;
 
     private String createBy;
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
     private Date modifyTime;
 
     private String modifyBy;
