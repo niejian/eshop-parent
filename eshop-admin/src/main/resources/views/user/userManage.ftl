@@ -40,21 +40,6 @@
     </form>
     <br/>
 </fieldset>
-<#--角色管理页面-->
-<fieldset class="layui-elem-field site-demo-button">
-    <div class="demoTable" style="margin-bottom: 10px">
-        <@security.authorize access="hasRole('sysadmin')">
-        <#--        <@security.authorize access="isAuthenticated()">-->
-            <button class="layui-btn layui-btn-radius" data-type="add"> <i class="layui-icon layui-icon-add-1"></i> 添加</button>
-            <button class="layui-btn layui-btn-normal layui-btn-radius" data-type="edit"> <i class="layui-icon layui-icon-edit"></i>编辑</button>
-
-
-            <button class="layui-btn layui-btn-warm layui-btn-radius" onclick="view()"> <i class="layui-icon layui-icon-file"></i>查看</button>
-            <button class="layui-btn layui-btn-radius" onclick="bindMenu()"> <i class="layui-icon layui-icon-add-circle"></i>绑定菜单</button>
-            <button class="layui-btn  layui-btn-danger layui-btn-radius"> <i class="layui-icon layui-icon-delete"></i>删除</button>
-        </@security.authorize>
-    </div>
-</fieldset>
 
 
 

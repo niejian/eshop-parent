@@ -29,6 +29,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -56,6 +57,8 @@ public class UserController {
     private ISysUserService sysUserService;
     @Autowired
     private ISysUserRoleService userRoleService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     @Autowired
@@ -93,19 +96,18 @@ public class UserController {
             }
 
             if (isContinue) {
-                UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(username, password);
-                Authentication authentication = authenticationManager.authenticate(upToken);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                UserDetails userDetails = (UserDetails)authentication.getPrincipal();
-                // 将token返回出去
-                token = tokenUtil.generateToken(userDetails);
-                HttpSession session = request.getSession();
-                session.setAttribute("login_token", token);
-                session.setAttribute("auth_user_info_" + username, JSONObject.fromObject(userDetails));
+                token = loginToken( username, password);
 
-                success = CommonInstance.SUCCESS;
-                errCode = CommonInstance.SUCCESS_CODE;
-                errMsg = CommonInstance.SUCCESS_MSG;
+                if (!StringUtils.isEmpty(token)) {
+                    HttpSession session = request.getSession();
+                    session.setAttribute("login_token", token);
+//                session.setAttribute("auth_user_info_" + username, JSONObject.fromObject(userDetails));
+
+                    success = CommonInstance.SUCCESS;
+                    errCode = CommonInstance.SUCCESS_CODE;
+                    errMsg = CommonInstance.SUCCESS_MSG;
+                }
+
             }
 
 
@@ -124,6 +126,16 @@ public class UserController {
         }
 
         return vo.data(token).success(success).errMsg(errMsg).errCode(errCode);
+    }
+
+    private String loginToken(String userName, String password) throws Exception{
+        UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(userName, password);
+        Authentication authentication = authenticationManager.authenticate(upToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserDetails userDetails = (UserDetails)authentication.getPrincipal();
+        // 将token返回出去
+        String token = tokenUtil.generateToken(userDetails);
+        return token;
     }
 
     @GetMapping(value = "/register")
@@ -463,6 +475,157 @@ public class UserController {
 
 
     }
+
+    @ResponseBody
+    @PostMapping(value = "/validPassword")
+    public ResultBeanVo<String> validPassword(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
+        boolean success = CommonInstance.ERR;
+        Integer errCode = CommonInstance.ERR_CODE;
+        String errMsg = CommonInstance.ERR_MSG;
+        ResultBeanVo<String> result = new ResultBeanVo<>();
+        CommonFunction.beforeProcess(log, jsonObject);
+        boolean isContinue = true;
+        String data = null;
+
+
+
+        try {
+            String userName = jsonObject.optString("userName", null);
+            String password = jsonObject.optString("password", null);
+
+            if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(password)) {
+                isContinue = false;
+                errMsg = "请输入旧密码";
+            }
+
+            if (isContinue) {
+//                password = passwordEncoder.encode(password);
+                String token = loginToken( userName, password);
+
+                if (null != token) {
+                    success = CommonInstance.SUCCESS;
+                    errCode = CommonInstance.SUCCESS_CODE;
+                } else {
+                    success = CommonInstance.SUCCESS;
+                    errCode = CommonInstance.SUCCESS_CODE;
+
+                    errMsg = "原密码不对，请重新输入";
+                    data = errMsg;
+                }
+
+
+            }
+
+        } catch (Exception e) {
+            CommonFunction.genErrorMessage(log, e);
+            if (e instanceof BadCredentialsException) {
+                success = CommonInstance.SUCCESS;
+                errCode = CommonInstance.SUCCESS_CODE;
+                errMsg = "原密码不对，请重新输入";
+                data = errMsg;
+            } else if (e instanceof InternalAuthenticationServiceException) {
+                success = CommonInstance.SUCCESS;
+                errCode = CommonInstance.SUCCESS_CODE;
+                errMsg = "用户不存在，请先注册再登陆";
+                data = errMsg;
+            }
+
+            e.printStackTrace();
+        }
+
+        return result.success(success)
+                .errCode(errCode)
+                .errMsg(errMsg).data(data);
+
+    }
+
+    /**
+     * 更新密码处理方法
+     * @param request
+     * @param jsonObject
+     * @return
+     */
+    @ResponseBody
+    @PostMapping(value = "/doUpdatePassword")
+    public ResultBeanVo<String> doUpdatePassword(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
+        boolean success = CommonInstance.ERR;
+        Integer errCode = CommonInstance.ERR_CODE;
+        String errMsg = CommonInstance.ERR_MSG;
+        ResultBeanVo<String> result = new ResultBeanVo<>();
+        CommonFunction.beforeProcess(log, jsonObject);
+        boolean isContinue = true;
+        String data = null;
+
+        try {
+            String userName = jsonObject.optString("userName", null);
+            String oldpassword = jsonObject.optString("olduserPassword", null);
+            String newpassword = jsonObject.optString("newuserPassword", null);
+
+            if (StringUtils.isEmpty(userName) ) {
+                isContinue = false;
+                errMsg = "用户名为空";
+            }
+
+            if (isContinue && StringUtils.isEmpty(oldpassword)) {
+                isContinue = false;
+                errMsg = "请输入旧密码";
+            }
+
+            if (isContinue && StringUtils.isEmpty(oldpassword)) {
+                isContinue = false;
+                errMsg = "请输入新密码";
+            }
+
+            if (isContinue) {
+//                password = passwordEncoder.encode(password);
+                String token = loginToken( userName, oldpassword);
+                // 能登录
+                if (null != token) {
+                    success = CommonInstance.SUCCESS;
+                    errCode = CommonInstance.SUCCESS_CODE;
+                    QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+                    queryWrapper.eq("delete_flag", 0).eq("user_name", userName);
+                    SysUser user = this.sysUserService.getOne(queryWrapper);
+                    if (null != user) {
+                        newpassword = passwordEncoder.encode(newpassword);
+                        user.setModifyTime(new Date());
+                        user.setUserPassword(newpassword);
+                        sysUserService.updateUser(user);
+                    } else {
+                        errMsg = "原密码不对，请重新输入";
+                    }
+                } else {
+
+                    errMsg = "原密码不对，请重新输入";
+                    data = errMsg;
+                }
+
+
+            }
+
+        } catch (Exception e) {
+            CommonFunction.genErrorMessage(log, e);
+            if (e instanceof BadCredentialsException) {
+                success = CommonInstance.SUCCESS;
+                errCode = CommonInstance.SUCCESS_CODE;
+                errMsg = "原密码不对，请重新输入";
+                data = errMsg;
+            } else if (e instanceof InternalAuthenticationServiceException) {
+                success = CommonInstance.SUCCESS;
+                errCode = CommonInstance.SUCCESS_CODE;
+                errMsg = "用户不存在，请先注册再登陆";
+                data = errMsg;
+            }
+
+            e.printStackTrace();
+        }
+
+        return result.success(success)
+                .errCode(errCode)
+                .errMsg(errMsg).data(data);
+
+    }
+
 
 
 }

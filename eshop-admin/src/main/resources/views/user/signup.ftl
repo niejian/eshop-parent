@@ -115,7 +115,6 @@
                     return '用户名长度至少为4';
                 }
 
-                debugger
                  // 校验用户名是否唯一
                  var msg = valifyUserName(value);
 
@@ -168,7 +167,7 @@
 
                     var isSuccess = data.success;
                     var responseData = data.data;
-debugger
+
                     if (!isSuccess) {
                         layer.alert(data.errMsg);
                     } else if (isSuccess && null != responseData){
@@ -185,7 +184,7 @@ debugger
         form.on('submit(registry)', function(data){
             // layer.msg(JSON.stringify(data.field));
             //return false;
-            debugger
+
             // md5 密码
             var pwd = data.field.userPassword;
             if (null == pwd || '' == pwd || typeof (pwd) == 'undefined') {

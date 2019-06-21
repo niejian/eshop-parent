@@ -1,0 +1,24 @@
+.iconLabel {
+    position: absolute;
+    line-height: 40px;
+    height: 40px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.registInput {
+    padding-left: 40px;
+    height: 40px;
+    line-height: 40px;
+    width:300px;
+
+}
+
+.registDiv{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.submitForm {
+    margin-top: 10px;
+}

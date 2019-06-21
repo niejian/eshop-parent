@@ -81,7 +81,7 @@
             id: "register",
             title: "用户注册",
             type: 2,
-            area: ["500px", "600px",],
+            area: ["500px", "600px"],
             content: url,
             success: function(layero, index){
                 //console.log("add--" + index);
