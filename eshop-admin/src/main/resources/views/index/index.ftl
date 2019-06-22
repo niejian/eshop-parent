@@ -498,11 +498,7 @@
             var userName = window.localStorage.getItem('login_user_name');
             data.field.userName = userName;
             var postJSON = JSON.stringify(data.field);
-/*
-confirmPassword: "niejian123"
-newuserPassword: "niejian123"
-olduserPassword: "qq123123"
- */
+
             // 验证成功，提交数据
             $.ajax({
                 url: '${cx}/user/doUpdatePassword',

@@ -53,9 +53,9 @@
 </script>
 <#--显示操作按钮-->
 <script type="text/html" id="opBar">
-    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
-    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <#--<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>-->
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑权限</a>
+    <#--<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
 </script>
 
 <script type="text/html" id="statusTpl">
@@ -63,9 +63,6 @@
 </script>
 
 <script type="text/javascript">
-
-    var roles = new Array();
-
 
     layui.use(['element', 'table', 'form'], function() {
         var table = layui.table;
@@ -77,7 +74,7 @@
         table.render({
             elem: '#users',
             // height: 500,
-            url: '${cx}/user/manageUserList', //数据接口,
+            url: '${ctx}/user/manageUserList', //数据接口,
             <#--data: '${roles}',-->
             method: 'post',
             contentType: "application/json",
@@ -127,6 +124,7 @@
             var data = obj.data //获得当前行数据
                 ,layEvent = obj.event; //获得 lay-event 对应的值
             if(layEvent === 'detail'){
+
                 layer.msg('查看操作');
             } else if(layEvent === 'del'){
                 layer.confirm('真的删除行么', function(index){
@@ -135,9 +133,87 @@
                     //向服务端发送删除指令
                 });
             } else if(layEvent === 'edit'){
+                debugger
+                console.log(data);
+                var userId = data.id;
+                changeUserRole(userId);
                 layer.msg('编辑操作');
             }
         });
+
+        // 编辑用户权限
+        window.changeUserRole = function(userId) {
+
+
+            var url = "${cx}/user/role/updateUserRole?userId=" + userId;
+            layer.open({
+                id: "updateUserRole",
+                title: "添加用户角色信息",
+                type: 2,
+                area: ["90%", "50%"],
+                content: url,
+                success: function(layero, index){
+                    //console.log("add--" + index);
+                },
+                end: function () {
+                    //resetForm();
+                    //刷新表格数据
+                    search();
+                },
+                cancel: function (index, layero) {
+
+                    layer.confirm('关闭后将无法保存已填写的数据，是否确认关闭', function (index2) {
+                        layer.close(index);
+                        layer.close(index2);
+                    });
+                    //resetForm();
+                    search();
+                    return false;
+                }
+            });
+           // searchRole()
+            table.render({
+                elem: '#changeUserRole',
+                // height: 500,
+                url: '${ctx}/user/role/getRoles', //数据接口,
+            <#--data: '${roles}',-->
+                method: 'post',
+                contentType: "application/json",
+                limit: 10, // 每页条数
+                limits: [10,20,50],  //每页条数的选择项，默认：[10,20,30,40,50,60,70,80,90]
+                parseData: function(res) { //res 即为原始返回的数据
+                    return {
+                        "code": res.code, //解析接口状态
+                        "msg": res.msg, //解析提示文本
+                        "count": res.count, //解析数据长度
+                        "data": res.data //解析数据列表
+                    };
+                },
+                // 请求参数
+
+                where: {},
+//             data: roles,
+                page: true, //开启分页
+                cols: [[ //表头, 这里要加两个中括号不然显示不出数据
+
+                    {title:'#',width:80, type: 'radio'},
+                    {title: '序号', width:80, align:"center", templet:'#tableIndex'}, //显示序号
+                    {field: 'id', title: 'id', width:80, sort: true, align: 'center', fixed:"left", hide:true},
+                    {field: 'roleCode', title: '角色编码',  sort: true, align: 'center'},
+                    {field: 'roleName', title: '角色名称',  sort: true, align: 'center'},
+                    {field: 'createTime', title: '创建时间',  sort: true, align: 'center'},
+                    {field: 'createBy', title: '创建人',  sort: true, align: 'center'},
+                    {field: 'modifyTime', title: '修改时间',  sort: true, align: 'center'},
+                    {field: 'modifyBy', title: '修改人',  sort: true, align: 'center'}
+
+                ]],
+                done:function (res) {   //返回数据执行回调函数
+                    layer.close(index);    //返回数据关闭loading
+
+                }
+
+            });
+        };
 
         // switch转换，获取到当前行的id
         form.on('switch(switchChange)', function(obj){
@@ -201,84 +277,26 @@
             // console.log(obj.data);
         });
 
-        // 查看按钮点击事件
-        window.view = function () {
-            var checkStatus = table.checkStatus('users'); // table标签的id属性
-            var data = checkStatus.data;
-            if (null == data || data.length == 0) {
-                layer.msg('请选择一条数据进行操作');
 
-                return;
-            }
+        // 选中行时，当前行被选中
+        table.on('row(roles)', function(obj){
 
-            var id = data[0].id;
-
-            var url = "${cx}/user/role/editRole?type=view&id=" + id;
-            layer.open({
-                id: "editRole",
-                title: "查看角色信息",
-                type: 2,
-                area: ["90%", "50%"],
-                content: url,
-                success: function(layero, index){
-                    //console.log("add--" + index);
-                },
-                end: function () {
-                    //resetForm();
-                    //刷新表格数据
-                    search();
-                },
-                cancel: function (index, layero) {
-                    layer.close(index);
-
-                    //resetForm();
-                    search();
-                    return false;
+            obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');//选中行样式
+            obj.tr.find('input[lay-type="layTableRadio"]').prop("checked",true);
+            var index = obj.tr.data('index')
+            var thisData = table.cache.roles;//tableName 表名
+            //重置数据单选属性
+            layui.each(thisData, function(i, item){
+                if(index === i){
+                    item.LAY_CHECKED = true;
+                } else {
+                    delete item.LAY_CHECKED;
                 }
             });
 
-        };
-
-        // 绑定菜单、按钮信息
-        window.bindMenu = function() {
-            var checkStatus = table.checkStatus('users'); // table标签的id属性
-            var data = checkStatus.data;
-            if (null == data || data.length == 0) {
-                layer.msg('请选择一条数据进行操作');
-
-                return;
-            }
-
-            // roleId
-            var id = data[0].id;
-            var url = "${ctx}/user/role/manageRoleMenu?id=" + id;
-            layer.open({
-                id: "manageRoleMenu",
-                title: "角色菜单管理",
-                type: 2,
-                area: ["500px", "500px"], // 宽200高度自适应
-                content: url,
-                success: function(layero, index){
-                    // 获取子页面的iframe
-                    var iframe = window['layui-layer-iframe' + index];
-                    // 向子页面的全局函数getRoleId传参
-                    iframe.getRoleId(id);
-                },
-                end: function () {
-                    //resetForm();
-                    //刷新表格数据
-                    search();
-                },
-                cancel: function (index, layero) {
-                    layer.close(index);
-
-                    //resetForm();
-                    search();
-                    return false;
-                }
-            });
-
-        };
+            form.render('radio');
+            // console.log(obj.data);
+        });
 
         // 重新加载表格信息
         window.search = function() {
@@ -296,90 +314,13 @@
 
         }
 
-        // 自定义js方法
-        var $ = layui.$, active = {
-            edit: function() { //获取选中数据
-
-                var checkStatus = table.checkStatus('users'); // table标签的id属性
-                var data = checkStatus.data;
-                if (null == data || data.length == 0) {
-                    layer.msg('请选择一条数据进行编辑');
-
-                    return;
-                }
-
-                //layer.alert(JSON.stringify(data));
-
-                var id = data[0].id;
-
-                var url = "${cx}/user/role/editRole?type=edit&id=" + id;
-                layer.open({
-                    id: "editRole",
-                    title: "更新角色信息",
-                    type: 2,
-                    area: ["90%", "50%"],
-                    content: url,
-                    success: function(layero, index){
-                        //console.log("add--" + index);
-                    },
-                    end: function () {
-                        //resetForm();
-                        //刷新表格数据
-                        search();
-                    },
-                    cancel: function (index, layero) {
-
-                        layer.confirm('关闭后将无法保存已填写的数据，是否确认关闭', function (index2) {
-                            layer.close(index);
-                            layer.close(index2);
-                        });
-                        //resetForm();
-                        search();
-                        return false;
-                    }
-                });
-            },
-            add: function () {
-                var url = "${cx}/user/role/addRole";
-                layer.open({
-                    id: "addRole",
-                    title: "添加角色信息",
-                    type: 2,
-                    area: ["90%", "50%"],
-                    content: url,
-                    success: function(layero, index){
-                        //console.log("add--" + index);
-                    },
-                    end: function () {
-                        //resetForm();
-                        //刷新表格数据
-                        search();
-                    },
-                    cancel: function (index, layero) {
-
-                        layer.confirm('关闭后将无法保存已填写的数据，是否确认关闭', function (index2) {
-                            layer.close(index);
-                            layer.close(index2);
-                        });
-                        //resetForm();
-                        search();
-                        return false;
-                    }
-                });
-            }
-
-        };
-
-        $('.demoTable .layui-btn').on('click', function(){
-            var type = $(this).data('type');
-            active[type] ? active[type].call(this) : '';
-        });
-
 
     });
 
 
 </script>
-
-
 </html>
+<form class="layui-form" action="" id="changepasswordForm" >
+
+    <table class="layui-hide" id="changeUserRole" lay-filter='changeUserRole' ></table>
+</form>

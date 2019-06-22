@@ -443,6 +443,24 @@ public class UserController {
                 isContinue = false;
                 errMsg = "请选择一条数据";
             }
+
+            // 当前登录用户名
+            String currentUserName = "";
+
+            //自己不能删除自己
+            if (isContinue) {
+                // 获取当前登录用户信息
+                HttpSession session = request.getSession();
+                String token = (String)session.getAttribute(LOGIN_TOKEN);
+
+                currentUserName = tokenUtil.getUsernameFromToken(token.replace("Bearer ", ""));
+
+                if (StringUtils.isEmpty(currentUserName)) {
+                    isContinue = false;
+                    errMsg = "用户不存在，请重新选择";
+                }
+
+            }
             SysUser user = null;
             if (isContinue) {
                 user = this.sysUserService.getById(id);
@@ -451,6 +469,15 @@ public class UserController {
                     errMsg = "用户不存在，请重新选择";
                 }
             }
+
+            if (isContinue && currentUserName.equals(user.getUserName())
+                    && deleteFlag) {
+                isContinue = false;
+                errMsg = "自己不能删除自己，请重新选择";
+            }
+
+
+
 
             if (isContinue) {
                 user.setDeleteFlag(deleteFlag);
@@ -499,7 +526,6 @@ public class UserController {
             }
 
             if (isContinue) {
-//                password = passwordEncoder.encode(password);
                 String token = loginToken( userName, password);
 
                 if (null != token) {
