@@ -326,5 +326,13 @@ public class SysMenusController {
 
         return vo.data(bean).success(success).errMsg(errMsg).errCode(errCode);
     }
+
+
+    // 数据统计页面
+    @GetMapping(value = "/dataCount")
+    public ModelAndView dataCount(HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView("user/data/dataCount");
+        return modelAndView;
+    }
 }
 

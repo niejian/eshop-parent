@@ -2,14 +2,10 @@ package cn.com.eshop.admin.controller;/**
  * Created by niejian on 2019/5/18.
  */
 
-import cn.com.eshop.admin.config.security.JwtUser;
 import cn.com.eshop.admin.config.security.TokenUtil;
-import cn.com.eshop.admin.entity.SysMenus;
-import cn.com.eshop.admin.entity.SysRole;
 import cn.com.eshop.admin.entity.SysUser;
 import cn.com.eshop.admin.entity.SysUserRole;
 import cn.com.eshop.admin.service.ISysMenusService;
-import cn.com.eshop.admin.service.ISysRoleService;
 import cn.com.eshop.admin.service.ISysUserRoleService;
 import cn.com.eshop.admin.service.ISysUserService;
 import cn.com.eshop.admin.utils.MenuNodeVo;
@@ -21,12 +17,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -34,15 +29,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -63,6 +57,8 @@ public class UserController {
     private ISysUserService sysUserService;
     @Autowired
     private ISysUserRoleService userRoleService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     @Autowired
@@ -100,19 +96,18 @@ public class UserController {
             }
 
             if (isContinue) {
-                UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(username, password);
-                Authentication authentication = authenticationManager.authenticate(upToken);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                UserDetails userDetails = (UserDetails)authentication.getPrincipal();
-                // 将token返回出去
-                token = tokenUtil.generateToken(userDetails);
-                HttpSession session = request.getSession();
-                session.setAttribute("login_token", token);
-                session.setAttribute("auth_user_info_" + username, JSONObject.fromObject(userDetails));
+                token = loginToken( username, password);
 
-                success = CommonInstance.SUCCESS;
-                errCode = CommonInstance.SUCCESS_CODE;
-                errMsg = CommonInstance.SUCCESS_MSG;
+                if (!StringUtils.isEmpty(token)) {
+                    HttpSession session = request.getSession();
+                    session.setAttribute("login_token", token);
+//                session.setAttribute("auth_user_info_" + username, JSONObject.fromObject(userDetails));
+
+                    success = CommonInstance.SUCCESS;
+                    errCode = CommonInstance.SUCCESS_CODE;
+                    errMsg = CommonInstance.SUCCESS_MSG;
+                }
+
             }
 
 
@@ -131,6 +126,16 @@ public class UserController {
         }
 
         return vo.data(token).success(success).errMsg(errMsg).errCode(errCode);
+    }
+
+    private String loginToken(String userName, String password) throws Exception{
+        UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(userName, password);
+        Authentication authentication = authenticationManager.authenticate(upToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserDetails userDetails = (UserDetails)authentication.getPrincipal();
+        // 将token返回出去
+        String token = tokenUtil.generateToken(userDetails);
+        return token;
     }
 
     @GetMapping(value = "/register")
@@ -242,8 +247,6 @@ public class UserController {
 
             }
 
-
-
             menuNodeVoList = this.menusService.getUserMenuNodeVoList(userId);
             if (null == menuNodeVoList) {
                 menuNodeVoList = new ArrayList<>();
@@ -352,6 +355,303 @@ public class UserController {
 
         return vo.data(errMsg).success(success).errMsg("").errCode(errCode);
     }
+
+    /**
+     * 用户信息管理
+     * @param request
+     * @return
+     */
+    @PreAuthorize("hasRole('sysadmin')")
+    @GetMapping("/userManage")
+    public ModelAndView userManage(HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView();
+
+        modelAndView.setViewName("user/userManage");
+        return modelAndView;
+
+    }
+
+    @PreAuthorize("hasRole('sysadmin')")
+    @ResponseBody
+    @PostMapping(value = "/manageUserList")
+    public TableResultVo<SysUser> editRole(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
+
+        TableResultVo<SysUser> tableResultVo = new TableResultVo<>();
+        ResultBeanVo<List<SysUser>> userResultBeanVo = new ResultBeanVo<>();
+        boolean success = CommonInstance.ERR;
+        Integer errCode = CommonInstance.ERR_CODE;
+        String errMsg = CommonInstance.ERR_MSG;
+        List<SysUser> beans = new ArrayList<>();
+        int count = 0;
+
+        try {
+            String userName = jsonObject.optString("userName", null);
+            String userNickName = jsonObject.optString("userNickName", null);
+            Integer pageNum = jsonObject.optInt("page", 1);
+            Integer pageSize = jsonObject.optInt("limit", 10);
+            Page<SysUser> page = new Page<>(pageNum, pageSize);
+            QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+
+            if (null != userName) {
+                queryWrapper.like("user_name", "%" + userName + "%");
+
+
+            }
+
+            if (null != userNickName) {
+                queryWrapper.like("user_nick_name", "%" + userNickName + "%");
+
+            }
+            IPage<SysUser> sysUserPages = this.sysUserService.page(page, queryWrapper);
+            if (null != sysUserPages) {
+                beans = sysUserPages.getRecords();
+            }
+            // 获取记录总数
+            count = this.sysUserService.count(queryWrapper);
+            success = CommonInstance.SUCCESS;
+            errCode = CommonInstance.SUCCESS_CODE;
+            errMsg = CommonInstance.SUCCESS_MSG;
+
+
+        } catch (Exception e) {
+            errMsg = e.getMessage();
+            log.error(e.getMessage());
+            e.printStackTrace();
+        }
+
+
+        return tableResultVo.code(errCode).count(count).data(beans).msg(errMsg);
+
+    }
+
+    @PreAuthorize("hasRole('sysadmin')")
+    @ResponseBody
+    @PostMapping(value = "/updateUser")
+    public ResultBeanVo<String> updateUser(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
+        boolean success = CommonInstance.ERR;
+        Integer errCode = CommonInstance.ERR_CODE;
+        String errMsg = CommonInstance.ERR_MSG;
+        ResultBeanVo<String> result = new ResultBeanVo<>();
+        CommonFunction.beforeProcess(log, jsonObject);
+        boolean isContinue = true;
+
+        try {
+            String id = jsonObject.optString("id", null);
+            boolean deleteFlag = jsonObject.optBoolean("deleteFlag", false);
+
+            if (StringUtils.isEmpty(id)) {
+                isContinue = false;
+                errMsg = "请选择一条数据";
+            }
+
+            // 当前登录用户名
+            String currentUserName = "";
+
+            //自己不能删除自己
+            if (isContinue) {
+                // 获取当前登录用户信息
+                HttpSession session = request.getSession();
+                String token = (String)session.getAttribute(LOGIN_TOKEN);
+
+                currentUserName = tokenUtil.getUsernameFromToken(token.replace("Bearer ", ""));
+
+                if (StringUtils.isEmpty(currentUserName)) {
+                    isContinue = false;
+                    errMsg = "用户不存在，请重新选择";
+                }
+
+            }
+            SysUser user = null;
+            if (isContinue) {
+                user = this.sysUserService.getById(id);
+                if (null == user) {
+                    isContinue = false;
+                    errMsg = "用户不存在，请重新选择";
+                }
+            }
+
+            if (isContinue && currentUserName.equals(user.getUserName())
+                    && deleteFlag) {
+                isContinue = false;
+                errMsg = "自己不能删除自己，请重新选择";
+            }
+
+
+
+
+            if (isContinue) {
+                user.setDeleteFlag(deleteFlag);
+                user.setModifyTime(new Date());
+                this.sysUserService.updateUser(user);
+                success = CommonInstance.SUCCESS;
+                errCode = CommonInstance.SUCCESS_CODE;
+                errMsg = CommonInstance.SUCCESS_MSG;
+
+            }
+
+
+        } catch (Exception e) {
+            CommonFunction.genErrorMessage(log, e);
+            e.printStackTrace();
+        }
+
+        return result.success(success)
+                .errCode(errCode)
+                .errMsg(errMsg);
+
+
+
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/validPassword")
+    public ResultBeanVo<String> validPassword(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
+        boolean success = CommonInstance.ERR;
+        Integer errCode = CommonInstance.ERR_CODE;
+        String errMsg = CommonInstance.ERR_MSG;
+        ResultBeanVo<String> result = new ResultBeanVo<>();
+        CommonFunction.beforeProcess(log, jsonObject);
+        boolean isContinue = true;
+        String data = null;
+
+
+
+        try {
+            String userName = jsonObject.optString("userName", null);
+            String password = jsonObject.optString("password", null);
+
+            if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(password)) {
+                isContinue = false;
+                errMsg = "请输入旧密码";
+            }
+
+            if (isContinue) {
+                String token = loginToken( userName, password);
+
+                if (null != token) {
+                    success = CommonInstance.SUCCESS;
+                    errCode = CommonInstance.SUCCESS_CODE;
+                } else {
+                    success = CommonInstance.SUCCESS;
+                    errCode = CommonInstance.SUCCESS_CODE;
+
+                    errMsg = "原密码不对，请重新输入";
+                    data = errMsg;
+                }
+
+
+            }
+
+        } catch (Exception e) {
+            CommonFunction.genErrorMessage(log, e);
+            if (e instanceof BadCredentialsException) {
+                success = CommonInstance.SUCCESS;
+                errCode = CommonInstance.SUCCESS_CODE;
+                errMsg = "原密码不对，请重新输入";
+                data = errMsg;
+            } else if (e instanceof InternalAuthenticationServiceException) {
+                success = CommonInstance.SUCCESS;
+                errCode = CommonInstance.SUCCESS_CODE;
+                errMsg = "用户不存在，请先注册再登陆";
+                data = errMsg;
+            }
+
+            e.printStackTrace();
+        }
+
+        return result.success(success)
+                .errCode(errCode)
+                .errMsg(errMsg).data(data);
+
+    }
+
+    /**
+     * 更新密码处理方法
+     * @param request
+     * @param jsonObject
+     * @return
+     */
+    @ResponseBody
+    @PostMapping(value = "/doUpdatePassword")
+    public ResultBeanVo<String> doUpdatePassword(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
+        boolean success = CommonInstance.ERR;
+        Integer errCode = CommonInstance.ERR_CODE;
+        String errMsg = CommonInstance.ERR_MSG;
+        ResultBeanVo<String> result = new ResultBeanVo<>();
+        CommonFunction.beforeProcess(log, jsonObject);
+        boolean isContinue = true;
+        String data = null;
+
+        try {
+            String userName = jsonObject.optString("userName", null);
+            String oldpassword = jsonObject.optString("olduserPassword", null);
+            String newpassword = jsonObject.optString("newuserPassword", null);
+
+            if (StringUtils.isEmpty(userName) ) {
+                isContinue = false;
+                errMsg = "用户名为空";
+            }
+
+            if (isContinue && StringUtils.isEmpty(oldpassword)) {
+                isContinue = false;
+                errMsg = "请输入旧密码";
+            }
+
+            if (isContinue && StringUtils.isEmpty(oldpassword)) {
+                isContinue = false;
+                errMsg = "请输入新密码";
+            }
+
+            if (isContinue) {
+//                password = passwordEncoder.encode(password);
+                String token = loginToken( userName, oldpassword);
+                // 能登录
+                if (null != token) {
+                    success = CommonInstance.SUCCESS;
+                    errCode = CommonInstance.SUCCESS_CODE;
+                    QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+                    queryWrapper.eq("delete_flag", 0).eq("user_name", userName);
+                    SysUser user = this.sysUserService.getOne(queryWrapper);
+                    if (null != user) {
+                        newpassword = passwordEncoder.encode(newpassword);
+                        user.setModifyTime(new Date());
+                        user.setUserPassword(newpassword);
+                        sysUserService.updateUser(user);
+                    } else {
+                        errMsg = "原密码不对，请重新输入";
+                    }
+                } else {
+
+                    errMsg = "原密码不对，请重新输入";
+                    data = errMsg;
+                }
+
+
+            }
+
+        } catch (Exception e) {
+            CommonFunction.genErrorMessage(log, e);
+            if (e instanceof BadCredentialsException) {
+                success = CommonInstance.SUCCESS;
+                errCode = CommonInstance.SUCCESS_CODE;
+                errMsg = "原密码不对，请重新输入";
+                data = errMsg;
+            } else if (e instanceof InternalAuthenticationServiceException) {
+                success = CommonInstance.SUCCESS;
+                errCode = CommonInstance.SUCCESS_CODE;
+                errMsg = "用户不存在，请先注册再登陆";
+                data = errMsg;
+            }
+
+            e.printStackTrace();
+        }
+
+        return result.success(success)
+                .errCode(errCode)
+                .errMsg(errMsg).data(data);
+
+    }
+
 
 
 }

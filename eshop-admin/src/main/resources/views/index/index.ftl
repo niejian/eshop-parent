@@ -16,6 +16,9 @@
 
     <link href="${ctx}/statics/js/layer/css/layui.css" rel="stylesheet"/>
     <link href="${ctx}/statics/css/index.css" rel="stylesheet"/>
+    <link href="${ctx}/statics/css/signup.css" rel="stylesheet"/>
+    <script type="text/javascript" src="${ctx}/statics/js/md5.js"></script>
+
 
     <script>
         //iframe高度自适应
@@ -75,7 +78,7 @@
                 </a>
                 <dl class="layui-nav-child">
                     <dd><a href="javascript:;" lay-href="./userinfo.html"><i class="layui-icon layui-icon-form"></i>基本资料</a></dd>
-                    <dd><a href="javascript:;" lay-href="./changepassword.html"><i class="layui-icon layui-icon-password"></i>修改密码</a></dd>
+                    <dd><a onclick="changepassword()"><i class="layui-icon layui-icon-password"></i>修改密码</a></dd>
                 </dl>
             </li>
             <li class="layui-nav-item">
@@ -206,10 +209,11 @@
     }
 
 
-    layui.use(['element','layer'],function(){
+    layui.use(['element','layer', 'form'],function(){
         var element = layui.element
                 ,layer = layui.layer
-                ,$ = layui.jquery;
+                ,$ = layui.jquery
+            ,form = layui.form;
 
 
 
@@ -374,8 +378,208 @@
 
 
         }
+
+        window.changepassword = function() {
+            var token = window.localStorage.getItem('token');
+            if (null == token || '' == token || typeof (token) === 'undefined') {
+                layer.msg('登录信息已过期，请重新登录！');
+                window.location = "login";
+
+                return;
+            }
+
+            layer.open({
+                type: 1,
+                area: "500px",
+                content: $('#changepassword') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+            });
+        }
+
+        // 校验密码
+        window.validPassword = function(value) {
+            var msg = '';
+            if (null == value || '' == value) {
+                return '请输入原密码';
+            }
+
+            value = md5(value);
+            var userName = window.localStorage.getItem('login_user_name');
+            var postJSON = JSON.stringify({userName:userName, password: value})
+            $.ajax({
+                url: '${ctx}/user/validPassword',
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                data: postJSON,
+                async: false,
+                dataType: "json",
+                success: function(data){
+
+                    var isSuccess = data.success;
+                    var responseData = data.data;
+
+                    if (!isSuccess) {
+                        layer.alert(data.errMsg);
+                    } else if (isSuccess && null != responseData){
+                        msg =  "密码不对，请重试";
+                    }
+
+                }
+            });
+
+            return msg;
+        }
+
+        // 密码更新校验
+        // 表达校验信息
+        form.verify({
+
+
+            olduserPassword: function (value) {
+                if (null == value || '' == value) {
+                    return '请输入原密码';
+                }
+                // 校验密码复杂度
+                if (value.length < 6) {
+                    return '密码长度最少为6位';
+                }
+
+                if (! (/[A-Za-z]{1}/.test(value))) {
+                    return '密码需要至少包含一个英文字母';
+                }
+
+
+                var msg = validPassword(value);
+
+                if (null != msg && '' != msg && typeof (msg) != 'undefined') {
+                    return msg
+                }
+            },
+            newuserPassword: function (value) {
+                if (null == value || '' == value) {
+                    return '请输入新密码';
+                }
+                // 校验密码复杂度
+                if (value.length < 6) {
+                    return '密码长度最少为6位';
+                }
+
+                if (! (/[A-Za-z]{1}/.test(value))) {
+                    return '密码需要至少包含一个英文字母';
+                }
+            },
+            // 确认密码
+            confirmPassword: function(value) {
+                // 获取用户密码
+                var newuserPassword = $("input[name=newuserPassword]").val();
+
+                if (newuserPassword !== value) {
+                    return '两次密码输入不一致，请重新输入！';
+                }
+
+            }
+        });
+
+        //监听提交
+        form.on('submit(updatePassword)', function(data){
+            // layer.msg(JSON.stringify(data.field));
+            //return false;
+
+            // md5 密码
+            var newpwd = data.field.newuserPassword;
+            var pwd = data.field.olduserPassword;
+            if (null == pwd || '' == pwd || typeof (pwd) == 'undefined') {
+                layer.msg("请输入注册密码");
+                return false;
+            }
+
+            data.field.newuserPassword = md5(newpwd);
+            data.field.olduserPassword = md5(pwd);
+
+            var userName = window.localStorage.getItem('login_user_name');
+            data.field.userName = userName;
+            var postJSON = JSON.stringify(data.field);
+
+            // 验证成功，提交数据
+            $.ajax({
+                url: '${cx}/user/doUpdatePassword',
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                data: postJSON,
+                async: false,
+                dataType: "json",
+                success: function(data){
+
+                    var isSuccess = data.success;
+                    if (!isSuccess) {
+                        layer.alert(data.errMsg);
+                    } else {
+                        var msg ='密码更新成功';
+                        layer.alert(msg, function(index) {
+                            // 关闭当前提示的这个弹出层
+                            layer.close(index);
+                            // 关闭当前的弹出页面
+                            var layIndex = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(layIndex);
+                        });
+
+                    }
+
+                }
+            });
+
+            // 必须加上这个
+            return false;
+
+        });
     });
 </script>
 
 </body>
 </html>
+<form class="layui-form" action="" id="changepassword" >
+
+
+    <div class="layui-form-item">
+
+        <div class="registDiv layui-inline">
+            <label class="layui-form-label">旧密码：</label>
+            <div class="layui-input-inline">
+                <label class="iconLabel layui-icon layui-icon-password" ></label>
+                <input type="password" name="olduserPassword" lay-verify="olduserPassword" autocomplete="off" placeholder="旧密码" class="registInput layui-input">
+            </div>
+        </div>
+
+        <div class="registDiv layui-inline">
+            <label class="layui-form-label">新密码：</label>
+            <div class="layui-input-inline">
+                <label class="iconLabel layui-icon layui-icon-password" ></label>
+                <input type="password" name="newuserPassword" lay-verify="newuserPassword" autocomplete="off" placeholder="新密码" class="registInput layui-input">
+            </div>
+        </div>
+
+        <div class="registDiv layui-inline">
+            <label class="layui-form-label">确认密码：</label>
+            <div class="layui-input-inline">
+                <label class="iconLabel layui-icon layui-icon-vercode" ></label>
+                <input type="password" name="confirmPassword" lay-verify="confirmPassword" autocomplete="off" placeholder="确认密码" class="registInput layui-input">
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <div class="layui-form-item submitForm layui-row">
+        <#--<div class="layui-col-xs4">-->
+        <#--<div class="grid-demo grid-demo-bg1">1</div>-->
+        <#--</div>-->
+
+        <div class="layui-col-md12" style="padding-left: 100px">
+            <button class="layui-btn layui-btn-radius" lay-submit lay-filter="updatePassword"><i class="layui-icon layui-icon-ok"> </i> &nbsp;确定</button>
+            <button type="reset" class="layui-btn layui-btn-radius layui-btn-primary"><i class="layui-icon layui-icon-refresh-1"> </i> 重置</button>
+            <button type="button" class="layui-btn layui-btn-radius layui-btn-warm"  data-type="back"><i class="layui-icon">&#xe603;</i>&nbsp;返回</button>
+
+        </div>
+    </div>
+
+</form >

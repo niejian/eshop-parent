@@ -4,8 +4,11 @@ package cn.com.eshop.admin.controller;
 import cn.com.eshop.admin.entity.SysMenus;
 import cn.com.eshop.admin.entity.SysRole;
 import cn.com.eshop.admin.entity.SysRoleMenu;
+import cn.com.eshop.admin.entity.SysUserRole;
 import cn.com.eshop.admin.service.ISysMenusService;
 import cn.com.eshop.admin.service.ISysRoleMenuService;
+import cn.com.eshop.admin.service.ISysRoleService;
+import cn.com.eshop.admin.service.ISysUserRoleService;
 import cn.com.eshop.admin.utils.MenuNodeVo;
 import cn.com.eshop.common.utils.CommonFunction;
 import cn.com.eshop.common.vo.CommonInstance;
@@ -13,9 +16,11 @@ import cn.com.eshop.common.vo.ResultBeanVo;
 import cn.com.eshop.common.vo.TableResultVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +51,10 @@ public class SysUserRoleController {
     private ISysRoleMenuService roleMenuService;
     @Autowired
     private ISysMenusService menusService;
+    @Autowired
+    private ISysRoleService roleService;
+    @Autowired
+    private ISysUserRoleService userRoleService;
 
 
     /**
@@ -139,6 +148,45 @@ public class SysUserRoleController {
         });
 
         return list;
+    }
+
+    @GetMapping(value = "/updateUserRole")
+    public ModelAndView updateUserRole(HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView();
+        // 获取所有角色信息
+        List<SysRole> roleList = this.roleService.list();
+        // 该用户的角色信息
+        String userId = request.getParameter("userId");
+        QueryWrapper<SysUserRole> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        List<SysUserRole> userRoleList = this.userRoleService.list(queryWrapper);
+        if (CollectionUtils.isEmpty(userRoleList)) {
+            userRoleList = new ArrayList<>();
+        }
+
+        JSONArray jsonArray = new JSONArray();
+        for (SysRole sysRole : roleList) {
+            JSONObject jsonObject = JSONObject.fromObject(sysRole);
+            for (SysUserRole userRole : userRoleList) {
+                boolean checked = false;
+                if (sysRole.getId() == userRole.getRoleId()) {
+                    checked = true;
+                    break;
+                }
+                jsonObject.put("checked", checked);
+            }
+
+            jsonArray.add(jsonObject);
+
+        }
+
+
+
+        modelAndView.addObject("data", jsonArray);
+        modelAndView.setViewName("user/manageUserRole");
+
+
+        return modelAndView;
     }
 
 }
