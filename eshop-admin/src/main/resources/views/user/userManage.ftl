@@ -320,7 +320,3 @@
 
 </script>
 </html>
-<form class="layui-form" action="" id="changepasswordForm" >
-
-    <table class="layui-hide" id="changeUserRole" lay-filter='changeUserRole' ></table>
-</form>

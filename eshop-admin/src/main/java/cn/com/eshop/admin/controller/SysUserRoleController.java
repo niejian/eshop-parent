@@ -20,17 +20,16 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -171,7 +170,7 @@ public class SysUserRoleController {
                 boolean checked = false;
                 if (sysRole.getId() == userRole.getRoleId()) {
                     checked = true;
-                    break;
+
                 }
                 jsonObject.put("checked", checked);
             }
@@ -182,11 +181,75 @@ public class SysUserRoleController {
 
 
 
-        modelAndView.addObject("data", jsonArray);
-        modelAndView.setViewName("user/manageUserRole");
+        modelAndView.addObject("list", jsonArray);
+        modelAndView.addObject("userId", userId);
+        modelAndView.setViewName("user/manageUserRoles");
 
 
         return modelAndView;
+    }
+
+    @PreAuthorize("hasRole('sysadmin')")
+    @ResponseBody
+    @PostMapping(value = "/updateUserRole")
+    public ResultBeanVo<String> updateUserRole(HttpServletRequest request, @RequestBody JSONObject jsonObject) {
+        boolean success = CommonInstance.ERR;
+        Integer errCode = CommonInstance.ERR_CODE;
+        String errMsg = CommonInstance.ERR_MSG;
+        ResultBeanVo<String> result = new ResultBeanVo<>();
+        CommonFunction.beforeProcess(log, jsonObject);
+        boolean isContinue = true;
+
+        try {
+
+            String userId = jsonObject.optString("userId", null);
+
+            if (StringUtils.isEmpty(userId)) {
+                isContinue = false;
+                errMsg = "用户信息为空";
+            }
+
+            JSONArray datas = jsonObject.optJSONArray("data");
+            if (isContinue && CollectionUtils.isEmpty(datas)) {
+                isContinue = false;
+                errMsg = "角色信息为空";
+            }
+
+            if (isContinue) {
+                String currentUser = (String) request.getSession().getAttribute("current_user_name");
+                List<SysUserRole> userRoles = new ArrayList<>();
+                Date date = new Date();
+                for (int i = 0; i < datas.size(); i++) {
+                    SysUserRole userRole = new SysUserRole();
+                    JSONObject data = datas.getJSONObject(i);
+                    userRole.setCreateBy(currentUser);
+                    userRole.setUserId(Long.parseLong(userId));
+                    userRole.setRoleId(data.getLong("id"));
+                    userRole.setRoleCode(data.getString("roleCode"));
+                    userRole.setModifyTime(date);
+                    userRole.setModifyBy(currentUser);
+                    userRole.setCreateTime(date);
+                    userRoles.add(userRole);
+                }
+
+                if (!CollectionUtils.isEmpty(userRoles)) {
+                    userRoleService.updateUserRole(userId, userRoles);
+                    success = CommonInstance.SUCCESS;
+                    errCode = CommonInstance.SUCCESS_CODE;
+                    errMsg = CommonInstance.SUCCESS_MSG;
+                }
+            }
+
+
+
+        } catch (Exception e) {
+            CommonFunction.genErrorMessage(log, e);
+            e.printStackTrace();
+        }
+
+        return result.success(success)
+                .errCode(errCode)
+                .errMsg(errMsg);
     }
 
 }
