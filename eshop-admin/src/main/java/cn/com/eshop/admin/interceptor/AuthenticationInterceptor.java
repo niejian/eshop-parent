@@ -95,6 +95,7 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter
         authToken = authToken.substring(tokenHead.length());
 
         String username = tokenUtil.getUsernameFromToken(authToken);
+        request.getSession().setAttribute("current_user_name", username);
 
         try {
             if (username != null) {

@@ -9,31 +9,40 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-
+    <script type="text/javascript" src="${ctx}/statics/js/moment.min.js"></script>
 </head>
 <body>
 
-<#--角色管理页面-->
-<fieldset class="layui-elem-field site-demo-button">
-    <div class="demoTable" style="margin-bottom: 10px">
-        <@security.authorize access="hasRole('sysadmin')">
-<#--        <@security.authorize access="isAuthenticated()">-->
-            <button class="layui-btn layui-btn-radius" data-type="add"> <i class="layui-icon layui-icon-add-1"></i> 添加</button>
-            <button class="layui-btn layui-btn-normal layui-btn-radius" data-type="edit"> <i class="layui-icon layui-icon-edit"></i>编辑</button>
-
-
-            <button class="layui-btn layui-btn-warm layui-btn-radius" onclick="view()"> <i class="layui-icon layui-icon-file"></i>查看</button>
-            <button class="layui-btn layui-btn-radius" onclick="bindMenu()"> <i class="layui-icon layui-icon-add-circle"></i>绑定菜单</button>
-            <button class="layui-btn  layui-btn-danger layui-btn-radius"> <i class="layui-icon layui-icon-delete"></i>删除</button>
-        </@security.authorize>
-    </div>
-</fieldset>
 
 
 
-<table class="layui-hide" id="roles" lay-filter='roles' ></table>
+<form class="layui-form" action="">
+    <table class="layui-hide" id="roles" lay-filter='roles' ></table>
+
+    <div>
+
+        <br/> <br/> <br/>
+        <div class="submitRole layui-form-item">
+            <div class="layui-row">
+            <#--<div class="layui-col-xs4">-->
+            <#--<div class="grid-demo grid-demo-bg1">1</div>-->
+            <#--</div>-->
+
+                <div class="layui-col-md6 layui-col-md-offset4">
+                    <button class="layui-btn"  lay-submit lay-filter="roleForm"><i class="layui-icon">&#xe605 </i> &nbsp;确定</button>
+
+                    <button type="button" class="layui-btn layui-btn-warm"  onclick="back()"><i class="layui-icon">&#xe603;</i>&nbsp;返回</button>
+
+                </div>
+            </div>
+        </div>
+
+</form>
 
 </body>
+<script type="text/javascript">
+
+</script>
 
 <#--为了让表格显示行号-->
 <script type="text/html" id="tableIndex">
@@ -41,38 +50,74 @@
 </script>
 <script type="text/javascript">
 
+
+    $(document).on("click",".layui-table-body table.layui-table tbody tr",function(){
+        var obj = event ? event.target : event.srcElement;
+        var tag = obj.tagName;
+        var checkbox = $(this).find("td div.laytable-cell-checkbox div.layui-form-checkbox I");
+        if(checkbox.length!=0){
+            if(tag == 'DIV') {
+                checkbox.click();
+            }
+        }
+
+    });
+
+    $(document).on("click","td div.laytable-cell-checkbox div.layui-form-checkbox",function(e){
+        e.stopPropagation();
+    });
+
+
     var roles = new Array();
+    <#list list as data>
+    var obj = {};
+
+    obj.id = ${data.id};
+    obj.roleCode = '${data.roleCode}';
+    obj.roleName = '${data.roleName}';
+    console.log('${data.createTime.time}'.replace(/,/g, ''))
+
+    obj.createTime = convertMillionSecondStr('${data.createTime.time}'.replace(/,/g, ''));
+    obj.createBy = '${data.createBy}';
+    obj.modifyTime = convertMillionSecondStr('${data.modifyTime.time}'.replace(/,/g, ''));
+    obj.modifyBy = '${data.modifyBy}';
+    obj.checked = '${data.checked}';
+    debugger
+    // 添加 LAY_CHECKED 属性，回显checkbox数据
+    if (obj.checked === 'true') {
+        obj.LAY_CHECKED = true;
+    }else {
+        obj.LAY_CHECKED = false;
+    }
+    roles.push(obj)
+    </#list>
 
 
-    layui.use(['element', 'table', 'form'], function() {
-        var table = layui.table;
 
-        var form = layui.form;
-        var index = layer.load(1); //添加laoding,0-2两种方式
+
+
+layui.use(['element', 'table', 'form'], function() {
+    var table = layui.table;
+    var jquery = layui.jquery;
+    var element = layui.element;
+
+    var form = layui.form;
+    var index = layer.load(1); //添加laoding,0-2两种方式
 
         //第一个实例
-        table.render({
+    table.render({
             elem: '#roles',
             // height: 500,
-            url: '${cx}/user/role/getRoles', //数据接口,
-            <#--data: '${roles}',-->
-            method: 'post',
-            contentType: "application/json",
+
+            data: roles,
             limit: 10, // 每页条数
             limits: [10,20,50],  //每页条数的选择项，默认：[10,20,30,40,50,60,70,80,90]
-            parseData: function(res) { //res 即为原始返回的数据
-                return {
-                    "code": res.code, //解析接口状态
-                    "msg": res.msg, //解析提示文本
-                    "count": res.count, //解析数据长度
-                    "data": res.data //解析数据列表
-                };
-            },
+
             // 请求参数
 
            where: {},
 //             data: roles,
-            page: true, //开启分页
+            page: false, //开启分页
             cols: [[ //表头, 这里要加两个中括号不然显示不出数据
 
                 {title:'#',width:80, type: 'checkbox'},
@@ -89,206 +134,85 @@
             done:function (res) {   //返回数据执行回调函数
                 layer.close(index);    //返回数据关闭loading
 
-            }
-
-        });
-
-        // 选中行时，当前行被选中
-        table.on('row(roles)', function(obj){
-
-            obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');//选中行样式
-            obj.tr.find('input[lay-type="layTableRadio"]').prop("checked",true);
-            var index = obj.tr.data('index')
-            var thisData = table.cache.roles;//tableName 表名
-            //重置数据单选属性
-            layui.each(thisData, function(i, item){
-                if(index === i){
-                    item.LAY_CHECKED = true;
-                } else {
-                    delete item.LAY_CHECKED;
-                }
-            });
-
-            form.render('radio');
-            // console.log(obj.data);
-        });
-
-        // 查看按钮点击事件
-        window.view = function () {
-            var checkStatus = table.checkStatus('roles'); // table标签的id属性
-            var data = checkStatus.data;
-            if (null == data || data.length == 0) {
-                layer.msg('请选择一条数据进行操作');
-
-                return;
-            }
-
-            var id = data[0].id;
-
-            var url = "${cx}/user/role/editRole?type=view&id=" + id;
-            layer.open({
-                id: "editRole",
-                title: "查看角色信息",
-                type: 2,
-                area: ["90%", "50%"],
-                content: url,
-                success: function(layero, index){
-                    //console.log("add--" + index);
-                },
-                end: function () {
-                    //resetForm();
-                    //刷新表格数据
-                    search();
-                },
-                cancel: function (index, layero) {
-                    layer.close(index);
-
-                    //resetForm();
-                    search();
-                    return false;
-                }
-            });
-
-        };
-
-        // 绑定菜单、按钮信息
-        window.bindMenu = function() {
-            var checkStatus = table.checkStatus('roles'); // table标签的id属性
-            var data = checkStatus.data;
-            if (null == data || data.length == 0) {
-                layer.msg('请选择一条数据进行操作');
-
-                return;
-            }
-
-            // roleId
-            var id = data[0].id;
-            var url = "${ctx}/user/role/manageRoleMenu?id=" + id;
-            layer.open({
-                id: "manageRoleMenu",
-                title: "角色菜单管理",
-                type: 2,
-                area: ["500px", "500px"], // 宽200高度自适应
-                content: url,
-                success: function(layero, index){
-                    // 获取子页面的iframe
-                    var iframe = window['layui-layer-iframe' + index];
-                    // 向子页面的全局函数getRoleId传参
-                    iframe.getRoleId(id);
-                },
-                end: function () {
-                    //resetForm();
-                    //刷新表格数据
-                    search();
-                },
-                cancel: function (index, layero) {
-                    layer.close(index);
-
-                    //resetForm();
-                    search();
-                    return false;
-                }
-            });
-
-        };
-
-        // 重新加载表格信息
-        window.search = function() {
-            var roleCode = $("input[name=roleCode]").val();
-            var roleName = $("input[name=roleName]").val();
-            table.reload('roles', {
-                page: {
-                    curr: 1 //重新从第 1 页开始
-                },
-                where: {
-                    roleCode: roleCode,
-                    roleName: roleName
-                }
-            });
-
-        }
-
-        // 自定义js方法
-        var $ = layui.$, active = {
-            edit: function() { //获取选中数据
-
-                var checkStatus = table.checkStatus('roles'); // table标签的id属性
-                var data = checkStatus.data;
-                if (null == data || data.length == 0) {
-                    layer.msg('请选择一条数据进行编辑');
-
-                    return;
-                }
-
-                //layer.alert(JSON.stringify(data));
-
-                var id = data[0].id;
-
-                var url = "${cx}/user/role/editRole?type=edit&id=" + id;
-                layer.open({
-                    id: "editRole",
-                    title: "更新角色信息",
-                    type: 2,
-                    area: ["90%", "50%"],
-                    content: url,
-                    success: function(layero, index){
-                        //console.log("add--" + index);
-                    },
-                    end: function () {
-                        //resetForm();
-                        //刷新表格数据
-                        search();
-                    },
-                    cancel: function (index, layero) {
-
-                        layer.confirm('关闭后将无法保存已填写的数据，是否确认关闭', function (index2) {
-                            layer.close(index);
-                            layer.close(index2);
-                        });
-                        //resetForm();
-                        search();
-                        return false;
-                    }
-                });
             },
-            add: function () {
-                var url = "${cx}/user/role/addRole";
-                layer.open({
-                    id: "addRole",
-                    title: "添加角色信息",
-                    type: 2,
-                    area: ["90%", "50%"],
-                    content: url,
-                    success: function(layero, index){
-                        //console.log("add--" + index);
-                    },
-                    end: function () {
-                        //resetForm();
-                        //刷新表格数据
-                        search();
-                    },
-                    cancel: function (index, layero) {
+        });
 
-                        layer.confirm('关闭后将无法保存已填写的数据，是否确认关闭', function (index2) {
-                            layer.close(index);
-                            layer.close(index2);
-                        });
-                        //resetForm();
-                        search();
-                        return false;
-                    }
-                });
-            }
-
-        };
 
         $('.demoTable .layui-btn').on('click', function(){
             var type = $(this).data('type');
             active[type] ? active[type].call(this) : '';
         });
 
+        window.back =  function() {
+            var layIndex = parent.layer.getFrameIndex(window.name);
+            layer.confirm('关闭后将无法保存已填写的数据，是否确认关闭', function () {
+                parent.layer.close(layIndex);
+                //parent.layer.close(index2);
+            });
+        };
 
+    form.on('submit(roleForm)', function(data){
+
+        var checkStatus = table.checkStatus('roles'); // table标签的id属性
+        var datas = checkStatus.data;
+//        if (null == datas || datas.length == 0) {
+//            layer.msg('请选择角色');
+//
+//            return;
+//        }
+
+        var roleInfo = new Array();
+        // 获取所选角色信息
+        datas.forEach(function(value, key) {
+
+            var role = {};
+            role.id = value.id;
+            role.roleCode = value.roleCode;
+            roleInfo.push(role);
+        });
+
+        var postJSON = JSON.stringify({data: roleInfo, userId: '${userId}'})
+
+        // 验证成功，提交数据
+        $.ajax({
+            url: '${ctx}/user/role/updateUserRole',
+            type: 'POST',
+            contentType: "application/json; charset=utf-8",
+            data: postJSON,
+            async: false,
+            dataType: "json",
+            success: function(data){
+
+                var isSuccess = data.success;
+                if (!isSuccess) {
+                    layer.alert(data.errMsg);
+                } else {
+                    var msg ='角色信息更新成功';
+                    layer.alert(msg, function(index) {
+                        // 关闭当前提示的这个弹出层
+                        layer.close(index);
+                        // 关闭当前的弹出页面
+                        var layIndex = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(layIndex);
+                    });
+
+                }
+
+            }
+        });
+
+        // 必须加上这个
+        return false;
     });
+
+
+
+});
+
+
+
+
+
 
 
 </script>

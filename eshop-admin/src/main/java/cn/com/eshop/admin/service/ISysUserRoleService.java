@@ -1,7 +1,9 @@
 package cn.com.eshop.admin.service;
 
+import cn.com.eshop.admin.entity.SysUser;
 import cn.com.eshop.admin.entity.SysUserRole;
 import com.baomidou.mybatisplus.extension.service.IService;
+import net.sf.json.JSONArray;
 
 import java.util.List;
 
@@ -22,5 +24,12 @@ public interface ISysUserRoleService extends IService<SysUserRole> {
      * @throws Exception
      */
     List<SysUserRole> getUserRoleByUserId(long userId) throws Exception;
+
+    /**
+     * 更新用户角色信息
+     * @param userRoleList
+     * @return
+     */
+    boolean updateUserRole(String userId,  List<SysUserRole> userRoleList);
 
 }

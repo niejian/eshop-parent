@@ -6,7 +6,11 @@ import cn.com.eshop.admin.service.ISysUserRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -35,5 +39,25 @@ public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleMapper, SysUs
         queryWrapper.eq("user_id", userId);
 
         return this.list(queryWrapper);
+    }
+
+    /**
+     * 更新用户角色信息
+     *
+     * @param userRoleList
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public boolean updateUserRole(String userId, List<SysUserRole> userRoleList) {
+
+        QueryWrapper<SysUserRole> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        this.remove(queryWrapper);
+        if (!CollectionUtils.isEmpty(userRoleList)) {
+            saveBatch(userRoleList);
+
+        }
+        return true;
     }
 }
