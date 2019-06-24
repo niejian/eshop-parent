@@ -133,11 +133,9 @@
                     //向服务端发送删除指令
                 });
             } else if(layEvent === 'edit'){
-                debugger
-                console.log(data);
+
                 var userId = data.id;
                 changeUserRole(userId);
-                layer.msg('编辑操作');
             }
         });
 
@@ -150,7 +148,7 @@
                 id: "updateUserRole",
                 title: "添加用户角色信息",
                 type: 2,
-                area: ["90%", "50%"],
+                area: ["92%", "50%"],
                 content: url,
                 success: function(layero, index){
                     //console.log("add--" + index);
@@ -242,13 +240,7 @@
                             var msg ='更新成功';
                             layer.msg(msg);
                             search();
-                            // layer.alert(msg, function(index) {
-                            //     // 关闭当前提示的这个弹出层
-                            //     layer.close(index);
-                            //     // 关闭当前的弹出页面
-                            //     var layIndex = parent.layer.getFrameIndex(window.name);
-                            //     parent.layer.close(layIndex);
-                            // });
+
 
                         }
 

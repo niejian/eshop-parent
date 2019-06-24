@@ -10,6 +10,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -53,8 +54,10 @@ public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleMapper, SysUs
         QueryWrapper<SysUserRole> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", userId);
         this.remove(queryWrapper);
+        if (!CollectionUtils.isEmpty(userRoleList)) {
+            saveBatch(userRoleList);
 
-        saveBatch(userRoleList);
+        }
         return true;
     }
 }

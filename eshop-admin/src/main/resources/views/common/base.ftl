@@ -20,3 +20,24 @@
 
 <script type="text/javascript" src="${ctx}/statics/js/layer/layui.all.js"></script>
 <#--<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">-->
+<script type="text/javascript">
+    /**
+     * 毫秒转时间
+     * @param sj
+     * @returns {string}
+     */
+    function convertMillionSecondStr(sj){
+        var now = new Date(parseFloat(sj));
+        var   year=now.getFullYear();
+        var   month=now.getMonth()+1;
+        var   date=now.getDate();
+        var   hour=now.getHours();
+        var   minute=now.getMinutes();
+        var   second=now.getSeconds();
+        return   year+"-"+month+"-"+date+"   "+hour+":"+minute+":"+second;
+
+    }
+
+
+
+</script>

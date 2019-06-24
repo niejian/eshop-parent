@@ -165,15 +165,17 @@ public class SysUserRoleController {
 
         JSONArray jsonArray = new JSONArray();
         for (SysRole sysRole : roleList) {
+            boolean checked = false;
+
             JSONObject jsonObject = JSONObject.fromObject(sysRole);
             for (SysUserRole userRole : userRoleList) {
-                boolean checked = false;
                 if (sysRole.getId() == userRole.getRoleId()) {
                     checked = true;
-
+                    break;
                 }
-                jsonObject.put("checked", checked);
+
             }
+            jsonObject.put("checked", checked);
 
             jsonArray.add(jsonObject);
 
@@ -210,10 +212,10 @@ public class SysUserRoleController {
             }
 
             JSONArray datas = jsonObject.optJSONArray("data");
-            if (isContinue && CollectionUtils.isEmpty(datas)) {
-                isContinue = false;
-                errMsg = "角色信息为空";
-            }
+//            if (isContinue && CollectionUtils.isEmpty(datas)) {
+//                isContinue = false;
+//                errMsg = "角色信息为空";
+//            }
 
             if (isContinue) {
                 String currentUser = (String) request.getSession().getAttribute("current_user_name");
@@ -232,12 +234,13 @@ public class SysUserRoleController {
                     userRoles.add(userRole);
                 }
 
-                if (!CollectionUtils.isEmpty(userRoles)) {
-                    userRoleService.updateUserRole(userId, userRoles);
-                    success = CommonInstance.SUCCESS;
-                    errCode = CommonInstance.SUCCESS_CODE;
-                    errMsg = CommonInstance.SUCCESS_MSG;
-                }
+
+                userRoleService.updateUserRole(userId, userRoles);
+
+
+                success = CommonInstance.SUCCESS;
+                errCode = CommonInstance.SUCCESS_CODE;
+                errMsg = CommonInstance.SUCCESS_MSG;
             }
 
 
