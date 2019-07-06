@@ -3,6 +3,7 @@ package cn.com.eshop.admin.test;/**
  */
 
 import cn.com.eshop.admin.service.SysCodeAutoGenerateService;
+import cn.com.eshop.common.dto.TableDescDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -34,5 +35,19 @@ public class CodeGenerateServiceTest {
             tables = new ArrayList<>();
         }
         log.info(tables.toString());
+    }
+
+    /**
+     *获取表结构信息
+     */
+    @Ignore
+    @Test
+    public void getTableDesc() {
+        try {
+            TableDescDto descDto = this.sysCodeAutoGenerateService.getTableDetail("sys_menus");
+            System.out.println(descDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

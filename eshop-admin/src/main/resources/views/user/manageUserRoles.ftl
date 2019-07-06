@@ -9,7 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <script type="text/javascript" src="${ctx}/statics/js/moment.min.js"></script>
+    <script type="text/javascript" src="${ctx}/statics/js/common/table-checkbox-select.js"></script>
 </head>
 <body>
 
@@ -49,24 +49,6 @@
     {{d.LAY_TABLE_INDEX+1}}
 </script>
 <script type="text/javascript">
-
-
-    $(document).on("click",".layui-table-body table.layui-table tbody tr",function(){
-        var obj = event ? event.target : event.srcElement;
-        var tag = obj.tagName;
-        var checkbox = $(this).find("td div.laytable-cell-checkbox div.layui-form-checkbox I");
-        if(checkbox.length!=0){
-            if(tag == 'DIV') {
-                checkbox.click();
-            }
-        }
-
-    });
-
-    $(document).on("click","td div.laytable-cell-checkbox div.layui-form-checkbox",function(e){
-        e.stopPropagation();
-    });
-
 
     var roles = new Array();
     <#list list as data>
