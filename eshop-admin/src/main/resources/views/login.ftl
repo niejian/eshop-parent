@@ -119,43 +119,7 @@
         var layer = layui.layer;
         var form = layui.form;
         
-//        form.verify({
-//            username: function (value) {
-//                if (null == value || '' == value) {
-//                    return '请输入用户名';
-//                }
-//
-//                if (value.length < 4) {
-//                    return '用户名长度至少为4';
-//                }
-//
-//            },
-//            password: function (value) {
-//                if (null == value || '' == value) {
-//                    return '请输入密码';
-//                }
-//                // 校验密码复杂度
-//                if (value.length < 6) {
-//                    return '密码长度最少为6位';
-//                }
-//
-//                if (! (/[A-Za-z]{1}/.test(value))) {
-//                    return '密码需要至少包含一个英文字母';
-//                }
-//            },
-//            valifyCode: function(value) {
-//                debugger
-//                if (null == value || '' == value) {
-//                    return '请输入验证码';
-//                }
-//                // 校验验证码复杂度
-//                if (value.length < 5) {
-//                    return '验证码不对';
-//                }
-//
-//
-//            }
-//        });
+
 
         //登录的点击事件
         $("#sub").on("click",function(){
@@ -167,7 +131,44 @@
             if(event.keyCode == "13"){
                 login();
             }
-        })
+        });
+        
+        function valid() {
+            var msg = '';
+
+            var username = $("input[ name='username' ] ").val();
+            if (null == username || '' == username) {
+                return '请输入用户名';
+            }
+
+            if (username.length < 4) {
+                return '用户名长度至少为4';
+            }
+
+            var password = $("input[ name='password' ] ").val();
+            if (null == password || '' == password) {
+                return '请输入密码';
+            }
+            // 校验密码复杂度
+            if (password.length < 6) {
+                return '密码长度最少为6位';
+            }
+
+            if (! (/[A-Za-z]{1}/.test(password))) {
+                return '密码需要至少包含一个英文字母';
+            }
+            var valifyCode = $("input[ name='valifyCode' ] ").val();
+            if (null == valifyCode || '' == valifyCode) {
+                return '请输入验证码';
+            }
+            // 校验验证码复杂度
+            if (valifyCode.length < 5) {
+                return '验证码不对';
+            }
+//
+
+            return msg;
+        }
 
         //登录函数
         function login(){
@@ -175,6 +176,13 @@
             var username = $("input[ name='username' ] ").val();
             var password = $("input[ name='password' ] ").val();
             var valifyCode = $("input[ name='valifyCode' ] ").val();
+
+            var errMsg = valid();
+            if (null != errMsg && '' != errMsg) {
+                layer.msg(errMsg);
+                return ;
+            }
+
             password = md5(password);
             $.ajax({
                 url:"${base}/user/doLogin",
@@ -183,7 +191,7 @@
                 contentType: "application/json; charset=utf-8",
                 dataType:"json",
                     success:function(data){
-                    debugger
+
                     if(data.success){
                         var token = data.data;
                         window.localStorage.setItem("token", token);
