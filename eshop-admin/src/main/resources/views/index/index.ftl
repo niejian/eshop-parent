@@ -77,7 +77,7 @@
                     <span id="login_user_name"></span>
                 </a>
                 <dl class="layui-nav-child">
-                    <dd><a href="javascript:;" lay-href="./userinfo.html"><i class="layui-icon layui-icon-form"></i>基本资料</a></dd>
+<#--                    <dd><a href="javascript:;" lay-href="./userinfo.html"><i class="layui-icon layui-icon-form"></i>基本资料</a></dd>-->
                     <dd><a onclick="changepassword()"><i class="layui-icon layui-icon-password"></i>修改密码</a></dd>
                 </dl>
             </li>
