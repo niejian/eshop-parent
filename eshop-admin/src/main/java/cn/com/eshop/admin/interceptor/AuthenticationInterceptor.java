@@ -54,6 +54,9 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         long beginTime = System.currentTimeMillis();// 1、开始时间
         startTimeThreadLocal.set(beginTime);// 线程绑定变量（该数据只有当前请求的线程可见）
+        if ("/captcha/getCaptcha".equals(request.getRequestURI())) {
+            return true;
+        }
         // 获取session
         HttpSession session = request.getSession(true);
         String token = (String)session.getAttribute(LOGIN_TOKEN);

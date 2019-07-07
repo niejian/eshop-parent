@@ -11,4 +11,5 @@ public interface CommonInstance {
     public final static String ERR_MSG = "请求失败";
     public final static Boolean SUCCESS = Boolean.TRUE;
     public final static Boolean ERR = Boolean.FALSE;
+    public final static String LOGIN_VALIFY_CODE = "login_valify_code";
 }

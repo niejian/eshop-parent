@@ -21,10 +21,11 @@
                 <canvas id="demo-canvas"></canvas>
                 <div class="logo_box">
                     <h3>欢迎你</h3>
-                    <form action="#" name="f" method="post">
-                        <div class="input_outer">
+                    <form action="#" name="f" class="layui-form" method="post">
+                        <div class="input_outer layui-form-item">
 
                             <span class="u_user"></span>
+
                             <input name="username" class="text" value="sysadmin" style="color: #FFFFFF !important" lay-verify="username" type="text" placeholder="请输入账户">
                         </div>
                         <div class="input_outer">
@@ -34,10 +35,10 @@
                         <div class="input_outer">
                             <div style="float:left; width: 45%">
                                 <span class="us_verify"></span>
-                                <input name="valifyCode" class="text" style="width:45%;color: #FFFFFF !important; position:absolute; z-index:100;"value="" type="text" placeholder="请输入验证码">
+                                <input name="valifyCode" class="text"  lay-verify="valifyCode" style="width:25%;color: #FFFFFF !important; position:absolute; z-index:100;" " placeholder="请输入验证码">
                             </div>
-                            <div style="float:right; width: 45%">
-
+                            <div style="float:right; width: 55%">
+                                <img class="validImg" src="${ctx}/captcha/getCaptcha" onclick="changeValidCode()">
                             </div>
 
                         </div>
@@ -73,6 +74,16 @@
     <script src="${base}/statics/login/js/demo-1.js"></script>
 </body>
 <script>
+    <#--$(document).ready(function(){-->
+        <#--$(".validImg").click(function () {-->
+            <#--$(this).attr('src', '${ctx}/captcha/getCaptcha');-->
+
+        <#--})-->
+    <#--});-->
+
+    function changeValidCode() {
+        $('.validImg').attr('src', '${ctx}/captcha/getCaptcha');
+    }
     // 注册
     function register() {
         var layer = layui.layer;
@@ -108,31 +119,43 @@
         var layer = layui.layer;
         var form = layui.form;
         
-        form.verify({
-            username: function (value) {
-                if (null == value || '' == value) {
-                    return '请输入用户名';
-                }
-
-                if (value.length < 4) {
-                    return '用户名长度至少为4';
-                }
-
-            },
-            password: function (value) {
-                if (null == value || '' == value) {
-                    return '请输入密码';
-                }
-                // 校验密码复杂度
-                if (value.length < 6) {
-                    return '密码长度最少为6位';
-                }
-
-                if (! (/[A-Za-z]{1}/.test(value))) {
-                    return '密码需要至少包含一个英文字母';
-                }
-            }
-        });
+//        form.verify({
+//            username: function (value) {
+//                if (null == value || '' == value) {
+//                    return '请输入用户名';
+//                }
+//
+//                if (value.length < 4) {
+//                    return '用户名长度至少为4';
+//                }
+//
+//            },
+//            password: function (value) {
+//                if (null == value || '' == value) {
+//                    return '请输入密码';
+//                }
+//                // 校验密码复杂度
+//                if (value.length < 6) {
+//                    return '密码长度最少为6位';
+//                }
+//
+//                if (! (/[A-Za-z]{1}/.test(value))) {
+//                    return '密码需要至少包含一个英文字母';
+//                }
+//            },
+//            valifyCode: function(value) {
+//                debugger
+//                if (null == value || '' == value) {
+//                    return '请输入验证码';
+//                }
+//                // 校验验证码复杂度
+//                if (value.length < 5) {
+//                    return '验证码不对';
+//                }
+//
+//
+//            }
+//        });
 
         //登录的点击事件
         $("#sub").on("click",function(){
@@ -151,20 +174,24 @@
 
             var username = $("input[ name='username' ] ").val();
             var password = $("input[ name='password' ] ").val();
+            var valifyCode = $("input[ name='valifyCode' ] ").val();
             password = md5(password);
             $.ajax({
                 url:"${base}/user/doLogin",
-                data:JSON.stringify({"username":username,"password":password}),
+                data:JSON.stringify({"username":username,"password":password, 'valifyCode':valifyCode}),
                 type:"post",
                 contentType: "application/json; charset=utf-8",
                 dataType:"json",
                     success:function(data){
+                    debugger
                     if(data.success){
                         var token = data.data;
                         window.localStorage.setItem("token", token);
                         window.localStorage.setItem("login_user_name", username);
                         window.location = "index";
                     }else{
+                        changeValidCode()
+
                         layer.msg(data.errMsg);
                     }
                 }

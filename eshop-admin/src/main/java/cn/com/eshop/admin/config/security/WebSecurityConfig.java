@@ -84,7 +84,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .antMatchers("/**/**", "/user/doLogin",
+                .antMatchers("/**/**", "/user/doLogin", "/captcha/**",
                         "/statics/**").permitAll() //静态文件拦截
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()//设置可跨域请求时的放行
 

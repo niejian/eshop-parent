@@ -82,6 +82,7 @@ public class UserController {
             // TODO 校验验证码是否正确
             String username = jsonObject.optString("username", null);
             String password = jsonObject.optString("password", null);
+            String valifyCode = jsonObject.optString("valifyCode", null);
 
             if (StringUtils.isEmpty(username)) {
                 isContinue = false;
@@ -93,6 +94,21 @@ public class UserController {
                 isContinue = false;
                 errMsg = "请输入密码";
 
+            }
+
+            if (isContinue && org.springframework.util.StringUtils.isEmpty(valifyCode)) {
+                isContinue = false;
+                errMsg = "请输入验证码";
+
+            }
+
+            if (isContinue) {
+                HttpSession session = request.getSession();
+                String sessionValifCode = (String)session.getAttribute(CommonInstance.LOGIN_VALIFY_CODE);
+                if (!valifyCode.equals(sessionValifCode)) {
+                    isContinue = false;
+                    errMsg = "验证码错误请重试";
+                }
             }
 
             if (isContinue) {
